@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>-ta ../../Data/raaTrafficLight.OSGB -rm ../../Data/roads2.txt -ra ../../Data/RoadSet.OSGB -ap ../../Data/animPath.txt</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>..\..\OpenSceneGraph-vs2015\bin</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>
