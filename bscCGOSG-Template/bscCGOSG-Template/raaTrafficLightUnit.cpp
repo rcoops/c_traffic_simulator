@@ -58,7 +58,7 @@ void raaTrafficLightUnit::toggleDetectionPointVisibility()
 	setDetectionPointVisibility(m_bIsDetectionPointVisible);
 }
 
-void raaTrafficLightUnit::setDetectionPointVisibility(bool bIsVisible)
+void raaTrafficLightUnit::setDetectionPointVisibility(const bool bIsVisible)
 {
 	if (m_pDetectionPointSwitch)
 	{
@@ -67,9 +67,9 @@ void raaTrafficLightUnit::setDetectionPointVisibility(bool bIsVisible)
 	}
 }
 
-void raaTrafficLightUnit::setLightState(raaTrafficLightUnit::rpcTrafficLightState newState)
+void raaTrafficLightUnit::setLightState(const rpcTrafficLightState eNewState)
 {
-	eTrafficLightState = newState;
+	eTrafficLightState = eNewState;
 	adjustLightColour();
 }
 

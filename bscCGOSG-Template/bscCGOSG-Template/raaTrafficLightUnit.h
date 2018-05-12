@@ -29,8 +29,8 @@ public:
 	static void finshAsset();
 
 	osg::Node* node();
-	void setTransform(float fX, float fY, float fRot, float fScale = raaTrafficLightUnit::csm_fDefaultScale);
-	void setLightState(raaTrafficLightUnit::rpcTrafficLightState state = STOP);
+	void setTransform(float fX, float fY, float fRot, float fScale = csm_fDefaultScale);
+	void setLightState(const rpcTrafficLightState eNewState = STOP);
 	void toggleDetectionPointVisibility();
 
 protected:
@@ -61,7 +61,7 @@ protected:
 	void adjustLightColour();
 
 	void setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed);
-	void setDetectionPointVisibility(bool b_isOn);
+	void setDetectionPointVisibility(const bool bIsVisible);
 
 	static void materialBuilder(osg::Material* pOn, osg::Material* pOff, osg::Vec3f vMat);
 };
