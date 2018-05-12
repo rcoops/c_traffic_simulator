@@ -24,7 +24,6 @@ void raaRoadSet::start(std::string sAssetFile, std::string sMapFile)
 {
 	if (!sm_uiInstance++ && !sm_pInstance) new raaRoadSet(sAssetFile);
 
-
 	std::ifstream file(sMapFile);
 
 	while(!file.eof())
@@ -159,7 +158,6 @@ raaRoadSet::~raaRoadSet()
 	if (sm_pInstance == this) sm_pInstance = 0;
 	
 	m_pSG->unref();
-
 }
 
 void raaRoadSet::buildAnimationPoints()
@@ -207,5 +205,4 @@ void raaRoadSet::buildAnimationPoints()
 	m_pXJunctionAP->addPoint(osg::Vec3f(-0.02f*sm_fTileUnit, -0.02f*sm_fTileUnit, 0.0f), osg::Quat(osg::DegreesToRadians(135.0f), osg::Vec3f(0.0f, 0.0f, 1.0f))); //13
 	m_pXJunctionAP->addPoint(osg::Vec3f(0.24f*sm_fTileUnit, 0.24f*sm_fTileUnit, 0.0f), osg::Quat(osg::DegreesToRadians(-45.0f), osg::Vec3f(0.0f, 0.0f, 1.0f))); //14
 	m_pXJunctionAP->addPoint(osg::Vec3f(0.02f*sm_fTileUnit, -0.02f*sm_fTileUnit, 0.0f), osg::Quat(osg::DegreesToRadians(45.0f), osg::Vec3f(0.0f, 0.0f, 1.0f))); //15
-
 }

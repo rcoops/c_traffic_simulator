@@ -11,13 +11,9 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 	{
 		switch(ea.getKey())
 		{
-			case 'd':
-			case 'D':
-				raaJunctionController::toggleDetectionBoxes();
-				return true;
 			case 'v':
 			case 'V':
-				raaJunctionController::toggleDetectionVisibility();
+				rpcCollidables::toggleDetectionVisibility();
 				return true;
 			case 'a':
 			case 'A':

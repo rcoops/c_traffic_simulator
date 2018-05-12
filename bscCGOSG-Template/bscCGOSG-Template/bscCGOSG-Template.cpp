@@ -35,7 +35,6 @@
 
 //#include <osgDB/ReadFile>
 
-
 osg::Node *g_pModel = 0; // holds the tile model
 osg::Group *g_pRoot = 0; // root of the sg
 
@@ -104,7 +103,7 @@ int main(int argc, char** argv)
 	g_pRoot->addChild(g_pAnim->root());
 
 	// add the vehcile to the junction controller for traffic light control
-	raaJunctionController::addVehicle(g_pAnim);
+	rpcCollidables::addVehicle(g_pAnim);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
@@ -157,5 +156,3 @@ int main(int argc, char** argv)
 
 	return viewer.run();
 }
-
-

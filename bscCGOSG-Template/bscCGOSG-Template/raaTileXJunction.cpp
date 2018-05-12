@@ -1,9 +1,6 @@
 #include "stdafx.h"
-#include "raaRoadSet.h"
-#include "raaTrafficLightUnit.h"
 #include "raaTileXJunction.h"
 #include <cmath>
-
 
 const float raaTileXJunction::csm_fAbsoluteLightPosition = 200.0f;
 
@@ -17,16 +14,18 @@ raaTileXJunction::raaTileXJunction(unsigned int uiName, osg::Node* pNode, raaAni
 // TODO - make this a junction controller virtual function?
 void raaTileXJunction::addLights()
 {
-	raaTrafficLightUnit *pL0;
 	float fRotation = -90.0f; // set to -90 so we can use += 90 for every loop iteration
 	const float fOutsidePositionRange = 3 * csm_fAbsoluteLightPosition;
 	const float fPositionStep = 2 * csm_fAbsoluteLightPosition;
 	for (int y = -csm_fAbsoluteLightPosition; y < fOutsidePositionRange; y += fPositionStep) {
 		for (int x = y; abs(x) < fOutsidePositionRange; x -= y * 2) {
-			pL0 = new raaTrafficLightUnit();
+			raaTrafficLightUnit *pL0 = new raaTrafficLightUnit();
 			pL0->setTransform(x, y, fRotation += 90.0f);
+			pL0->ref();
 			m_pLocalRoot->addChild(pL0->node());
-			addLightUnit(pL0);
+			rpcCollidables::addLight(pL0);
+			m_lLights.push_back(pL0);
+			m_itLight = m_lLights.begin();
 		}
 	}
 }
@@ -35,4 +34,9 @@ void raaTileXJunction::addLights()
 
 raaTileXJunction::~raaTileXJunction()
 {
+	for (raaLights::iterator itLight = m_lLights.begin(); itLight != m_lLights.end(); ++itLight)
+	{
+		(*itLight)->unref();
+	}
+	m_lLights.clear();
 }
