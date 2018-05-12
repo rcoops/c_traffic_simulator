@@ -20,7 +20,7 @@ raaTrafficLights raaTrafficLightUnit::sm_lLights;
 
 const float raaTrafficLightUnit::csm_fDefaultScale = 0.03f;
 
-raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(true)
+raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 {
 	sm_lLights.push_back(this);
 	m_pTranslation = new osg::MatrixTransform();
@@ -32,12 +32,13 @@ raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(true)
 	osg::Geode* pGeode = new osg::Geode();
 	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(m_vfPosition, 10.0f));
 	m_pTranslation->addChild(m_pRotation);
-	m_pRotation->addChild(m_pDetectionPointSwitch); // Don't want to scale the point
 	m_pRotation->addChild(m_pScale);
 
-	m_pScale->addChild((osg:: Node*) sm_pAsset->clone(osg::CopyOp::DEEP_COPY_NODES));
+	m_pRotation->addChild(m_pDetectionPointSwitch); // Don't want to scale the point
 	m_pDetectionPointSwitch->addChild(pGeode);
 	pGeode->addDrawable(pSPoint);
+
+	m_pScale->addChild((osg:: Node*) sm_pAsset->clone(osg::CopyOp::DEEP_COPY_NODES));
 
 	raaFinder<osg::Geode> redFinder("trafficLight::RedLamp-GEODE", m_pRotation);
 	raaFinder<osg::Geode> greenFinder("trafficLight::GreenLamp-GEODE", m_pRotation);
@@ -48,14 +49,20 @@ raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(true)
 	m_pAmber = amberFinder.node();
 
 	setLightState();
+	setDetectionPointVisibility(m_bIsDetectionPointVisible);
 }
 
 void raaTrafficLightUnit::toggleDetectionPointVisibility()
 {
 	m_bIsDetectionPointVisible = !m_bIsDetectionPointVisible;
+	setDetectionPointVisibility(m_bIsDetectionPointVisible);
+}
+
+void raaTrafficLightUnit::setDetectionPointVisibility(bool bIsVisible)
+{
 	if (m_pDetectionPointSwitch)
 	{
-		if (m_bIsDetectionPointVisible) m_pDetectionPointSwitch->setAllChildrenOn();
+		if (bIsVisible) m_pDetectionPointSwitch->setAllChildrenOn();
 		else m_pDetectionPointSwitch->setAllChildrenOff();
 	}
 }

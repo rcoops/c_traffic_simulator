@@ -61,6 +61,7 @@ protected:
 	void adjustLightColour();
 
 	void setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed);
+	void setDetectionPointVisibility(bool b_isOn);
 
 	static void materialBuilder(osg::Material* pOn, osg::Material* pOff, osg::Vec3f vMat);
 };

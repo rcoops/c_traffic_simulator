@@ -21,10 +21,7 @@ public:
 
 	osg::MatrixTransform* root();
 	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
-	void toggleDetectionBox();
 	void toggleDetectionBoxVisibility();
-	bool isDetectionBoxVisible();
-	void toggleDetectionBoxes();
 
 protected:
 	osg::MatrixTransform* m_pRoot;
@@ -33,5 +30,7 @@ protected:
 
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
+
+	void setDetectionBoxVisibility(const bool bIsVisible);
 };
 

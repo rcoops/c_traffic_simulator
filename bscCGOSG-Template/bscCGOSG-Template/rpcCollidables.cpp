@@ -35,11 +35,11 @@ void rpcCollidables::toggleDetectionVisibility()
 {
 	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
 	{
-		(*itVehicle)->toggleDetectionBox();
+		(*itVehicle)->toggleDetectionBoxVisibility();
 	}
-	for (raaLights::iterator itLights = sm_lLights.begin(); itLights != sm_lLights.end(); ++itLights)
+	for (raaLights::iterator itLight = sm_lLights.begin(); itLight != sm_lLights.end(); ++itLight)
 	{
-		
+		(*itLight)->toggleDetectionPointVisibility();
 	}
 }
 

@@ -11,7 +11,7 @@
 const osg::Vec3f raaAnimatedComponent::msc_vfDetector_Position = osg::Vec3f(20.0f, 70.0f, 20.0f);
 
 // convert dimensions to consts
-raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): osg::AnimationPathCallback(pAP), m_bDetectorBoxVisible(true)
+raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): osg::AnimationPathCallback(pAP), m_bDetectorBoxVisible(false)
 {
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
@@ -41,8 +41,8 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): osg::Animat
 	m_pDetectionBox = new rpcDetectionBox(msc_vfDetector_Position);
 	m_psDetectorSwitch = new osg::Switch();
 	m_psDetectorSwitch->addChild(m_pDetectionBox->m_pRoot);
-	toggleDetectionBox();
 	m_pRoot->addChild(m_psDetectorSwitch);
+	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 
 	m_pRoot->setUpdateCallback(this);
 }
@@ -57,31 +57,19 @@ osg::Vec3f raaAnimatedComponent::getDetectionPoint(osg::MatrixTransform* pRoot)
 	return m_vfFront;
 }
 
-void raaAnimatedComponent::toggleDetectionBox()
-{
-	osg::BoundingSphere sphere = m_pDetectionBox->m_pRoot->getBound();
-	m_bDetectorBoxVisible = !m_bDetectorBoxVisible;
-	if (m_psDetectorSwitch)
-	{
-		if (m_bDetectorBoxVisible) m_psDetectorSwitch->setAllChildrenOn();
-		else m_psDetectorSwitch->setAllChildrenOff();
-	}
-	printf("");
-}
-
 void raaAnimatedComponent::toggleDetectionBoxVisibility()
 {
-	m_pDetectionBox->toggleVisibility();
+	m_bDetectorBoxVisible = !m_bDetectorBoxVisible;
+	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 }
 
-bool raaAnimatedComponent::isDetectionBoxVisible()
+void raaAnimatedComponent::setDetectionBoxVisibility(const bool bIsVisible)
 {
-	return m_bDetectorBoxVisible;
-}
-
-void raaAnimatedComponent::toggleDetectionBoxes()
-{
-	// TODO?
+	if (m_psDetectorSwitch)
+	{
+		if (bIsVisible) m_psDetectorSwitch->setAllChildrenOn();
+		else m_psDetectorSwitch->setAllChildrenOff();
+	}
 }
 
 raaAnimatedComponent::~raaAnimatedComponent()
