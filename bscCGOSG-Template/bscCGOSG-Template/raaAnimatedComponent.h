@@ -25,8 +25,10 @@ public:
 
 protected:
 	osg::MatrixTransform* m_pRoot;
-	osg::Vec3f m_vfFront;
-	static const osg::Vec3f msc_vfDetector_Position;
+	static const osg::Vec3f csm_vfBack;
+	void initDetectionPoints();
+	osg::Geode* initGeode();
+	static const osg::Vec3f csm_vfDetector_Position;
 
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;

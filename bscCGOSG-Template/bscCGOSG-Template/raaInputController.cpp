@@ -31,6 +31,7 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 			return true;
 		case 'p':
 		case 'P':
+			rpcCollidables::instance()->pauseVehicles();
 			return true;
 		}
 	}

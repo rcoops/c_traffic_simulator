@@ -24,6 +24,7 @@ public:
 	void checkDetection();
 	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, raaAnimatedComponent* pVehicle);
 	void adjustVehicleSpeed(float fMultiplier);
+	void pauseVehicles();
 	
 protected:
 	rpcCollidables();
@@ -33,4 +34,5 @@ protected:
 
 	static rpcCollidables* sm_pInstance;
 
+	bool m_bIsGlobalPause = false;
 };

@@ -12,8 +12,6 @@ public:
 	virtual ~raaTileXJunction();
 
 protected:
-	void addLights();
-
-	static const float csm_fAbsoluteLightPosition;
+	void addLights() override;
 };
 

@@ -20,7 +20,7 @@ public:
 	raaJunctionController();
 	virtual ~raaJunctionController();
 	virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
-
+	
 protected:
 	static const double csm_dLightChangeTime;
 	std::list<raaTrafficLightUnit*> m_lLights;
@@ -28,6 +28,13 @@ protected:
 	std::list<raaAnimatedComponent*>::iterator m_itVehicle;
 	double m_dLastChangeTime = 0.0;
 
+	std::list<osg::Vec3f> m_lvfLightPositionRotation;
+
 	void cycleTrafficLights(osg::NodeVisitor* nv);
+	raaTrafficLightUnit* addLight(osg::Vec3f vfPositionRotation);
+
+	virtual void addLights() = 0;
+
+	static const float csm_fAbsoluteLightPosition;
 };
 

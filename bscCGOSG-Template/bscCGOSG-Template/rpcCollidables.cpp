@@ -19,7 +19,6 @@ public:
 	{
 		printf("Vehicle speed (before): %f\n", pVehicle->getTimeMultiplier());
 		pVehicle->setTimeMultiplier(m_fMultiplier);
-		pVehicle->setPause(true);
 		printf("Vehicle speed (after): %f\n", pVehicle->getTimeMultiplier());
 	}
 
@@ -27,6 +26,24 @@ public:
 
 protected:
 	float m_fMultiplier;
+};
+
+class rpcPauseVehicles : public rpcVehicleFunctor
+{
+public:
+	rpcPauseVehicles(bool bIsPause)
+	{
+		m_bIsPause = bIsPause;
+	}
+
+	void operator()(raaAnimatedComponent *pVehicle) override
+	{
+		pVehicle->setPause(m_bIsPause);
+	}
+
+	virtual ~rpcPauseVehicles() {};
+protected:
+	bool m_bIsPause;
 };
 
 rpcCollidables* rpcCollidables::instance()
@@ -92,7 +109,7 @@ void rpcCollidables::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTraffi
 	case raaTrafficLightUnit::rpcTrafficLightState::READY:
 		pVehicle->setTimeMultiplier(0.1f);
 	default:
-		pVehicle->setPause(false);
+		pVehicle->setPause(m_bIsGlobalPause);
 		break;
 	}
 }
@@ -100,6 +117,12 @@ void rpcCollidables::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTraffi
 void rpcCollidables::adjustVehicleSpeed(float fMultiplier)
 {
 	performOnAllVehicles(new rpcAdjustVehicleSpeed(fMultiplier));
+}
+
+void rpcCollidables::pauseVehicles()
+{
+	m_bIsGlobalPause = !m_bIsGlobalPause;
+	performOnAllVehicles(new rpcPauseVehicles(m_bIsGlobalPause));
 }
 
 rpcCollidables::rpcCollidables()

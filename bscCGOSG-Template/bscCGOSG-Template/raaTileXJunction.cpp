@@ -2,7 +2,6 @@
 #include "raaTileXJunction.h"
 #include <cmath>
 
-const float raaTileXJunction::csm_fAbsoluteLightPosition = 200.0f;
 
 raaTileXJunction::raaTileXJunction(unsigned int uiName, osg::Node* pNode, raaAnimationPoints* pAP): raaTile(uiName, pNode, pAP)
 {
@@ -19,13 +18,8 @@ void raaTileXJunction::addLights()
 	const float fPositionStep = 2 * csm_fAbsoluteLightPosition;
 	for (int y = -csm_fAbsoluteLightPosition; y < fOutsidePositionRange; y += fPositionStep) {
 		for (int x = y; abs(x) < fOutsidePositionRange; x -= y * 2) {
-			raaTrafficLightUnit *pL0 = new raaTrafficLightUnit();
-			pL0->setTransform(x, y, fRotation += 90.0f);
-			pL0->ref();
+			raaTrafficLightUnit *pL0 = addLight(osg::Vec3f(x, y, fRotation += 90));
 			m_pLocalRoot->addChild(pL0->node());
-			rpcCollidables::instance()->addLight(pL0);
-			m_lLights.push_back(pL0);
-			m_itLight = m_lLights.begin();
 		}
 	}
 }
