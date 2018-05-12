@@ -19,7 +19,7 @@ public:
 	void operator()(raaAnimatedComponent *pVehicle) override
 	{
 		printf("Vehicle speed (before): %f\n", pVehicle->getTimeMultiplier());
-		pVehicle->setTimeMultiplier(m_fMultiplier);
+		pVehicle->setSpeed(m_fMultiplier);
 		printf("Vehicle speed (after): %f\n", pVehicle->getTimeMultiplier());
 	}
 

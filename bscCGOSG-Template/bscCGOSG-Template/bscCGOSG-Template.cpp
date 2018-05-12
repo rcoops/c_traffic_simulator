@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
-	addAnimatedComponent(sAnimPath2);
+//	addAnimatedComponent(sAnimPath2);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();

@@ -14,7 +14,6 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 		switch (ea.getKey())
 		{
 		case '+':
-			uiSpeed = uiSpeed > 10 ? 10 : uiSpeed;
 			rpcCollidables::instance()->adjustVehicleSpeed((++uiSpeed) / 10.0f);
 			return true;
 		case '-':

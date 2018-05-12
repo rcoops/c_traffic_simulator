@@ -71,11 +71,9 @@ void raaJunctionController::checkDetection()
 	{
 		for (itLights = m_lLights.begin(); itLights != m_lLights.end(); ++itLights)
 		{
-			osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * osg::computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
+			const osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
 			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
-			osg::BoundingSphere sphere = box->m_pScale->computeBound();
-			osg::Vec3f vfDetectionPointLocalToLight = vfGlobalDetectionPoint * osg::computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]);
-			bool bIsHit = sphere.contains(vfDetectionPointLocalToLight);
+			bool bIsHit = box->m_pScale->computeBound().contains(vfGlobalDetectionPoint * computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
 			if (bIsHit)
 			{
 				(*itVehicle)->handleVehicleReactionToLight((*itLights)->eTrafficLightState, rpcCollidables::instance()->m_bIsGlobalPause);

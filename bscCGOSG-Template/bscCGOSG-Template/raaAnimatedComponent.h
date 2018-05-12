@@ -24,6 +24,8 @@ public:
 	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
 	void toggleDetectionBoxVisibility();
 	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, bool bIsGlobalPause);
+	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
+	void setSpeed(double dSpeed);
 
 protected:
 	osg::MatrixTransform* m_pRoot;
@@ -34,6 +36,7 @@ protected:
 
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
+	double m_dTimeMultiplier;
 
 	void setDetectionBoxVisibility(const bool bIsVisible);
 };

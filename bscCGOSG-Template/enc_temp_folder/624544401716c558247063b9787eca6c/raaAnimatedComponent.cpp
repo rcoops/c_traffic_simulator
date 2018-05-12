@@ -43,6 +43,7 @@ void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	setTimeMultiplier(m_dTimeMultiplier);
 	AnimationPathCallback::operator()(node, nv);
+	printf("Time: %f, Last Time: %f, Time offset: %f, Time Multiplier: %f, getTimeMultiplier: %f\n", _firstTime, _latestTime, _timeOffset, _timeMultiplier, getTimeMultiplier());
 }
 
 void raaAnimatedComponent::setSpeed(double dSpeed)
