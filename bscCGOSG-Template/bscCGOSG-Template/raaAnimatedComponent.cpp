@@ -15,13 +15,18 @@ const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.
 void raaAnimatedComponent::initDetectionPoints()
 {
 	if (!m_psDetectorSwitch) return;
+	osg::MatrixTransform *pTransform1 = new osg::MatrixTransform();
+	osg::MatrixTransform *pTransform2 = new osg::MatrixTransform();
+	pTransform1->setMatrix(osg::Matrix::translate(csm_vfBack));
+	pTransform2->setMatrix(osg::Matrix::translate(csm_vfDetector_Position));
 	osg::Geode* pGeode = initGeode();
-	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(csm_vfBack, 2.0f));
-	osg::ShapeDrawable* pSPoint2 = new osg::ShapeDrawable(new osg::Sphere(csm_vfDetector_Position, 2.0f));
+	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f));
 
 	pGeode->addDrawable(pSPoint);
-	pGeode->addDrawable(pSPoint2);
-	m_psDetectorSwitch->addChild(pGeode);
+	pTransform1->addChild(pGeode);
+	pTransform2->addChild(pGeode);
+	m_psDetectorSwitch->addChild(pTransform1);
+	m_psDetectorSwitch->addChild(pTransform2);
 }
 
 osg::Geode* raaAnimatedComponent::initGeode()
