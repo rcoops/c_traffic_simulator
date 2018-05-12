@@ -26,7 +26,6 @@ void raaTileTJunction::addLights()
 	}
 }
 
-
 raaTileTJunction::~raaTileTJunction()
 {
 }

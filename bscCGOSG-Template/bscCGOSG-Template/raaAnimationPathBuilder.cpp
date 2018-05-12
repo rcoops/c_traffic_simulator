@@ -78,7 +78,7 @@ void raaAnimationPathBuilder::addControlPoints()
 void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint)
 {
 	raaRoadSet *pRoadSet = raaRoadSet::instance();
-	printf("Tile number: %d, Point number: %d\n", uiCurrentTile, uiCurrentPoint);
+//	printf("Tile number: %d, Point number: %d\n", uiCurrentTile, uiCurrentPoint);
 	raaTile *pTile = pRoadSet->tile(uiCurrentTile);
 
 	// transform is easy - multiply matrix by vector

@@ -76,47 +76,6 @@ void rpcCollidables::toggleDetectionVisibility()
 	performOnAllLights(new rpcTrafficLightDetectorVisibilityToggleFunctor());
 }
 
-void rpcCollidables::checkDetection()
-{
-	raaLights::iterator itLights;
-	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
-	{
-		for (itLights = sm_lLights.begin(); itLights != sm_lLights.end(); ++itLights)
-		{
-			osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * osg::computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
-			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
-			osg::BoundingSphere sphere = box->m_pScale->computeBound();
-			osg::Vec3f vfDetectionPointLocalToLight = vfGlobalDetectionPoint * osg::computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]);
-			bool bIsHit = sphere.contains(vfDetectionPointLocalToLight);
-			if (bIsHit)
-			{
-				handleVehicleReactionToLight((*itLights)->eTrafficLightState, *itVehicle);
-			}
-			else
-			{
-				(*itVehicle)->setTimeMultiplier(1.0f);
-			}
-		}
-	}
-}
-
-void rpcCollidables::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, raaAnimatedComponent* pVehicle)
-{
-	switch (eState)
-	{
-	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
-		pVehicle->setPause(true);
-		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
-		pVehicle->setTimeMultiplier(2.0f);
-	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		pVehicle->setTimeMultiplier(0.1f);
-	default:
-		pVehicle->setPause(m_bIsGlobalPause);
-		break;
-	}
-}
-
 void rpcCollidables::adjustVehicleSpeed(float fMultiplier)
 {
 	performOnAllVehicles(new rpcAdjustVehicleSpeed(fMultiplier));

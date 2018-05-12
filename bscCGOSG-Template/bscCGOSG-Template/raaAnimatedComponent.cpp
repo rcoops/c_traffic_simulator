@@ -7,6 +7,7 @@
 
 #include "raaAnimatedComponent.h"
 #include <osg/PolygonMode>
+#include "raaTrafficLightUnit.h"
 
 const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f, 140.0f, 20.0f);
 
@@ -101,4 +102,19 @@ osg::MatrixTransform* raaAnimatedComponent::root()
 	return m_pRoot;
 }
 
-
+void raaAnimatedComponent::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, bool bIsGlobalPause)
+{
+	switch (eState)
+	{
+	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
+		setPause(true);
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
+		setTimeMultiplier(2.0f);
+	case raaTrafficLightUnit::rpcTrafficLightState::READY:
+		setTimeMultiplier(0.1f);
+	default:
+		setPause(bIsGlobalPause);
+		break;
+	}
+}
