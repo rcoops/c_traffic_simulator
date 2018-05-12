@@ -1,12 +1,33 @@
 #include "stdafx.h"
 
 #include "rpcCollidables.h"
+#include "rpcVehicleDetectionBoxVisibilityToggleFunctor.h"
+#include "rpcTrafficLightDetectorVisibilityToggleFunctor.h"
 
 raaVehicles rpcCollidables::sm_lVehicles;
 raaLights rpcCollidables::sm_lLights;
 rpcCollidables* rpcCollidables::sm_pInstance;
 
 extern osg::Group *g_pRoot; // TODO pass this into the controller?
+
+class rpcAdjustVehicleSpeed: public rpcVehicleFunctor
+{
+public:
+	rpcAdjustVehicleSpeed(float fMultiplier): m_fMultiplier((fMultiplier)) {}
+
+	void operator()(raaAnimatedComponent *pVehicle) override
+	{
+		printf("Vehicle speed (before): %f\n", pVehicle->getTimeMultiplier());
+		pVehicle->setTimeMultiplier(m_fMultiplier);
+		pVehicle->setPause(true);
+		printf("Vehicle speed (after): %f\n", pVehicle->getTimeMultiplier());
+	}
+
+	virtual ~rpcAdjustVehicleSpeed() {};
+
+protected:
+	float m_fMultiplier;
+};
 
 rpcCollidables* rpcCollidables::instance()
 {
@@ -33,23 +54,16 @@ void rpcCollidables::addLight(raaTrafficLightUnit* pLight)
 
 void rpcCollidables::toggleDetectionVisibility()
 {
-	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
-	{
-		(*itVehicle)->toggleDetectionBoxVisibility();
-	}
-	for (raaLights::iterator itLight = sm_lLights.begin(); itLight != sm_lLights.end(); ++itLight)
-	{
-		(*itLight)->toggleDetectionPointVisibility();
-	}
+	performOnAllVehicles(new rpcVehicleDetectionBoxVisibilityToggleFunctor());
+	performOnAllLights(new rpcTrafficLightDetectorVisibilityToggleFunctor());
 }
 
 void rpcCollidables::checkDetection()
 {
-	raaVehicles::iterator itVehicle = sm_lVehicles.begin();
 	raaLights::iterator itLights;
-	for (; itVehicle != sm_lVehicles.end(); itVehicle++)
+	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
 	{
-		for (itLights = sm_lLights.begin(); itLights != sm_lLights.end(); itLights++)
+		for (itLights = sm_lLights.begin(); itLights != sm_lLights.end(); ++itLights)
 		{
 			osg::Vec3f vfGlobalDetectionPoint = (*itLights)->m_vfPosition * osg::computeLocalToWorld((*itLights)->node()->getParentalNodePaths(g_pRoot)[0]);
 			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
@@ -83,8 +97,29 @@ void rpcCollidables::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTraffi
 	}
 }
 
+void rpcCollidables::adjustVehicleSpeed(float fMultiplier)
+{
+	performOnAllVehicles(new rpcAdjustVehicleSpeed(fMultiplier));
+}
+
 rpcCollidables::rpcCollidables()
 {
+}
+
+void rpcCollidables::performOnAllVehicles(rpcVehicleFunctor *pFunc)
+{
+	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
+	{
+		(*pFunc)(*itVehicle);
+	}
+}
+
+void rpcCollidables::performOnAllLights(rpcTrafficLightFunctor* pFunctor)
+{
+	for (raaLights::iterator itLight = sm_lLights.begin(); itLight != sm_lLights.end(); ++itLight)
+	{
+		(*pFunctor)(*itLight);
+	}
 }
 
 rpcCollidables::~rpcCollidables()

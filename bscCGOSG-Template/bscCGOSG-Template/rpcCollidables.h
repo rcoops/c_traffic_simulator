@@ -3,7 +3,8 @@
 #include <list>
 #include "raaTrafficLightUnit.h"
 #include "raaAnimatedComponent.h"
-#include "raaJunctionController.h"
+#include "rpcVehicleFunctor.h"
+#include "rpcTrafficLightFunctor.h"
 
 typedef std::list<raaTrafficLightUnit*> raaLights;
 typedef std::list<raaAnimatedComponent*> raaVehicles;
@@ -22,9 +23,13 @@ public:
 	void toggleDetectionVisibility();
 	void checkDetection();
 	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, raaAnimatedComponent* pVehicle);
+	void adjustVehicleSpeed(float fMultiplier);
 	
 protected:
 	rpcCollidables();
+
+	void performOnAllVehicles(rpcVehicleFunctor* pFunctor);
+	void performOnAllLights(rpcTrafficLightFunctor* pFunctor);
 
 	static rpcCollidables* sm_pInstance;
 

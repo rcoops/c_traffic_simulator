@@ -18,6 +18,7 @@ public:
 
 	void load(std::string sFile);  // read animation file and populate 
 	void save(std::string sFile); // save the animation points
+	void setAnimationPath(osg::AnimationPath *pAP);
 
 	void addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint); // manually add points
 

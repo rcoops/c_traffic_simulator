@@ -32,19 +32,37 @@
 #include "raaJunctionController.h"
 #include "raaInputController.h"
 
-
 //#include <osgDB/ReadFile>
 
 osg::Node *g_pModel = 0; // holds the tile model
 osg::Group *g_pRoot = 0; // root of the sg
 
-raaAnimatedComponent* g_pAnim = 0;
-
 unsigned int g_uiCPs = 0;
 double g_dLastTime = 0.0;
 osg::Vec3f g_vPastPos;
 
-// define a SPEED rather than calculating for in between each set of two points
+void addAnimatedComponent(const std::string sAnimPath)
+{
+	osg::AnimationPath *pAP = new osg::AnimationPath();
+	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
+
+	/* Example of manually adding control points - use instead of file loading if you wish
+	apBuilder.addControlPoint(1, 2);
+	apBuilder.addControlPoint(1, 0);
+	apBuilder.addControlPoint(2, 2);
+	....
+	apBuilder.addControlPoint(0, 10);
+	*/
+
+	//	apBuilder.save("../../data/animPointsOut.txt");
+	apBuilder.load(sAnimPath); // loading the animation path from file
+
+	// create an animated component and add to the scene with the animation path included
+	raaAnimatedComponent *pAnim = new raaAnimatedComponent(pAP);
+	g_pRoot->addChild(pAnim->root());
+
+	rpcCollidables::instance()->addVehicle(pAnim);
+}
 
 int main(int argc, char** argv)
 {
@@ -58,7 +76,8 @@ int main(int argc, char** argv)
 	std::string sTrafficLightAsset = "../../Data/raaTrafficLight.OSGB";
 	std::string sRoadMap = "../../Data/roads2.txt";
 	std::string sRoadAsset = "../../Data/RoadSet.OSGB";
-	std::string sAnimPath = "../../Data/animPath.txt";
+	std::string sAnimPath = "../../Data/animPath1.txt";
+	std::string sAnimPath2 = "../../Data/animPath2.txt";
 
 	for (int i = 0; i < argc; i++)
 	{
@@ -84,26 +103,8 @@ int main(int argc, char** argv)
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
 
 	// building an animation path
-	osg::AnimationPath *pAP = new osg::AnimationPath();
-	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
-
-	/* Example of manually adding control points - use instead of file loading if you wish
-	apBuilder.addControlPoint(1, 2);
-	apBuilder.addControlPoint(1, 0);
-	apBuilder.addControlPoint(2, 2);
-	....
-	apBuilder.addControlPoint(0, 10);
-*/
-
-	//	apBuilder.save("../../data/animPointsOut.txt");
-	apBuilder.load(sAnimPath); // loading the animation path from file
-
-	// create an animated component and add to the scene with the animation path included
-	g_pAnim = new raaAnimatedComponent(pAP);
-	g_pRoot->addChild(g_pAnim->root());
-
-	// add the vehcile to the junction controller for traffic light control
-	rpcCollidables::instance()->addVehicle(g_pAnim);
+	addAnimatedComponent(sAnimPath);
+	addAnimatedComponent(sAnimPath2);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
@@ -125,7 +126,7 @@ int main(int argc, char** argv)
 	pCamera->setGraphicsContext(pGC);
 	pCamera->setViewport(new osg::Viewport(0, 0, pTraits->width, pTraits->height));
 
-	// add own event handler - thish currently switches on an off the animation points
+	// add own event handler - this currently switches on an off the animation points
 	viewer.addEventHandler(new raaInputController());
 
 	// add the state manipulator
