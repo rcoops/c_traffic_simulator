@@ -22,8 +22,9 @@ public:
 		OFF, GO, STOP, SLOW, READY
 	};
 
-	raaTrafficLightUnit::rpcTrafficLightState eTrafficLightState;
-	osg::Vec3f m_vfPosition;
+	rpcTrafficLightState eTrafficLightState;
+	const static osg::Vec3f csm_vfPosition;
+	osg::MatrixTransform* m_pRotation;
 
 	static void initAsset(std:: string sFile);
 	static void finshAsset();
@@ -44,13 +45,10 @@ protected:
 
 	osg::MatrixTransform* m_pTranslation;
 	osg::MatrixTransform* m_pScale;
-	osg::MatrixTransform* m_pRotation;
 
 	osg::Geode* m_pRed;
 	osg::Geode* m_pGreen;
 	osg::Geode* m_pAmber;
-
-	static raaTrafficLights sm_lLights;
 
 	const static float csm_fDefaultScale;
 

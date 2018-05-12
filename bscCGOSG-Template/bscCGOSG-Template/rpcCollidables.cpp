@@ -3,6 +3,7 @@
 #include "rpcCollidables.h"
 #include "rpcVehicleDetectionBoxVisibilityToggleFunctor.h"
 #include "rpcTrafficLightDetectorVisibilityToggleFunctor.h"
+#include <osg/ShapeDrawable>
 
 raaVehicles rpcCollidables::sm_lVehicles;
 raaLights rpcCollidables::sm_lLights;
@@ -82,9 +83,11 @@ void rpcCollidables::checkDetection()
 	{
 		for (itLights = sm_lLights.begin(); itLights != sm_lLights.end(); ++itLights)
 		{
-			osg::Vec3f vfGlobalDetectionPoint = (*itLights)->m_vfPosition * osg::computeLocalToWorld((*itLights)->node()->getParentalNodePaths(g_pRoot)[0]);
+			osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * osg::computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
 			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
-			bool bIsHit = box->m_pRoot->getBound().contains(vfGlobalDetectionPoint * osg::computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
+			osg::BoundingSphere sphere = box->m_pScale->computeBound();
+			osg::Vec3f vfDetectionPointLocalToLight = vfGlobalDetectionPoint * osg::computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]);
+			bool bIsHit = sphere.contains(vfDetectionPointLocalToLight);
 			if (bIsHit)
 			{
 				handleVehicleReactionToLight((*itLights)->eTrafficLightState, *itVehicle);

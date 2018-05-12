@@ -6,9 +6,9 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Switch>
+#include <osg/ShapeDrawable>
 
 #include <list>
-
 
 class rpcDetectionBox
 {
@@ -17,6 +17,7 @@ public:
 	virtual ~rpcDetectionBox();
 
 	osg::MatrixTransform* m_pRoot;
+	osg::MatrixTransform* m_pScale;
 
 	void toggleVisibility();
 
@@ -28,5 +29,5 @@ protected:
 	osg::Matrix* m_pWorldToBound;
 
 	osg::Material* makeMaterial();
-	osg::Geode* makeGeometry(float fPositionX, float fPositionY, float fPositionZ);
+	osg::Geode* makeGeometry();
 };

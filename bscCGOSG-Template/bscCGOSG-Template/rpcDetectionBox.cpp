@@ -3,6 +3,7 @@
 
 #include <osg/ShapeDrawable>
 #include <osg/PolygonMode>
+#include "raaTrafficLightUnit.h"
 
 rpcDetectionBox::rpcDetectionBox(): m_pRoot(0)
 {
@@ -12,21 +13,23 @@ rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition): m_bVisible(true)
 {
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
-	osg::Matrixf mfTranslate;
-	mfTranslate.makeTranslate(vfPosition[0], vfPosition[1], vfPosition[2]);// TODO z?
-	m_pRoot->setMatrix(mfTranslate);
+	m_pRoot->setMatrix(osg::Matrix::translate(vfPosition[0], vfPosition[1], vfPosition[2]));
 
-	osg::Geode* pGeode = makeGeometry(vfPosition[0], vfPosition[1], vfPosition[2]);
+	m_pScale = new osg::MatrixTransform();
+	m_pScale->setMatrix(osg::Matrix::scale(30.0f, 30.0f, 30.0f));
+	m_pScale->ref();
+	m_pRoot->addChild(m_pScale);
+	osg::Geode* pGeode = makeGeometry();
 	m_pSwitch = new osg::Switch();
 	m_pSwitch->ref();
 	m_pSwitch->addChild(pGeode);
-	m_pRoot->addChild(m_pSwitch);
+	m_pScale->addChild(m_pSwitch);
 }
 
-osg::Geode* rpcDetectionBox::makeGeometry(float fPositionX, float fPositionY, float fPositionZ)
+osg::Geode* rpcDetectionBox::makeGeometry()
 {
 	osg::Geode* pGeode = new osg::Geode();
-	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(fPositionX, fPositionY, fPositionZ), 90.0f, 90.0f, 90.0f));
+	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Sphere(m_pScale->getBound().center(), m_pScale->getBound().radius()));
 
 	osg::Material *pMat = makeMaterial();
 

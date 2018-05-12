@@ -91,7 +91,7 @@ void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsign
 	if (!m_bIsBeginningOfAnimation)
 	{
 		float fDistance = (vfGlobalTranslation - m_vfPreviousGlobalTranslation).length();
-		m_fAnimationTime += fDistance / 500.0f;
+		m_fAnimationTime += fDistance / 60.0f;
 	}
 	m_vfPreviousGlobalTranslation = vfGlobalTranslation;
 

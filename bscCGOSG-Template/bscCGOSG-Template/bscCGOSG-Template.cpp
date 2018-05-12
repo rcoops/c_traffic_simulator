@@ -125,6 +125,7 @@ int main(int argc, char** argv)
 	osg::Camera *pCamera = viewer.getCamera();
 	pCamera->setGraphicsContext(pGC);
 	pCamera->setViewport(new osg::Viewport(0, 0, pTraits->width, pTraits->height));
+	pCamera->setViewMatrixAsLookAt(osg::Vec3(0.0, 0.0, 0.0), osg::Vec3(0.0, 1.0, 0.0), osg::Vec3(0.0, 0.0, 1.0));
 
 	// add own event handler - this currently switches on an off the animation points
 	viewer.addEventHandler(new raaInputController());

@@ -16,21 +16,18 @@ osg::Material* raaTrafficLightUnit::sm_pAmberOff=0;
 osg::Material* raaTrafficLightUnit::sm_pGreenOn=0;
 osg::Material* raaTrafficLightUnit::sm_pGreenOff=0;
 
-raaTrafficLights raaTrafficLightUnit::sm_lLights;
-
 const float raaTrafficLightUnit::csm_fDefaultScale = 0.03f;
+const osg::Vec3f raaTrafficLightUnit::csm_vfPosition = osg::Vec3f(0.0f, -120.0f, 40.0f);
 
 raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 {
-	sm_lLights.push_back(this);
 	m_pTranslation = new osg::MatrixTransform();
 	m_pTranslation->ref();
 	m_pRotation = new osg::MatrixTransform();
 	m_pScale = new osg::MatrixTransform();
-	m_vfPosition = osg::Vec3f(0.0f, 0.0f, 40.0f);
 	m_pDetectionPointSwitch = new osg::Switch();
 	osg::Geode* pGeode = new osg::Geode();
-	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(m_vfPosition, 10.0f));
+	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(csm_vfPosition, 10.0f));
 	m_pTranslation->addChild(m_pRotation);
 	m_pRotation->addChild(m_pScale);
 
@@ -181,5 +178,4 @@ void raaTrafficLightUnit::materialBuilder(osg::Material* pOn, osg::Material* pOf
 raaTrafficLightUnit::~raaTrafficLightUnit()
 {
 	if (m_pTranslation) m_pTranslation->unref();
-	sm_lLights.remove(this);
 }

@@ -8,25 +8,21 @@
 #include "raaAnimatedComponent.h"
 #include <osg/PolygonMode>
 
-const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(20.0f, 70.0f, 20.0f);
+const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f, 140.0f, 20.0f);
 
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 
-void raaAnimatedComponent::initDetectionPoints()
+void raaAnimatedComponent::initDetectionPoint()
 {
 	if (!m_psDetectorSwitch) return;
-	osg::MatrixTransform *pTransform1 = new osg::MatrixTransform();
-	osg::MatrixTransform *pTransform2 = new osg::MatrixTransform();
-	pTransform1->setMatrix(osg::Matrix::translate(csm_vfBack));
-	pTransform2->setMatrix(osg::Matrix::translate(csm_vfDetector_Position));
+	osg::MatrixTransform *pDetectionPointTransform = new osg::MatrixTransform();
+	pDetectionPointTransform->setMatrix(osg::Matrix::translate(csm_vfBack));
 	osg::Geode* pGeode = initGeode();
 	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f));
 
 	pGeode->addDrawable(pSPoint);
-	pTransform1->addChild(pGeode);
-	pTransform2->addChild(pGeode);
-	m_psDetectorSwitch->addChild(pTransform1);
-	m_psDetectorSwitch->addChild(pTransform2);
+	pDetectionPointTransform->addChild(pGeode);
+	m_psDetectorSwitch->addChild(pDetectionPointTransform);
 }
 
 osg::Geode* raaAnimatedComponent::initGeode()
@@ -62,7 +58,7 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): osg::Animat
 
 	m_pDetectionBox = new rpcDetectionBox(csm_vfDetector_Position);
 	m_psDetectorSwitch = new osg::Switch();
-	initDetectionPoints();
+	initDetectionPoint();
 	m_psDetectorSwitch->addChild(m_pDetectionBox->m_pRoot);
 	m_pRoot->addChild(m_psDetectorSwitch);
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
