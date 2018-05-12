@@ -1,51 +1,12 @@
 #include "stdafx.h"
 
 #include "rpcCollidables.h"
-#include "rpcVehicleDetectionBoxVisibilityToggleFunctor.h"
-#include "rpcTrafficLightDetectorVisibilityToggleFunctor.h"
-#include <osg/ShapeDrawable>
 
 raaVehicles rpcCollidables::sm_lVehicles;
 raaLights rpcCollidables::sm_lLights;
 rpcCollidables* rpcCollidables::sm_pInstance;
 
 extern osg::Group *g_pRoot; // TODO pass this into the controller?
-
-class rpcAdjustVehicleSpeed: public rpcVehicleFunctor
-{
-public:
-	rpcAdjustVehicleSpeed(float fMultiplier): m_fMultiplier((fMultiplier)) {}
-
-	void operator()(raaAnimatedComponent *pVehicle) override
-	{
-		printf("Vehicle speed (before): %f\n", pVehicle->getTimeMultiplier());
-		pVehicle->setSpeed(m_fMultiplier);
-		printf("Vehicle speed (after): %f\n", pVehicle->getTimeMultiplier());
-	}
-
-	virtual ~rpcAdjustVehicleSpeed() {};
-
-protected:
-	float m_fMultiplier;
-};
-
-class rpcPauseVehicles : public rpcVehicleFunctor
-{
-public:
-	rpcPauseVehicles(bool bIsPause)
-	{
-		m_bIsPause = bIsPause;
-	}
-
-	void operator()(raaAnimatedComponent *pVehicle) override
-	{
-		pVehicle->setPause(m_bIsPause);
-	}
-
-	virtual ~rpcPauseVehicles() {};
-protected:
-	bool m_bIsPause;
-};
 
 rpcCollidables* rpcCollidables::instance()
 {
@@ -76,9 +37,18 @@ void rpcCollidables::toggleDetectionVisibility()
 	performOnAllLights(new rpcTrafficLightDetectorVisibilityToggleFunctor());
 }
 
-void rpcCollidables::adjustVehicleSpeed(float fMultiplier)
+void rpcCollidables::toggleLightState()
 {
-	performOnAllVehicles(new rpcAdjustVehicleSpeed(fMultiplier));
+	cycleManualState();
+	performOnAllLights(new rpcToggleLightState(m_eLightState));
+}
+
+void rpcCollidables::adjustVehicleSpeed(bool bIsUp)
+{
+	double dAdjustment = bIsUp ? 2.0 : 0.5;
+	m_dGlobalTimeMultiplier = m_dGlobalTimeMultiplier * dAdjustment;
+	
+	performOnAllVehicles(new rpcAdjustVehicleSpeed(m_dGlobalTimeMultiplier));
 }
 
 void rpcCollidables::pauseVehicles()
@@ -105,6 +75,29 @@ void rpcCollidables::performOnAllLights(rpcTrafficLightFunctor* pFunctor)
 	{
 		(*pFunctor)(*itLight);
 	}
+}
+
+void rpcCollidables::cycleManualState()
+{
+	switch (m_eLightState)
+	{
+	case raaTrafficLightUnit::rpcTrafficLightState::OFF:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::READY;
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::GO:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::SLOW;
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::OFF;
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::STOP;
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::READY:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::GO;
+		break;
+	}
+	performOnAllLights(new rpcToggleLightState(m_eLightState));
 }
 
 rpcCollidables::~rpcCollidables()

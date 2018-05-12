@@ -14,7 +14,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 
 // convert dimensions to consts
-raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_dTimeMultiplier(1.0)
+raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_dTimeMultiplier(1.0), m_dSpeed(1.0)
 {
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
@@ -41,13 +41,19 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
-	setTimeMultiplier(m_dTimeMultiplier);
+	setTimeMultiplier(m_dTimeMultiplier * m_dSpeed);
+	printf("Time multiplier: %f\n", getTimeMultiplier());
 	AnimationPathCallback::operator()(node, nv);
 }
 
 void raaAnimatedComponent::setSpeed(double dSpeed)
 {
-	m_dTimeMultiplier = dSpeed;
+	m_dSpeed = dSpeed;
+}
+
+void raaAnimatedComponent::setManualMultiplier(double dTimeMultiplier)
+{
+	m_dTimeMultiplier = dTimeMultiplier;
 }
 
 void raaAnimatedComponent::initDetectionPoint()
@@ -121,9 +127,9 @@ void raaAnimatedComponent::handleVehicleReactionToLight(raaTrafficLightUnit::rpc
 		setPause(true);
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
-		setTimeMultiplier(2.0f);
+		setSpeed(20.0f);
 	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		setTimeMultiplier(0.1f);
+		setSpeed(0.3f);
 	default:
 		setPause(bIsGlobalPause);
 		break;

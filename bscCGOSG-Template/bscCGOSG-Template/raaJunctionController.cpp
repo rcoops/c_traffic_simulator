@@ -30,7 +30,7 @@ void raaJunctionController::operator()(osg::Node* node, osg::NodeVisitor* nv)
 
 void raaJunctionController::cycleTrafficLights(osg::NodeVisitor* pNodeVisitor)
 {
-	if (!(*m_itLight)) return;
+	if (!(*m_itLight) || (*m_itLight)->m_bIsManual) return;
 
 	const double dSimulationTime = round(pNodeVisitor->getFrameStamp()->getSimulationTime());
 	const double c_dTimeSinceStatusChange = dSimulationTime - m_dLastChangeTime;
@@ -74,13 +74,14 @@ void raaJunctionController::checkDetection()
 			const osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
 			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
 			bool bIsHit = box->m_pScale->computeBound().contains(vfGlobalDetectionPoint * computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
+			// TODO - here is the problem (1 light is hit but several are NOT), so speed is immediately getting set back to 1.0
 			if (bIsHit)
 			{
-				(*itVehicle)->handleVehicleReactionToLight((*itLights)->eTrafficLightState, rpcCollidables::instance()->m_bIsGlobalPause);
+				(*itVehicle)->handleVehicleReactionToLight((*itLights)->m_eTrafficLightState, rpcCollidables::instance()->m_bIsGlobalPause);
 			}
 			else
 			{
-				(*itVehicle)->setTimeMultiplier(1.0f);
+				(*itVehicle)->setSpeed(1.0f);
 			}
 		}
 	}

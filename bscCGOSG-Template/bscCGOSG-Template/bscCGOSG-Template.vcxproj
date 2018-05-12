@@ -165,12 +165,10 @@
     <ClInclude Include="raaTileTJunction.h" />
     <ClInclude Include="raaTileXJunction.h" />
     <ClInclude Include="raaTrafficLightUnit.h" />
-    <ClInclude Include="rpcTrafficLightDetectorVisibilityToggleFunctor.h" />
     <ClInclude Include="rpcTrafficLightFunctor.h" />
     <ClInclude Include="rpcVehicleFunctor.h" />
     <ClInclude Include="rpcDetectionBox.h" />
     <ClInclude Include="rpcCollidables.h" />
-    <ClInclude Include="rpcVehicleDetectionBoxVisibilityToggleFunctor.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -192,8 +190,6 @@
     <ClCompile Include="raaTrafficLightUnit.cpp" />
     <ClCompile Include="rpcDetectionBox.cpp" />
     <ClCompile Include="rpcCollidables.cpp" />
-    <ClCompile Include="rpcTrafficLightDetectorVisibilityToggleFunctor.cpp" />
-    <ClCompile Include="rpcVehicleDetectionBoxVisibilityToggleFunctor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

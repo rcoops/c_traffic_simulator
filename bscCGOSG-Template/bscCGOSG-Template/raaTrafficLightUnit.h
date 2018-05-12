@@ -22,7 +22,9 @@ public:
 		OFF, GO, STOP, SLOW, READY
 	};
 
-	rpcTrafficLightState eTrafficLightState;
+	rpcTrafficLightState m_eTrafficLightState;
+	rpcTrafficLightState m_eLastState;
+	bool m_bIsManual;
 	const static osg::Vec3f csm_vfPosition;
 	osg::MatrixTransform* m_pRotation;
 
@@ -32,6 +34,9 @@ public:
 	osg::Node* node();
 	void setTransform(float fX, float fY, float fRot, float fScale = csm_fDefaultScale);
 	void setLightState(const rpcTrafficLightState eNewState = STOP);
+	void setManualState(const rpcTrafficLightState eNewState);
+	void turnOffManualState();
+	void setRed();
 	void toggleDetectionPointVisibility();
 
 protected:

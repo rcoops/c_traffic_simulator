@@ -17,13 +17,16 @@ public:
 	static raaVehicles sm_lVehicles;
 
 	bool m_bIsGlobalPause = false;
+	double m_dGlobalTimeMultiplier = 1.0;
+	raaTrafficLightUnit::rpcTrafficLightState m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::OFF;
 
 	static rpcCollidables* instance();
 
 	void addVehicle(raaAnimatedComponent *pVehicle);
 	void addLight(raaTrafficLightUnit *pLight);
 	void toggleDetectionVisibility();
-	void adjustVehicleSpeed(float fMultiplier);
+	void toggleLightState();
+	void adjustVehicleSpeed(bool bIsUp);
 	void pauseVehicles();
 	
 protected:
@@ -31,6 +34,7 @@ protected:
 
 	void performOnAllVehicles(rpcVehicleFunctor* pFunctor);
 	void performOnAllLights(rpcTrafficLightFunctor* pFunctor);
+	void cycleManualState();
 
 	static rpcCollidables* sm_pInstance;
 };

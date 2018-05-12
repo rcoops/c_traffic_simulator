@@ -6,10 +6,7 @@ rpcTrafficLightDetectorVisibilityToggleFunctor::rpcTrafficLightDetectorVisibilit
 {
 }
 
-void rpcTrafficLightDetectorVisibilityToggleFunctor::operator()(raaTrafficLightUnit* pLight)
-{
-	pLight->toggleDetectionPointVisibility();
-}
+
 
 rpcTrafficLightDetectorVisibilityToggleFunctor::~rpcTrafficLightDetectorVisibilityToggleFunctor()
 {

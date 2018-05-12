@@ -5,20 +5,17 @@
 #include "raaJunctionController.h"
 #include "raaRoadSet.h"
 
-unsigned int uiSpeed = 10;
-
 bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter&)
 {
 	if (ea.getEventType() == osgGA::GUIEventAdapter::KEYDOWN)
 	{
 		switch (ea.getKey())
 		{
-		case '+':
-			rpcCollidables::instance()->adjustVehicleSpeed((++uiSpeed) / 10.0f);
+		case ']':
+			rpcCollidables::instance()->adjustVehicleSpeed(true);
 			return true;
-		case '-':
-			uiSpeed = uiSpeed < 0 ? 0 : uiSpeed;
-			rpcCollidables::instance()->adjustVehicleSpeed(uiSpeed ? (--uiSpeed) / 10.0f : 0.0f);
+		case '[':
+			rpcCollidables::instance()->adjustVehicleSpeed(false);
 			return true;
 		case 'v':
 		case 'V':
@@ -27,6 +24,10 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 		case 'a':
 		case 'A':
 			raaTile::toggleAnimPoints();
+			return true;
+		case 't':
+		case 'T':
+			rpcCollidables::instance()->toggleLightState();
 			return true;
 		case 'p':
 		case 'P':

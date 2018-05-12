@@ -26,6 +26,7 @@ public:
 	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, bool bIsGlobalPause);
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	void setSpeed(double dSpeed);
+	void setManualMultiplier(double dTimeMultiplier);
 
 protected:
 	osg::MatrixTransform* m_pRoot;
@@ -37,6 +38,7 @@ protected:
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
 	double m_dTimeMultiplier;
+	double m_dSpeed;
 
 	void setDetectionBoxVisibility(const bool bIsVisible);
 };

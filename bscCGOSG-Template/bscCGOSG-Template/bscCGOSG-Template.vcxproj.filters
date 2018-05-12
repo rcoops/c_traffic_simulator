@@ -75,13 +75,7 @@
     <ClInclude Include="rpcTrafficLightFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rpcVehicleDetectionBoxVisibilityToggleFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="rpcVehicleFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rpcTrafficLightDetectorVisibilityToggleFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -138,12 +132,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rpcCollidables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rpcVehicleDetectionBoxVisibilityToggleFunctor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rpcTrafficLightDetectorVisibilityToggleFunctor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
