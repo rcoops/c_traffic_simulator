@@ -17,11 +17,11 @@ public:
 
 	static rpcCollidables* instance();
 
-	static void addVehicle(raaAnimatedComponent *pVehicle);
-	static void addLight(raaTrafficLightUnit *pLight);
-	static void toggleDetectionVisibility();
-	static void checkDetection();
-	static void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, raaAnimatedComponent* pVehicle);
+	void addVehicle(raaAnimatedComponent *pVehicle);
+	void addLight(raaTrafficLightUnit *pLight);
+	void toggleDetectionVisibility();
+	void checkDetection();
+	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, raaAnimatedComponent* pVehicle);
 	
 protected:
 	rpcCollidables();

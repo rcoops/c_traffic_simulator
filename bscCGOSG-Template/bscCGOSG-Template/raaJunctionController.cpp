@@ -21,7 +21,7 @@ raaJunctionController::~raaJunctionController()
 void raaJunctionController::operator()(osg::Node* node, osg::NodeVisitor* nv) 
 {
 	cycleTrafficLights(nv);
-	rpcCollidables::checkDetection();
+	rpcCollidables::instance()->checkDetection();
 	nv->traverse(*node);
 }
 
@@ -33,9 +33,9 @@ void raaJunctionController::cycleTrafficLights(osg::NodeVisitor* pNodeVisitor)
 	if (c_dTimeSinceStatusChange > csm_dLightChangeTime)
 	{
 		(*m_itLight)->setLightState(raaTrafficLightUnit::SLOW);
-		raaLights::iterator it = m_itLight;
-		if (++it == m_lLights.end()) it = m_lLights.begin();
-		(*it)->setLightState(raaTrafficLightUnit::READY);
+		raaLights::iterator itLights = m_itLight;
+		if (++itLights == m_lLights.end()) itLights = m_lLights.begin();
+		(*itLights)->setLightState(raaTrafficLightUnit::READY);
 	}
 	if (c_dTimeSinceStatusChange > csm_dLightChangeTime + 2.0f)
 	{

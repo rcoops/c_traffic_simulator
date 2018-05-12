@@ -23,7 +23,7 @@ void raaTileXJunction::addLights()
 			pL0->setTransform(x, y, fRotation += 90.0f);
 			pL0->ref();
 			m_pLocalRoot->addChild(pL0->node());
-			rpcCollidables::addLight(pL0);
+			rpcCollidables::instance()->addLight(pL0);
 			m_lLights.push_back(pL0);
 			m_itLight = m_lLights.begin();
 		}

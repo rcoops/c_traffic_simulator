@@ -13,7 +13,7 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 		{
 			case 'v':
 			case 'V':
-				rpcCollidables::toggleDetectionVisibility();
+				rpcCollidables::instance()->toggleDetectionVisibility();
 				return true;
 			case 'a':
 			case 'A':

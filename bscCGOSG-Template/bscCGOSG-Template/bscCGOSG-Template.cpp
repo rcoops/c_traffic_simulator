@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 	g_pRoot->addChild(g_pAnim->root());
 
 	// add the vehcile to the junction controller for traffic light control
-	rpcCollidables::addVehicle(g_pAnim);
+	rpcCollidables::instance()->addVehicle(g_pAnim);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
