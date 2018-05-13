@@ -28,19 +28,19 @@ public:
 class rpcAdjustVehicleSpeed : public rpcVehicleFunctor
 {
 public:
-	rpcAdjustVehicleSpeed(double dMultiplier) : m_dMultiplier((dMultiplier)) {}
+	rpcAdjustVehicleSpeed(float fMutiplier) : m_fMultiplier((fMutiplier)) {}
 
 	void operator()(raaAnimatedComponent *pVehicle) override
 	{
 		//		printf("Vehicle speed (before): %f\n", pVehicle->getTimeMultiplier());
-			pVehicle->setManualMultiplier(m_dMultiplier);
+			pVehicle->setManualMultiplier(m_fMultiplier);
 		//		printf("Vehicle speed (after): %f\n", pVehicle->getTimeMultiplier());
 	}
 
 	virtual ~rpcAdjustVehicleSpeed() {};
 
 protected:
-	double m_dMultiplier;
+	float m_fMultiplier;
 };
 
 class rpcPauseVehicles : public rpcVehicleFunctor

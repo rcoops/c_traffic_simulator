@@ -17,7 +17,7 @@ public:
 	static raaVehicles sm_lVehicles;
 
 	bool m_bIsGlobalPause = false;
-	double m_dGlobalTimeMultiplier = 1.0;
+	float m_fGlobalTimeMultiplier = 1.0f;
 	raaTrafficLightUnit::rpcTrafficLightState m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::OFF;
 
 	static rpcCollidables* instance();

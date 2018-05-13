@@ -66,9 +66,7 @@ raaTrafficLightUnit* raaJunctionController::addLight(osg::Vec3f vfPositionRotati
 
 bool raaJunctionController::isHit(raaAnimatedComponent* pVehicle, raaTrafficLightUnit* pLight)
 {
-	const osg::Vec3f vfGlobalDetectionPoint = pLight->csm_vfPosition * computeLocalToWorld(pLight->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
-	rpcDetectionBox *box = pVehicle->m_pDetectionBox;
-	return box->m_pScale->computeBound().contains(vfGlobalDetectionPoint * computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
+	return pVehicle->canSee(pLight->getDetectionPointRelativeTo(g_pRoot), g_pRoot);
 }
 
 void raaJunctionController::checkDetection()
@@ -92,7 +90,7 @@ void raaJunctionController::checkDetection()
 			}
 			else
 			{
-				(*itVehicle)->setSpeed(1.0); // If the speed's been sped during an orange, it needs to go back to normal
+				(*itVehicle)->setSpeed(1.0f); // If the speed's been sped during an orange, it needs to go back to normal
 				(*itVehicle)->m_pLightDetected = nullptr; // Reset the car's light to nothing
 			}
 		}

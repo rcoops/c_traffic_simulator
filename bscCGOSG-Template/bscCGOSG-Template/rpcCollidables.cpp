@@ -45,10 +45,10 @@ void rpcCollidables::toggleLightState()
 
 void rpcCollidables::adjustVehicleSpeed(const bool bIsIncrease)
 {
-	const double dAdjustment = bIsIncrease ? 2.0 : 0.5;
-	m_dGlobalTimeMultiplier = m_dGlobalTimeMultiplier * dAdjustment;
+	const float fAdjustment = bIsIncrease ? 2.0f : 0.5f;
+	m_fGlobalTimeMultiplier = m_fGlobalTimeMultiplier * fAdjustment;
 	
-	performOnAllVehicles(new rpcAdjustVehicleSpeed(m_dGlobalTimeMultiplier));
+	performOnAllVehicles(new rpcAdjustVehicleSpeed(m_fGlobalTimeMultiplier));
 }
 
 void rpcCollidables::pauseVehicles()

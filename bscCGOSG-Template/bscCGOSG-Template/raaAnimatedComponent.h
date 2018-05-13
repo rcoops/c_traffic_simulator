@@ -24,10 +24,11 @@ public:
 	osg::MatrixTransform* root();
 	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
 	void toggleDetectionBoxVisibility();
-	void handleVehicleReactionToLight(bool bIsGlobalPause);
+	void handleVehicleReactionToLight(const bool bIsGlobalPause);
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
-	void setSpeed(double dSpeed);
-	void setManualMultiplier(double dTimeMultiplier);
+	void setSpeed(float fSpeed);
+	void setManualMultiplier(float fTimeMultiplier);
+	bool canSee(osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot);
 
 protected:
 	static const osg::Vec3f csm_vfBack;
@@ -36,8 +37,8 @@ protected:
 	osg::MatrixTransform* m_pRoot;
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
-	double m_dTimeMultiplier;
-	double m_dSpeed;
+	float m_fTimeMultiplier;
+	float m_fSpeed;
 
 	void initDetectionPoint();
 	osg::Geode* initGeode();

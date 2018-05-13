@@ -15,7 +15,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 
 // convert dimensions to consts
-raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_dTimeMultiplier(1.0), m_dSpeed(1.0)
+raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fTimeMultiplier(1.0), m_fSpeed(1.0)
 {
 	m_pLightDetected = 0;
 	m_pRoot = new osg::MatrixTransform();
@@ -34,7 +34,7 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 	m_pDetectionBox = new rpcDetectionBox(csm_vfDetector_Position);
 	m_psDetectorSwitch = new osg::Switch();
 	initDetectionPoint();
-	m_psDetectorSwitch->addChild(m_pDetectionBox->m_pRoot);
+	m_psDetectorSwitch->addChild(m_pDetectionBox->root());
 	m_pRoot->addChild(m_psDetectorSwitch);
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 
@@ -44,7 +44,7 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	// Controllable global speed * car's speed in reaction to light colours
-	double dTotalMultiplier = m_dTimeMultiplier * m_dSpeed;
+	double dTotalMultiplier = m_fTimeMultiplier * m_fSpeed;
 	double dSimulationTime = _latestTime - _firstTime; // latest frame
 	// Adjusting the multiplier will 
 	setTimeOffset(calculateTimeOffset(dSimulationTime, _timeOffset, _timeMultiplier, dTotalMultiplier));
@@ -64,14 +64,19 @@ double raaAnimatedComponent::calculateTimeOffset(double dSimulationTime, double 
 	return dSimulationTime - (dSimulationTime - dOriginalOffset) * dOriginalMultiplier / dTotalMultiplier;
 }
 
-void raaAnimatedComponent::setSpeed(double dSpeed)
+void raaAnimatedComponent::setSpeed(float fSpeed)
 {
-	m_dSpeed = dSpeed;
+	m_fSpeed = fSpeed;
 }
 
-void raaAnimatedComponent::setManualMultiplier(double dTimeMultiplier)
+void raaAnimatedComponent::setManualMultiplier(float fTimeMultiplier)
 {
-	m_dTimeMultiplier = dTimeMultiplier;
+	m_fTimeMultiplier = fTimeMultiplier;
+}
+
+bool raaAnimatedComponent::canSee(osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot)
+{
+	return m_pDetectionBox->canSee(pvfGlobalCoordinates, pRoot);
 }
 
 void raaAnimatedComponent::initDetectionPoint()
@@ -106,7 +111,7 @@ osg::Vec3f raaAnimatedComponent::getDetectionPoint(osg::MatrixTransform* pRoot)
 {
 	osg::Matrix m;
 	if (pRoot) {
-		m = osg::computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
+		m = computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
 		return csm_vfBack * m;
 	}
 	return csm_vfBack;
@@ -137,7 +142,7 @@ osg::MatrixTransform* raaAnimatedComponent::root()
 	return m_pRoot;
 }
 
-void raaAnimatedComponent::handleVehicleReactionToLight(bool bIsGlobalPause)
+void raaAnimatedComponent::handleVehicleReactionToLight(const bool bIsGlobalPause)
 {
 	if (!m_pLightDetected) return;
 	if (m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::STOP) {
@@ -148,13 +153,13 @@ void raaAnimatedComponent::handleVehicleReactionToLight(bool bIsGlobalPause)
 	switch (m_pLightDetected->m_eTrafficLightState)
 	{
 	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
-		setSpeed(4.0);
+		setSpeed(4.0f);
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		setSpeed(0.5);
+		setSpeed(0.5f);
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::GO:
-		setSpeed(1.0);
+		setSpeed(1.0f);
 		break;
 	default:
 		break;

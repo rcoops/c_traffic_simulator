@@ -25,7 +25,7 @@ public:
 	rpcTrafficLightState m_eTrafficLightState;
 	rpcTrafficLightState m_eLastState;
 	bool m_bIsManual;
-	const static osg::Vec3f csm_vfPosition;
+	const static osg::Vec3f csm_vfDetectionPoint;
 	osg::MatrixTransform* m_pRotation;
 
 	static void initAsset(std:: string sFile);
@@ -38,6 +38,7 @@ public:
 	void turnOffManualState();
 	void setRed();
 	void toggleDetectionPointVisibility();
+	osg::Vec3f getDetectionPointRelativeTo(osg::Group* pRoot);
 
 protected:
 	static osg::Node* sm_pAsset;

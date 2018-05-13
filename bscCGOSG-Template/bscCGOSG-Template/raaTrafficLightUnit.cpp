@@ -17,7 +17,7 @@ osg::Material* raaTrafficLightUnit::sm_pGreenOn=0;
 osg::Material* raaTrafficLightUnit::sm_pGreenOff=0;
 
 const float raaTrafficLightUnit::csm_fDefaultScale = 0.03f;
-const osg::Vec3f raaTrafficLightUnit::csm_vfPosition = osg::Vec3f(0.0f, -120.0f, 40.0f);
+const osg::Vec3f raaTrafficLightUnit::csm_vfDetectionPoint = osg::Vec3f(0.0f, -120.0f, 40.0f);
 
 raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 {
@@ -27,7 +27,7 @@ raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 	m_pScale = new osg::MatrixTransform();
 	m_pDetectionPointSwitch = new osg::Switch();
 	osg::Geode* pGeode = new osg::Geode();
-	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(csm_vfPosition, 10.0f));
+	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(csm_vfDetectionPoint, 10.0f));
 	m_pTranslation->addChild(m_pRotation);
 	m_pRotation->addChild(m_pScale);
 
@@ -53,6 +53,14 @@ void raaTrafficLightUnit::toggleDetectionPointVisibility()
 {
 	m_bIsDetectionPointVisible = !m_bIsDetectionPointVisible;
 	setDetectionPointVisibility(m_bIsDetectionPointVisible);
+}
+
+osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(osg::Group *pRoot)
+{
+	if (pRoot) {
+		return csm_vfDetectionPoint * computeLocalToWorld(m_pRotation->getParentalNodePaths(pRoot)[0]);
+	}
+	return csm_vfDetectionPoint;
 }
 
 void raaTrafficLightUnit::setDetectionPointVisibility(const bool bIsVisible)

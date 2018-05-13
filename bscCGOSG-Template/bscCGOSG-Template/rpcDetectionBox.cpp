@@ -9,14 +9,14 @@ const osg::Vec3f rpcDetectionBox::vfDefaultSize = osg::Vec3f(30.0f, 30.0f, 30.0f
 
 rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize): m_bVisible(true)
 {
-	m_pRoot = new osg::MatrixTransform();
-	m_pRoot->ref();
-	m_pRoot->setMatrix(osg::Matrix::translate(vfPosition[0], vfPosition[1], vfPosition[2]));
+	m_pTransform = new osg::MatrixTransform();
+	m_pTransform->ref();
+	m_pTransform->setMatrix(osg::Matrix::translate(vfPosition[0], vfPosition[1], vfPosition[2]));
 
 	m_pScale = new osg::MatrixTransform();
 	m_pScale->setMatrix(osg::Matrix::scale(vfSize[0], vfSize[1], vfSize[2]));
 	m_pScale->ref();
-	m_pRoot->addChild(m_pScale);
+	m_pTransform->addChild(m_pScale);
 	osg::Geode* pGeode = makeGeometry();
 	m_pSwitch = new osg::Switch();
 	m_pSwitch->ref();
@@ -24,7 +24,7 @@ rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize): m_bV
 	m_pScale->addChild(m_pSwitch);
 }
 
-osg::Geode* rpcDetectionBox::makeGeometry()
+osg::Geode* rpcDetectionBox::makeGeometry() const
 {
 	osg::Geode* pGeode = new osg::Geode();
 	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Sphere(m_pScale->getBound().center(), m_pScale->getBound().radius()));
@@ -48,6 +48,11 @@ void rpcDetectionBox::toggleVisibility()
 	}
 }
 
+bool rpcDetectionBox::canSee(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
+{
+	return m_pScale->computeBound().contains(pvfGlobalCoordinates * computeWorldToLocal(m_pTransform->getParentalNodePaths(pRoot)[0]));
+}
+
 osg::Material* rpcDetectionBox::makeMaterial()
 {
 	osg::Material *pMat = new osg::Material();
@@ -60,6 +65,12 @@ osg::Material* rpcDetectionBox::makeMaterial()
 
 rpcDetectionBox::~rpcDetectionBox()
 {
-	m_pRoot->unref();
+	m_pTransform->unref();
+	m_pScale->unref();
 	m_pSwitch->unref();
+}
+
+osg::MatrixTransform* rpcDetectionBox::root() const
+{
+	return m_pTransform;
 }
