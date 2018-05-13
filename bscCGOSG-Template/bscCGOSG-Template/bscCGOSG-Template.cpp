@@ -31,6 +31,7 @@
 #include "raaTrafficLightUnit.h"
 #include "raaJunctionController.h"
 #include "raaInputController.h"
+#include "rpcPathSelector.h"
 
 //#include <osgDB/ReadFile>
 
@@ -107,7 +108,7 @@ int main(int argc, char** argv)
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);
 //	addAnimatedComponent(sAnimPath3);
-
+	rpcPathSelector::instance()->buildAnimationPaths();
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
 	pTraits->x = 20;

@@ -24,7 +24,7 @@ public:
 
 	static rpcCollidables* instance();
 
-	void addVehicle(raaAnimatedComponent *pVehicle);
+	static void addVehicle(raaAnimatedComponent *pVehicle);
 	void addLight(raaTrafficLightUnit *pLight);
 	void toggleDetectionVisibility();
 	void toggleLightState();

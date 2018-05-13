@@ -11,6 +11,8 @@ extern osg::Group *g_pRoot; // TODO pass this into the controller?
 const bool rpcCollidables::csm_bSpeedUp = true;
 const bool rpcCollidables::csm_bSpeedDown = false;
 
+rpcCollidables::rpcCollidables() {}
+
 rpcCollidables* rpcCollidables::instance()
 {
 	if (!sm_pInstance) sm_pInstance = new rpcCollidables();
@@ -57,10 +59,6 @@ void rpcCollidables::pauseVehicles()
 {
 	m_bIsGlobalPause = !m_bIsGlobalPause;
 	performOnAllVehicles(new rpcPauseVehicles(m_bIsGlobalPause));
-}
-
-rpcCollidables::rpcCollidables()
-{
 }
 
 void rpcCollidables::performOnAllVehicles(rpcVehicleFunctor *pFunc)
