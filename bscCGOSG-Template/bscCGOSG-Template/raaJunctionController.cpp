@@ -78,20 +78,22 @@ void raaJunctionController::checkDetection()
 	for (itVehicle = rpcCollidables::sm_lVehicles.begin(); itVehicle != rpcCollidables::sm_lVehicles.end(); ++itVehicle)
 	{
 		// Iterate through all lights for the junction IF the vehicle has no 'current' hit light
-		for (itLight = m_lLights.begin(); itLight != m_lLights.end() && !(*itVehicle)->m_pLightCurrentHit; ++itLight)
+		// So we can avoid this extra processing if we know there's already a hit on the car
+		for (itLight = m_lLights.begin(); itLight != m_lLights.end() && !(*itVehicle)->m_pLightDetected; ++itLight)
 		{
-			if (isHit(*itVehicle, *itLight)) (*itVehicle)->m_pLightCurrentHit = (*itLight);
+			// If we have a hit, set the car's detected light to that hit
+			if (isHit(*itVehicle, *itLight)) (*itVehicle)->m_pLightDetected = (*itLight);
 		}
-		if((*itVehicle)->m_pLightCurrentHit)
+		if((*itVehicle)->m_pLightDetected) // If the car has a detected light already
 		{
-			if (isHit(*itVehicle, (*itVehicle)->m_pLightCurrentHit))
+			if (isHit(*itVehicle, (*itVehicle)->m_pLightDetected)) // Ift it's still detected
 			{
-				(*itVehicle)->handleVehicleReactionToLight(rpcCollidables::instance()->m_bIsGlobalPause);
+				(*itVehicle)->handleVehicleReactionToLight(rpcCollidables::instance()->m_bIsGlobalPause); // React
 			}
 			else
 			{
-				(*itVehicle)->setSpeed(1.0f);
-				(*itVehicle)->m_pLightCurrentHit = 0;
+				(*itVehicle)->setSpeed(1.0); // If the speed's been sped during an orange, it needs to go back to normal
+				(*itVehicle)->m_pLightDetected = nullptr; // Reset the car's light to nothing
 			}
 		}
 	}

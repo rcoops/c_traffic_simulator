@@ -26,7 +26,7 @@ public:
 	void addLight(raaTrafficLightUnit *pLight);
 	void toggleDetectionVisibility();
 	void toggleLightState();
-	void adjustVehicleSpeed(bool bIsUp);
+	void adjustVehicleSpeed(const bool bIsIncrease);
 	void pauseVehicles();
 	
 protected:

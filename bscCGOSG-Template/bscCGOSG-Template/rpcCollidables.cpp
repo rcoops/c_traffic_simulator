@@ -43,9 +43,9 @@ void rpcCollidables::toggleLightState()
 	performOnAllLights(new rpcToggleLightState(m_eLightState));
 }
 
-void rpcCollidables::adjustVehicleSpeed(bool bIsUp)
+void rpcCollidables::adjustVehicleSpeed(const bool bIsIncrease)
 {
-	double dAdjustment = bIsUp ? 2.0 : 0.5;
+	const double dAdjustment = bIsIncrease ? 2.0 : 0.5;
 	m_dGlobalTimeMultiplier = m_dGlobalTimeMultiplier * dAdjustment;
 	
 	performOnAllVehicles(new rpcAdjustVehicleSpeed(m_dGlobalTimeMultiplier));
