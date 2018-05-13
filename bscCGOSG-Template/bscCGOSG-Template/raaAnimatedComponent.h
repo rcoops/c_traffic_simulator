@@ -19,11 +19,12 @@ public:
 	virtual ~raaAnimatedComponent();
 
 	rpcDetectionBox* m_pDetectionBox;
+	raaTrafficLightUnit *m_pLightCurrentHit;
 
 	osg::MatrixTransform* root();
 	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
 	void toggleDetectionBoxVisibility();
-	void handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, bool bIsGlobalPause);
+	void handleVehicleReactionToLight(bool bIsGlobalPause);
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	void setSpeed(double dSpeed);
 	void setManualMultiplier(double dTimeMultiplier);

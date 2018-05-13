@@ -32,6 +32,7 @@ protected:
 
 	void cycleTrafficLights(osg::NodeVisitor* nv);
 	raaTrafficLightUnit* addLight(osg::Vec3f vfPositionRotation);
+	bool isHit(raaAnimatedComponent* pVehicle, raaTrafficLightUnit* pLight);
 	void checkDetection();
 
 	virtual void addLights() = 0;

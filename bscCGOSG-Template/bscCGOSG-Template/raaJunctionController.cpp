@@ -64,24 +64,34 @@ raaTrafficLightUnit* raaJunctionController::addLight(osg::Vec3f vfPositionRotati
 	return pL0;
 }
 
+bool raaJunctionController::isHit(raaAnimatedComponent* pVehicle, raaTrafficLightUnit* pLight)
+{
+	const osg::Vec3f vfGlobalDetectionPoint = pLight->csm_vfPosition * computeLocalToWorld(pLight->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
+	rpcDetectionBox *box = pVehicle->m_pDetectionBox;
+	return box->m_pScale->computeBound().contains(vfGlobalDetectionPoint * computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
+}
+
 void raaJunctionController::checkDetection()
 {
-	raaLights::iterator itLights;
-	for (raaVehicles::iterator itVehicle = rpcCollidables::sm_lVehicles.begin(); itVehicle != rpcCollidables::sm_lVehicles.end(); ++itVehicle)
+	raaLights::iterator itLight; raaVehicles::iterator itVehicle;
+	// Iterate through all vehicles
+	for (itVehicle = rpcCollidables::sm_lVehicles.begin(); itVehicle != rpcCollidables::sm_lVehicles.end(); ++itVehicle)
 	{
-		for (itLights = m_lLights.begin(); itLights != m_lLights.end(); ++itLights)
+		// Iterate through all lights for the junction IF the vehicle has no 'current' hit light
+		for (itLight = m_lLights.begin(); itLight != m_lLights.end() && !(*itVehicle)->m_pLightCurrentHit; ++itLight)
 		{
-			const osg::Vec3f vfGlobalDetectionPoint = (*itLights)->csm_vfPosition * computeLocalToWorld((*itLights)->m_pRotation->getParentalNodePaths(g_pRoot)[0]);
-			rpcDetectionBox *box = (*itVehicle)->m_pDetectionBox;
-			bool bIsHit = box->m_pScale->computeBound().contains(vfGlobalDetectionPoint * computeWorldToLocal(box->m_pRoot->getParentalNodePaths(g_pRoot)[0]));
-			// TODO - here is the problem (1 light is hit but several are NOT), so speed is immediately getting set back to 1.0
-			if (bIsHit)
+			if (isHit(*itVehicle, *itLight)) (*itVehicle)->m_pLightCurrentHit = (*itLight);
+		}
+		if((*itVehicle)->m_pLightCurrentHit)
+		{
+			if (isHit(*itVehicle, (*itVehicle)->m_pLightCurrentHit))
 			{
-				(*itVehicle)->handleVehicleReactionToLight((*itLights)->m_eTrafficLightState, rpcCollidables::instance()->m_bIsGlobalPause);
+				(*itVehicle)->handleVehicleReactionToLight(rpcCollidables::instance()->m_bIsGlobalPause);
 			}
 			else
 			{
 				(*itVehicle)->setSpeed(1.0f);
+				(*itVehicle)->m_pLightCurrentHit = 0;
 			}
 		}
 	}

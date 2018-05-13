@@ -16,6 +16,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.
 // convert dimensions to consts
 raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_dTimeMultiplier(1.0), m_dSpeed(1.0)
 {
+	m_pLightCurrentHit = 0;
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	// switch->transform->geode
@@ -119,17 +120,22 @@ osg::MatrixTransform* raaAnimatedComponent::root()
 	return m_pRoot;
 }
 
-void raaAnimatedComponent::handleVehicleReactionToLight(raaTrafficLightUnit::rpcTrafficLightState eState, bool bIsGlobalPause)
+void raaAnimatedComponent::handleVehicleReactionToLight(bool bIsGlobalPause)
 {
-	switch (eState)
+	if (!m_pLightCurrentHit) return;
+	switch (m_pLightCurrentHit->m_eTrafficLightState)
 	{
 	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
 		setPause(true);
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
 		setSpeed(20.0f);
+		setPause(bIsGlobalPause);
+		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		setSpeed(0.3f);
+		setSpeed(0.1f);
+		setPause(bIsGlobalPause);
+		break;
 	default:
 		setPause(bIsGlobalPause);
 		break;
