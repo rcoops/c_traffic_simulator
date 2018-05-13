@@ -37,16 +37,16 @@ void raaJunctionController::cycleTrafficLights(osg::NodeVisitor* pNodeVisitor)
 	
 	if (c_dTimeSinceStatusChange > csm_dLightChangeTime)
 	{
-		(*m_itLight)->setLightState(raaTrafficLightUnit::SLOW);
+		(*m_itLight)->setLightState(raaTrafficLightUnit::slow);
 		raaLights::iterator itLights = m_itLight;
 		if (++itLights == m_lLights.end()) itLights = m_lLights.begin();
-		(*itLights)->setLightState(raaTrafficLightUnit::READY);
+		(*itLights)->setLightState(raaTrafficLightUnit::ready);
 	}
 	if (c_dTimeSinceStatusChange > csm_dLightChangeTime + 2.0f)
 	{
-		(*m_itLight)->setLightState(raaTrafficLightUnit::STOP);
+		(*m_itLight)->setLightState(raaTrafficLightUnit::stop);
 		if (++m_itLight == m_lLights.end()) m_itLight = m_lLights.begin();
-		(*m_itLight)->setLightState(raaTrafficLightUnit::GO);
+		(*m_itLight)->setLightState(raaTrafficLightUnit::go);
 
 		//counter reset to zero
 		m_dLastChangeTime = dSimulationTime;

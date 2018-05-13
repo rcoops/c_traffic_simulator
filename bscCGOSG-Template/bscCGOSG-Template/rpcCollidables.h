@@ -12,13 +12,12 @@ typedef std::list<raaAnimatedComponent*> raaVehicles;
 class rpcCollidables
 {
 public:
-	virtual ~rpcCollidables();
 	static raaLights sm_lLights;
 	static raaVehicles sm_lVehicles;
 
 	bool m_bIsGlobalPause = false;
 	float m_fGlobalTimeMultiplier = 1.0f;
-	raaTrafficLightUnit::rpcTrafficLightState m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::OFF;
+	raaTrafficLightUnit::rpcTrafficLightState m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::off;
 
 	static rpcCollidables* instance();
 
@@ -28,6 +27,8 @@ public:
 	void toggleLightState();
 	void adjustVehicleSpeed(const bool bIsIncrease);
 	void pauseVehicles();
+
+	virtual ~rpcCollidables();
 	
 protected:
 	rpcCollidables();

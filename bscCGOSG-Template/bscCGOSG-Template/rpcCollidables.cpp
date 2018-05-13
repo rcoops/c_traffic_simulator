@@ -81,20 +81,20 @@ void rpcCollidables::cycleManualState()
 {
 	switch (m_eLightState)
 	{
-	case raaTrafficLightUnit::rpcTrafficLightState::OFF:
-		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::READY;
+	case raaTrafficLightUnit::rpcTrafficLightState::off:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::ready;
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::GO:
-		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::SLOW;
+	case raaTrafficLightUnit::rpcTrafficLightState::go:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::slow;
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
-		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::OFF;
+	case raaTrafficLightUnit::rpcTrafficLightState::stop:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::off;
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
-		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::STOP;
+	case raaTrafficLightUnit::rpcTrafficLightState::slow:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::stop;
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::GO;
+	case raaTrafficLightUnit::rpcTrafficLightState::ready:
+		m_eLightState = raaTrafficLightUnit::rpcTrafficLightState::go;
 		break;
 	}
 	performOnAllLights(new rpcToggleLightState(m_eLightState));

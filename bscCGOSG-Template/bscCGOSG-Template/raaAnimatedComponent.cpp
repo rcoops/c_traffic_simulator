@@ -17,7 +17,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.
 // convert dimensions to consts
 raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fTimeMultiplier(1.0), m_fSpeed(1.0)
 {
-	m_pLightDetected = 0;
+	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	// switch->transform->geode
@@ -44,8 +44,8 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	// Controllable global speed * car's speed in reaction to light colours
-	double dTotalMultiplier = m_fTimeMultiplier * m_fSpeed;
-	double dSimulationTime = _latestTime - _firstTime; // latest frame
+	const double dTotalMultiplier = m_fTimeMultiplier * m_fSpeed;
+	const double dSimulationTime = _latestTime - _firstTime; // latest frame
 	// Adjusting the multiplier will 
 	setTimeOffset(calculateTimeOffset(dSimulationTime, _timeOffset, _timeMultiplier, dTotalMultiplier));
 	setTimeMultiplier(dTotalMultiplier);
@@ -59,27 +59,27 @@ void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
  * ((ST-OO)*OM)/NM = ST-NO
  * NO = ST - (((ST-OO)*OM)/NM))
  */
-double raaAnimatedComponent::calculateTimeOffset(double dSimulationTime, double dOriginalOffset, double dOriginalMultiplier, double dTotalMultiplier)
+double raaAnimatedComponent::calculateTimeOffset(const double dSimulationTime, const double dOriginalOffset, const double dOriginalMultiplier, const double dTotalMultiplier)
 {
 	return dSimulationTime - (dSimulationTime - dOriginalOffset) * dOriginalMultiplier / dTotalMultiplier;
 }
 
-void raaAnimatedComponent::setSpeed(float fSpeed)
+void raaAnimatedComponent::setSpeed(const float fSpeed)
 {
 	m_fSpeed = fSpeed;
 }
 
-void raaAnimatedComponent::setManualMultiplier(float fTimeMultiplier)
+void raaAnimatedComponent::setManualMultiplier(const float fTimeMultiplier)
 {
 	m_fTimeMultiplier = fTimeMultiplier;
 }
 
-bool raaAnimatedComponent::canSee(osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot)
+bool raaAnimatedComponent::canSee(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
 {
-	return m_pDetectionBox->canSee(pvfGlobalCoordinates, pRoot);
+	return m_pDetectionBox->contains(pvfGlobalCoordinates, pRoot);
 }
 
-void raaAnimatedComponent::initDetectionPoint()
+void raaAnimatedComponent::initDetectionPoint() const
 {
 	if (!m_psDetectorSwitch) return;
 	osg::MatrixTransform *pDetectionPointTransform = new osg::MatrixTransform();
@@ -107,7 +107,7 @@ osg::Geode* raaAnimatedComponent::initGeode()
 	return pGeode;
 }
 
-osg::Vec3f raaAnimatedComponent::getDetectionPoint(osg::MatrixTransform* pRoot)
+osg::Vec3f raaAnimatedComponent::getDetectionPoint(osg::MatrixTransform* pRoot) const
 {
 	osg::Matrix m;
 	if (pRoot) {
@@ -123,7 +123,7 @@ void raaAnimatedComponent::toggleDetectionBoxVisibility()
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 }
 
-void raaAnimatedComponent::setDetectionBoxVisibility(const bool bIsVisible)
+void raaAnimatedComponent::setDetectionBoxVisibility(const bool bIsVisible) const
 {
 	if (m_psDetectorSwitch)
 	{
@@ -137,7 +137,7 @@ raaAnimatedComponent::~raaAnimatedComponent()
 	m_pRoot->unref();
 }
 
-osg::MatrixTransform* raaAnimatedComponent::root()
+osg::MatrixTransform* raaAnimatedComponent::root() const
 {
 	return m_pRoot;
 }
@@ -145,20 +145,20 @@ osg::MatrixTransform* raaAnimatedComponent::root()
 void raaAnimatedComponent::handleVehicleReactionToLight(const bool bIsGlobalPause)
 {
 	if (!m_pLightDetected) return;
-	if (m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::STOP) {
+	if (m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop) {
 		setPause(true);
 		return;
 	}
 
 	switch (m_pLightDetected->m_eTrafficLightState)
 	{
-	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
+	case raaTrafficLightUnit::rpcTrafficLightState::slow:
 		setSpeed(4.0f);
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::READY:
+	case raaTrafficLightUnit::rpcTrafficLightState::ready:
 		setSpeed(0.5f);
 		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::GO:
+	case raaTrafficLightUnit::rpcTrafficLightState::go:
 		setSpeed(1.0f);
 		break;
 	default:

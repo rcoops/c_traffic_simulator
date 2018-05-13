@@ -8,13 +8,13 @@
 #include <osg/ShapeDrawable>
 #include <osg/Switch>
 
-osg::Node* raaTrafficLightUnit::sm_pAsset = 0;
-osg::Material* raaTrafficLightUnit::sm_pRedOn=0;
-osg::Material* raaTrafficLightUnit::sm_pRedOff=0;
-osg::Material* raaTrafficLightUnit::sm_pAmberOn=0;
-osg::Material* raaTrafficLightUnit::sm_pAmberOff=0;
-osg::Material* raaTrafficLightUnit::sm_pGreenOn=0;
-osg::Material* raaTrafficLightUnit::sm_pGreenOff=0;
+osg::Node* raaTrafficLightUnit::sm_pAsset = nullptr;
+osg::Material* raaTrafficLightUnit::sm_pRedOn=nullptr;
+osg::Material* raaTrafficLightUnit::sm_pRedOff=nullptr;
+osg::Material* raaTrafficLightUnit::sm_pAmberOn=nullptr;
+osg::Material* raaTrafficLightUnit::sm_pAmberOff=nullptr;
+osg::Material* raaTrafficLightUnit::sm_pGreenOn=nullptr;
+osg::Material* raaTrafficLightUnit::sm_pGreenOff=nullptr;
 
 const float raaTrafficLightUnit::csm_fDefaultScale = 0.03f;
 const osg::Vec3f raaTrafficLightUnit::csm_vfDetectionPoint = osg::Vec3f(0.0f, -120.0f, 40.0f);
@@ -25,17 +25,18 @@ raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 	m_pTranslation->ref();
 	m_pRotation = new osg::MatrixTransform();
 	m_pScale = new osg::MatrixTransform();
+	m_pTranslation->addChild(m_pRotation);
+	m_pRotation->addChild(m_pScale);
+
 	m_pDetectionPointSwitch = new osg::Switch();
 	osg::Geode* pGeode = new osg::Geode();
 	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(csm_vfDetectionPoint, 10.0f));
-	m_pTranslation->addChild(m_pRotation);
-	m_pRotation->addChild(m_pScale);
 
 	m_pRotation->addChild(m_pDetectionPointSwitch); // Don't want to scale the point
 	m_pDetectionPointSwitch->addChild(pGeode);
 	pGeode->addDrawable(pSPoint);
 
-	m_pScale->addChild((osg:: Node*) sm_pAsset->clone(osg::CopyOp::DEEP_COPY_NODES));
+	m_pScale->addChild(static_cast<Node*>(sm_pAsset->clone(osg::CopyOp::DEEP_COPY_NODES)));
 
 	raaFinder<osg::Geode> redFinder("trafficLight::RedLamp-GEODE", m_pRotation);
 	raaFinder<osg::Geode> greenFinder("trafficLight::GreenLamp-GEODE", m_pRotation);
@@ -55,7 +56,7 @@ void raaTrafficLightUnit::toggleDetectionPointVisibility()
 	setDetectionPointVisibility(m_bIsDetectionPointVisible);
 }
 
-osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(osg::Group *pRoot)
+osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(osg::Group *pRoot) const
 {
 	if (pRoot) {
 		return csm_vfDetectionPoint * computeLocalToWorld(m_pRotation->getParentalNodePaths(pRoot)[0]);
@@ -63,7 +64,7 @@ osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(osg::Group *pRoot)
 	return csm_vfDetectionPoint;
 }
 
-void raaTrafficLightUnit::setDetectionPointVisibility(const bool bIsVisible)
+void raaTrafficLightUnit::setDetectionPointVisibility(const bool bIsVisible) const
 {
 	if (m_pDetectionPointSwitch)
 	{
@@ -91,19 +92,19 @@ void raaTrafficLightUnit::turnOffManualState()
 	setLightState(m_eLastState);
 }
 
-void raaTrafficLightUnit::adjustLightColour()
+void raaTrafficLightUnit::adjustLightColour() const
 {
 	switch (m_eTrafficLightState) {
-	case GO:
+	case go:
 		setColour(sm_pGreenOn, sm_pAmberOff, sm_pRedOff);
 		break;
-	case STOP:
+	case stop:
 		setColour(sm_pGreenOff, sm_pAmberOff, sm_pRedOn);
 		break;
-	case SLOW:
+	case slow:
 		setColour(sm_pGreenOff, sm_pAmberOn, sm_pRedOn);
 		break;
-	case READY:
+	case ready:
 		setColour(sm_pGreenOff, sm_pAmberOn, sm_pRedOff);
 		break;
 	default:
@@ -111,14 +112,14 @@ void raaTrafficLightUnit::adjustLightColour()
 	}
 }
 
-void raaTrafficLightUnit::setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed)
+void raaTrafficLightUnit::setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed) const
 {
 	m_pGreen->getOrCreateStateSet()->setAttributeAndModes(pGreen, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	m_pRed->getOrCreateStateSet()->setAttributeAndModes(pAmber, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	m_pAmber->getOrCreateStateSet()->setAttributeAndModes(pRed, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 }
 
-void raaTrafficLightUnit::initAsset(std::string sFile)
+void raaTrafficLightUnit::initAsset(const std::string sFile)
 {
 	if(!sm_pAsset)
 	{
@@ -150,7 +151,7 @@ void raaTrafficLightUnit::finshAsset()
 	if(sm_pAsset)
 	{
 		sm_pAsset->unref();
-		sm_pAsset = 0;
+		sm_pAsset = nullptr;
 
 		sm_pRedOn->unref();
 		sm_pRedOff->unref();
@@ -162,7 +163,7 @@ void raaTrafficLightUnit::finshAsset()
 }
 
 
-void raaTrafficLightUnit::setTransform(float fX, float fY, float fRot, float fScale)
+void raaTrafficLightUnit::setTransform(const float fX, const float fY, const float fRot, const float fScale) const
 {
 	if(m_pTranslation)
 	{
@@ -178,7 +179,7 @@ void raaTrafficLightUnit::setTransform(float fX, float fY, float fRot, float fSc
 	}
 }
 
-osg::Node* raaTrafficLightUnit::node()
+osg::Node* raaTrafficLightUnit::node() const
 {
 	return m_pTranslation;
 }

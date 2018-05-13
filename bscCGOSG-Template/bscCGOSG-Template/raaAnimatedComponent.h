@@ -21,14 +21,14 @@ public:
 	rpcDetectionBox* m_pDetectionBox;
 	raaTrafficLightUnit *m_pLightDetected;
 
-	osg::MatrixTransform* root();
-	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
+	osg::MatrixTransform* root() const;
+	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot) const;
 	void toggleDetectionBoxVisibility();
 	void handleVehicleReactionToLight(const bool bIsGlobalPause);
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	void setSpeed(float fSpeed);
 	void setManualMultiplier(float fTimeMultiplier);
-	bool canSee(osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot);
+	bool canSee(osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const;
 
 protected:
 	static const osg::Vec3f csm_vfBack;
@@ -40,11 +40,11 @@ protected:
 	float m_fTimeMultiplier;
 	float m_fSpeed;
 
-	void initDetectionPoint();
-	osg::Geode* initGeode();
-	double calculateTimeOffset(double dAnimationTime, double dOriginalOffset, double dOriginalMultiplier,
+	void initDetectionPoint() const;
+	static osg::Geode* initGeode();
+	static double calculateTimeOffset(double dAnimationTime, double dOriginalOffset, double dOriginalMultiplier,
 		double dTotalMultiplier);
 
-	void setDetectionBoxVisibility(const bool bIsVisible);
+	void setDetectionBoxVisibility(const bool bIsVisible) const;
 };
 

@@ -7,7 +7,7 @@
 
 const osg::Vec3f rpcDetectionBox::vfDefaultSize = osg::Vec3f(30.0f, 30.0f, 30.0f);
 
-rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize): m_bVisible(true)
+rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize)
 {
 	m_pTransform = new osg::MatrixTransform();
 	m_pTransform->ref();
@@ -17,11 +17,7 @@ rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize): m_bV
 	m_pScale->setMatrix(osg::Matrix::scale(vfSize[0], vfSize[1], vfSize[2]));
 	m_pScale->ref();
 	m_pTransform->addChild(m_pScale);
-	osg::Geode* pGeode = makeGeometry();
-	m_pSwitch = new osg::Switch();
-	m_pSwitch->ref();
-	m_pSwitch->addChild(pGeode);
-	m_pScale->addChild(m_pSwitch);
+	m_pScale->addChild(makeGeometry());
 }
 
 osg::Geode* rpcDetectionBox::makeGeometry() const
@@ -39,16 +35,7 @@ osg::Geode* rpcDetectionBox::makeGeometry() const
 	return pGeode;
 }
 
-void rpcDetectionBox::toggleVisibility()
-{
-	m_bVisible = !m_bVisible;
-	if (m_pSwitch) {
-		if (m_bVisible) m_pSwitch->setAllChildrenOn();
-		else m_pSwitch->setAllChildrenOff();
-	}
-}
-
-bool rpcDetectionBox::canSee(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
+bool rpcDetectionBox::contains(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
 {
 	return m_pScale->computeBound().contains(pvfGlobalCoordinates * computeWorldToLocal(m_pTransform->getParentalNodePaths(pRoot)[0]));
 }
@@ -67,7 +54,6 @@ rpcDetectionBox::~rpcDetectionBox()
 {
 	m_pTransform->unref();
 	m_pScale->unref();
-	m_pSwitch->unref();
 }
 
 osg::MatrixTransform* rpcDetectionBox::root() const

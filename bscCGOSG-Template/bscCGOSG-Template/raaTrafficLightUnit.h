@@ -19,7 +19,7 @@ public:
 
 	enum rpcTrafficLightState
 	{
-		OFF, GO, STOP, SLOW, READY
+		off, go, stop, slow, ready
 	};
 
 	rpcTrafficLightState m_eTrafficLightState;
@@ -31,14 +31,13 @@ public:
 	static void initAsset(std:: string sFile);
 	static void finshAsset();
 
-	osg::Node* node();
-	void setTransform(float fX, float fY, float fRot, float fScale = csm_fDefaultScale);
-	void setLightState(const rpcTrafficLightState eNewState = STOP);
+	Node* node() const;
+	void setTransform(float fX, float fY, float fRot, float fScale = csm_fDefaultScale) const;
+	void setLightState(const rpcTrafficLightState eNewState = stop);
 	void setManualState(const rpcTrafficLightState eNewState);
-	void turnOffManualState();
-	void setRed();
+	void turnOffManualState();;
 	void toggleDetectionPointVisibility();
-	osg::Vec3f getDetectionPointRelativeTo(osg::Group* pRoot);
+	osg::Vec3f getDetectionPointRelativeTo(osg::Group* pRoot) const;
 
 protected:
 	static osg::Node* sm_pAsset;
@@ -62,10 +61,10 @@ protected:
 
 	osg::Switch *m_pDetectionPointSwitch;
 
-	void adjustLightColour();
+	void adjustLightColour() const;
 
-	void setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed);
-	void setDetectionPointVisibility(const bool bIsVisible);
+	void setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed) const;
+	void setDetectionPointVisibility(const bool bIsVisible) const;
 
 	static void materialBuilder(osg::Material* pOn, osg::Material* pOff, osg::Vec3f vMat);
 };
