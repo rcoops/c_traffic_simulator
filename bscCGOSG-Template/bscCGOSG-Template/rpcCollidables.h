@@ -12,6 +12,9 @@ typedef std::list<raaAnimatedComponent*> raaVehicles;
 class rpcCollidables
 {
 public:
+	const static bool csm_bSpeedUp;
+	const static bool csm_bSpeedDown;
+
 	static raaLights sm_lLights;
 	static raaVehicles sm_lVehicles;
 

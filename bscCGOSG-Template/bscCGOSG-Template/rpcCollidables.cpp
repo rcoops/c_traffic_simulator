@@ -8,6 +8,9 @@ rpcCollidables* rpcCollidables::sm_pInstance;
 
 extern osg::Group *g_pRoot; // TODO pass this into the controller?
 
+const bool rpcCollidables::csm_bSpeedUp = true;
+const bool rpcCollidables::csm_bSpeedDown = false;
+
 rpcCollidables* rpcCollidables::instance()
 {
 	if (!sm_pInstance) sm_pInstance = new rpcCollidables();
@@ -47,8 +50,7 @@ void rpcCollidables::adjustVehicleSpeed(const bool bIsIncrease)
 {
 	const float fAdjustment = bIsIncrease ? 2.0f : 0.5f;
 	m_fGlobalTimeMultiplier = m_fGlobalTimeMultiplier * fAdjustment;
-	
-	performOnAllVehicles(new rpcAdjustVehicleSpeed(m_fGlobalTimeMultiplier));
+	raaAnimatedComponent::setManualMultiplier(m_fGlobalTimeMultiplier);
 }
 
 void rpcCollidables::pauseVehicles()

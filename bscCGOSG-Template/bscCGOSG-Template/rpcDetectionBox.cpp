@@ -30,7 +30,7 @@ osg::Geode* rpcDetectionBox::makeGeometry() const
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(pMat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
-	pSD->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
+	pGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
 	pGeode->addDrawable(pSD);
 	return pGeode;
 }
@@ -44,7 +44,7 @@ osg::Material* rpcDetectionBox::makeMaterial()
 {
 	osg::Material *pMat = new osg::Material();
 	pMat->setAmbient(osg::Material::FRONT, osg::Vec4f(0.2f, 0.2f, 0.0f, 1.0f));
-	pMat->setDiffuse(osg::Material::FRONT, osg::Vec4f(0.0f, 0.8f, 0.0f, 1.0f));
+	pMat->setDiffuse(osg::Material::FRONT, osg::Vec4f(0.8f, 0.8f, 0.0f, 1.0f));
 	pMat->setSpecular(osg::Material::FRONT, osg::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
 	pMat->setShininess(osg::Material::FRONT, 100.0f);
 	return pMat;

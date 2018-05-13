@@ -9,33 +9,33 @@
 #include <osg/PolygonMode>
 #include "raaTrafficLightUnit.h"
 #include <valarray>
+#include "raaJunctionController.h"
 
-const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f, 140.0f, 20.0f);
+extern osg::Group *g_pRoot;
+
+const osg::Vec3f raaAnimatedComponent::csm_vfLightDetectorPosition = osg::Vec3f(0.0f, 140.0f, 20.0f);
+const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3f(80.0f, 0.0f, 20.0f);
 
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
+float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
 // convert dimensions to consts
-raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fTimeMultiplier(1.0), m_fSpeed(1.0)
+raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f)
 {
 	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	// switch->transform->geode
-	// bounding box for the geode not the matrix transform
 
-	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(0.0f, 0.0f, 20.0f), 80.0f, 60.0f, 40.0f));
+	m_pRoot->addChild(makeBaseGeometry());
 
-	osg::Geode* pGeode = initGeode();
-
-	pSD->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
-	pGeode->addDrawable(pSD);
-	m_pRoot->addChild(pGeode);
-
-	m_pDetectionBox = new rpcDetectionBox(csm_vfDetector_Position);
 	m_psDetectorSwitch = new osg::Switch();
-	initDetectionPoint();
-	m_psDetectorSwitch->addChild(m_pDetectionBox->root());
 	m_pRoot->addChild(m_psDetectorSwitch);
+	initDetectionPoint();
+	m_pLightDetector = new rpcDetectionBox(csm_vfLightDetectorPosition);
+	m_pVehicleDetector = new rpcDetectionBox(csm_vfVehicleDetectorPosition);
+	m_psDetectorSwitch->addChild(m_pLightDetector->root());
+	m_psDetectorSwitch->addChild(m_pVehicleDetector->root());
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 
 	m_pRoot->setUpdateCallback(this);
@@ -44,15 +44,24 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	// Controllable global speed * car's speed in reaction to light colours
-	const double dTotalMultiplier = m_fTimeMultiplier * m_fSpeed;
+	const double dTotalMultiplier = sm_fTimeMultiplier * m_fSpeed;
 	const double dSimulationTime = _latestTime - _firstTime; // latest frame
 	// Adjusting the multiplier will 
 	setTimeOffset(calculateTimeOffset(dSimulationTime, _timeOffset, _timeMultiplier, dTotalMultiplier));
 	setTimeMultiplier(dTotalMultiplier);
 	AnimationPathCallback::operator()(node, nv);
+	checkForVehicles();
 }
 
-/* Why does this not already exist??
+osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
+{
+	if (pRoot) {
+		return csm_vfBack * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
+	}
+	return csm_vfBack; // can't really happen - this wont exit if tree root doesn't
+}
+
+/* Why is this not a function of the callback??
  * ST = Simulation Time (latest - first), OC = Original Offset, OM = Original multiplier,
  * NO = New Offeset, NM = New Multiplier
  * (ST-OO)*OM=(ST-NO)*NM
@@ -71,12 +80,17 @@ void raaAnimatedComponent::setSpeed(const float fSpeed)
 
 void raaAnimatedComponent::setManualMultiplier(const float fTimeMultiplier)
 {
-	m_fTimeMultiplier = fTimeMultiplier;
+	sm_fTimeMultiplier = fTimeMultiplier;
 }
 
-bool raaAnimatedComponent::canSee(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
+bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable, osg::Group *pRoot) const
 {
-	return m_pDetectionBox->contains(pvfGlobalCoordinates, pRoot);
+	const osg::Vec3f vfGlobalCoordinates = pDetectable->getDetectionPointRelativeTo(pRoot);
+	if (dynamic_cast<raaTrafficLightUnit*>(pDetectable)) // is it a light?
+	{
+		return m_pLightDetector->contains(vfGlobalCoordinates, pRoot); // cool, check the light detector
+	}
+	return m_pVehicleDetector->contains(vfGlobalCoordinates, pRoot); // no? must be a vehicle
 }
 
 void raaAnimatedComponent::initDetectionPoint() const
@@ -84,18 +98,18 @@ void raaAnimatedComponent::initDetectionPoint() const
 	if (!m_psDetectorSwitch) return;
 	osg::MatrixTransform *pDetectionPointTransform = new osg::MatrixTransform();
 	pDetectionPointTransform->setMatrix(osg::Matrix::translate(csm_vfBack));
-	osg::Geode* pGeode = initGeode();
+	osg::Geode* pGeode = makeGeode();
 	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f));
-
+	pSPoint->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
 	pGeode->addDrawable(pSPoint);
 	pDetectionPointTransform->addChild(pGeode);
 	m_psDetectorSwitch->addChild(pDetectionPointTransform);
 }
-
-osg::Geode* raaAnimatedComponent::initGeode()
+osg::Geode* raaAnimatedComponent::makeGeode()
 {
 	osg::Geode* pGeode = new osg::Geode();
 	osg::Material *pMat = new osg::Material();
+
 	pMat->setAmbient(osg::Material::FRONT, osg::Vec4f(0.2f, 0.2f, 0.0f, 1.0f));
 	pMat->setDiffuse(osg::Material::FRONT, osg::Vec4f(0.8f, 0.8f, 0.0f, 1.0f));
 	pMat->setSpecular(osg::Material::FRONT, osg::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
@@ -103,18 +117,17 @@ osg::Geode* raaAnimatedComponent::initGeode()
 
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(pMat, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-
 	return pGeode;
 }
 
-osg::Vec3f raaAnimatedComponent::getDetectionPoint(osg::MatrixTransform* pRoot) const
+osg::Geode* raaAnimatedComponent::makeBaseGeometry()
 {
-	osg::Matrix m;
-	if (pRoot) {
-		m = computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
-		return csm_vfBack * m;
-	}
-	return csm_vfBack;
+	osg::Geode* pGeode = makeGeode();
+	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(0.0f, 0.0f, 20.0f), 80.0f, 60.0f, 40.0f));
+	pSD->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
+
+	pGeode->addDrawable(pSD);
+	return pGeode;
 }
 
 void raaAnimatedComponent::toggleDetectionBoxVisibility()
@@ -132,9 +145,24 @@ void raaAnimatedComponent::setDetectionBoxVisibility(const bool bIsVisible) cons
 	}
 }
 
-raaAnimatedComponent::~raaAnimatedComponent()
+void raaAnimatedComponent::checkForVehicles()
 {
-	m_pRoot->unref();
+	if (!g_pRoot) return;
+	raaVehicles::iterator itVehicle = rpcCollidables::sm_lVehicles.begin();
+	// All the vehicles
+	for (; itVehicle != rpcCollidables::sm_lVehicles.end() && !m_pVehicleDetected; ++itVehicle)
+	{
+		if (*itVehicle == this)  return; // No point checking detection on self
+		if (canSee((*itVehicle), g_pRoot)) m_pVehicleDetected = *itVehicle; 
+	}
+	if (m_pVehicleDetected)
+	{
+		// still in sight?
+		const bool bCanStillSeeVehicle = canSee(m_pVehicleDetected, g_pRoot);
+		// if it is, set pause true, if not, take global val
+		setPause(bCanStillSeeVehicle || rpcCollidables::instance()->m_bIsGlobalPause);
+		if (!bCanStillSeeVehicle) m_pVehicleDetected = nullptr; // discard reference if out of sight
+	}
 }
 
 osg::MatrixTransform* raaAnimatedComponent::root() const
@@ -142,27 +170,29 @@ osg::MatrixTransform* raaAnimatedComponent::root() const
 	return m_pRoot;
 }
 
-void raaAnimatedComponent::handleVehicleReactionToLight(const bool bIsGlobalPause)
+void raaAnimatedComponent::reactToLightInSights()
 {
 	if (!m_pLightDetected) return;
-	if (m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop) {
-		setPause(true);
-		return;
-	}
 
 	switch (m_pLightDetected->m_eTrafficLightState)
 	{
 	case raaTrafficLightUnit::rpcTrafficLightState::slow:
-		setSpeed(4.0f);
+		setSpeed(4.0f); // GET THROUGH THE LIGHT QUICK!!!
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::ready:
-		setSpeed(0.5f);
+		setSpeed(0.5f); // speeding up
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::go:
-		setSpeed(1.0f);
+		setSpeed(1.0f); // standard
 		break;
 	default:
 		break;
 	}
-	setPause(bIsGlobalPause);
+	// Haven't taken a red action so just check it here if it's red, pause, if not take global
+	setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
+}
+
+raaAnimatedComponent::~raaAnimatedComponent()
+{
+	m_pRoot->unref();
 }

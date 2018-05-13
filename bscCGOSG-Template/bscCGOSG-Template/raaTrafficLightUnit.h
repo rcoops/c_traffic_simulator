@@ -7,11 +7,12 @@
 #include <osg/Geode>
 
 #include <list>
+#include "rpcDetectable.h"
 
 typedef std::list<class raaTrafficLightUnit*>raaTrafficLights;
 
 // a basic traffic light class. You will need to extend and develop this to operate the lights and develop junctions and controls for the animation
-class raaTrafficLightUnit: public osg::Node
+class raaTrafficLightUnit: public osg::Node, public rpcDetectable
 {
 public:
 	raaTrafficLightUnit();
@@ -37,7 +38,7 @@ public:
 	void setManualState(const rpcTrafficLightState eNewState);
 	void turnOffManualState();;
 	void toggleDetectionPointVisibility();
-	osg::Vec3f getDetectionPointRelativeTo(osg::Group* pRoot) const;
+	osg::Vec3f getDetectionPointRelativeTo(Node* pRoot) override;
 
 protected:
 	static osg::Node* sm_pAsset;

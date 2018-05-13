@@ -12,10 +12,10 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 		switch (ea.getKey())
 		{
 		case ']':
-			rpcCollidables::instance()->adjustVehicleSpeed(true);
+			rpcCollidables::instance()->adjustVehicleSpeed(rpcCollidables::csm_bSpeedUp);
 			return true;
 		case '[':
-			rpcCollidables::instance()->adjustVehicleSpeed(false);
+			rpcCollidables::instance()->adjustVehicleSpeed(rpcCollidables::csm_bSpeedDown);
 			return true;
 		case 'v':
 		case 'V':

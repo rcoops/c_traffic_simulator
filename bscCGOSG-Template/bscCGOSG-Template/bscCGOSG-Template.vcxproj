@@ -165,6 +165,7 @@
     <ClInclude Include="raaTileTJunction.h" />
     <ClInclude Include="raaTileXJunction.h" />
     <ClInclude Include="raaTrafficLightUnit.h" />
+    <ClInclude Include="rpcDetectable.h" />
     <ClInclude Include="rpcTrafficLightFunctor.h" />
     <ClInclude Include="rpcVehicleFunctor.h" />
     <ClInclude Include="rpcDetectionBox.h" />

@@ -56,7 +56,7 @@ void raaTrafficLightUnit::toggleDetectionPointVisibility()
 	setDetectionPointVisibility(m_bIsDetectionPointVisible);
 }
 
-osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(osg::Group *pRoot) const
+osg::Vec3f raaTrafficLightUnit::getDetectionPointRelativeTo(Node *pRoot)
 {
 	if (pRoot) {
 		return csm_vfDetectionPoint * computeLocalToWorld(m_pRotation->getParentalNodePaths(pRoot)[0]);

@@ -74,17 +74,18 @@ int main(int argc, char** argv)
 
 	// parse command line options
 	std::string sTrafficLightAsset = "../../Data/raaTrafficLight.OSGB";
-	std::string sRoadMap = "../../Data/roads2.txt";
+	std::string sRoadMap = "../../Data/roads3.txt";
 	std::string sRoadAsset = "../../Data/RoadSet.OSGB";
 	std::string sAnimPath = "../../Data/animPath1.txt";
 	std::string sAnimPath2 = "../../Data/animPath2.txt";
+	std::string sAnimPath3 = "../../Data/animPath3.txt";
 
 	for (int i = 0; i < argc; i++)
 	{
 		if (std::string(argv[i]) == "-ta") sTrafficLightAsset = (argv[++i]);
-		else if (std::string(argv[i]) == "-rm") sRoadMap = (argv[++i]);
+//		else if (std::string(argv[i]) == "-rm") sRoadMap = (argv[++i]);
 		else if (std::string(argv[i]) == "-ra") sRoadAsset = (argv[++i]);
-		else if (std::string(argv[i]) == "-ap") sAnimPath = (argv[++i]);
+//		else if (std::string(argv[i]) == "-ap") sAnimPath = (argv[++i]);
 	}
 
 	// loads the tile assets for laying out the tiles. 
@@ -104,7 +105,8 @@ int main(int argc, char** argv)
 
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
-//	addAnimatedComponent(sAnimPath2);
+	addAnimatedComponent(sAnimPath2);
+	addAnimatedComponent(sAnimPath3);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
