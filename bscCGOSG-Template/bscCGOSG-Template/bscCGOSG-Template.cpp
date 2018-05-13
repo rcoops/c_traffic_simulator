@@ -105,8 +105,8 @@ int main(int argc, char** argv)
 
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
-	addAnimatedComponent(sAnimPath2);
-	addAnimatedComponent(sAnimPath3);
+//	addAnimatedComponent(sAnimPath2);
+//	addAnimatedComponent(sAnimPath3);
 
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
@@ -127,7 +127,6 @@ int main(int argc, char** argv)
 	osg::Camera *pCamera = viewer.getCamera();
 	pCamera->setGraphicsContext(pGC);
 	pCamera->setViewport(new osg::Viewport(0, 0, pTraits->width, pTraits->height));
-	pCamera->setViewMatrixAsLookAt(osg::Vec3(0.0, 0.0, 0.0), osg::Vec3(0.0, 1.0, 0.0), osg::Vec3(0.0, 0.0, 1.0));
 
 	// add own event handler - this currently switches on an off the animation points
 	viewer.addEventHandler(new raaInputController());

@@ -32,7 +32,7 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 	m_psDetectorSwitch = new osg::Switch();
 	m_pRoot->addChild(m_psDetectorSwitch);
 	initDetectionPoint();
-	m_pLightDetector = new rpcDetectionBox(csm_vfLightDetectorPosition);
+	m_pLightDetector = new rpcDetectionBox(csm_vfLightDetectorPosition, osg::Vec3f(50.0f, 50.0f, 50.0f));
 	m_pVehicleDetector = new rpcDetectionBox(csm_vfVehicleDetectorPosition);
 	m_psDetectorSwitch->addChild(m_pLightDetector->root());
 	m_psDetectorSwitch->addChild(m_pVehicleDetector->root());

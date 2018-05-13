@@ -82,7 +82,7 @@ void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsign
 	raaTile *pTile = pRoadSet->tile(uiCurrentTile);
 
 	// transform is easy - multiply matrix by vector
-	osg::Matrixf mfGlobalTransform = osg::computeLocalToWorld(pTile->lowestTransform()->getParentalNodePaths()[0], true);
+	osg::Matrixf mfGlobalTransform = computeLocalToWorld(pTile->lowestTransform()->getParentalNodePaths()[0], true);
 
 	osg::Vec3f vfGlobalTranslation = pTile->animPointPosition(uiCurrentPoint) * mfGlobalTransform;
 	// rotation is harder - local quarternian to matrix, multiply global by local matrix, resulting matrix to quarternian (or convert the global matrix to quarternian
