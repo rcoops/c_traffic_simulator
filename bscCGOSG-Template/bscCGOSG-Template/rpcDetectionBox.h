@@ -1,19 +1,15 @@
 #pragma once
 
 #include <windows.h>
-#include <osg/Node>
 #include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Switch>
-#include <osg/ShapeDrawable>
-
-#include <list>
 
 class rpcDetectionBox
 {
 public:
-	rpcDetectionBox(osg::Vec3f vfPosition);
+	rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize = vfDefaultSize);
 	virtual ~rpcDetectionBox();
 
 	osg::MatrixTransform* m_pRoot;
@@ -22,7 +18,6 @@ public:
 	void toggleVisibility();
 
 protected:
-	rpcDetectionBox();
 
 	osg::Switch* m_pSwitch;
 	bool m_bVisible;
@@ -30,4 +25,5 @@ protected:
 
 	osg::Material* makeMaterial();
 	osg::Geode* makeGeometry();
+	static const osg::Vec3f vfDefaultSize;
 };

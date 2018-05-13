@@ -30,7 +30,7 @@ void raaJunctionController::operator()(osg::Node* node, osg::NodeVisitor* nv)
 
 void raaJunctionController::cycleTrafficLights(osg::NodeVisitor* pNodeVisitor)
 {
-	if (!(*m_itLight) || (*m_itLight)->m_bIsManual) return;
+	if (!(*m_itLight) || (*m_itLight)->m_bIsManual) return; // if we've turned off light changes
 
 	const double dSimulationTime = round(pNodeVisitor->getFrameStamp()->getSimulationTime());
 	const double c_dTimeSinceStatusChange = dSimulationTime - m_dLastChangeTime;

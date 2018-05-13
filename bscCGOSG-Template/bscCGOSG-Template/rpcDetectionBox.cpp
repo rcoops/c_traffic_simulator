@@ -5,18 +5,16 @@
 #include <osg/PolygonMode>
 #include "raaTrafficLightUnit.h"
 
-rpcDetectionBox::rpcDetectionBox(): m_pRoot(0)
-{
-}
+const osg::Vec3f rpcDetectionBox::vfDefaultSize = osg::Vec3f(30.0f, 30.0f, 30.0f);
 
-rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition): m_bVisible(true)
+rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize): m_bVisible(true)
 {
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	m_pRoot->setMatrix(osg::Matrix::translate(vfPosition[0], vfPosition[1], vfPosition[2]));
 
 	m_pScale = new osg::MatrixTransform();
-	m_pScale->setMatrix(osg::Matrix::scale(30.0f, 30.0f, 30.0f));
+	m_pScale->setMatrix(osg::Matrix::scale(vfSize[0], vfSize[1], vfSize[2]));
 	m_pScale->ref();
 	m_pRoot->addChild(m_pScale);
 	osg::Geode* pGeode = makeGeometry();

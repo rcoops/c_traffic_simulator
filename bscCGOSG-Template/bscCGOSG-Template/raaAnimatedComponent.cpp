@@ -8,6 +8,7 @@
 #include "raaAnimatedComponent.h"
 #include <osg/PolygonMode>
 #include "raaTrafficLightUnit.h"
+#include <valarray>
 
 const osg::Vec3f raaAnimatedComponent::csm_vfDetector_Position = osg::Vec3f(0.0f, 140.0f, 20.0f);
 
@@ -16,7 +17,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.
 // convert dimensions to consts
 raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_dTimeMultiplier(1.0), m_dSpeed(1.0)
 {
-	m_pLightCurrentHit = 0;
+	m_pLightDetected = 0;
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	// switch->transform->geode
@@ -42,9 +43,25 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
-	setTimeMultiplier(m_dTimeMultiplier * m_dSpeed);
-	printf("Time multiplier: %f\n", getTimeMultiplier());
+	// Controllable global speed * car's speed in reaction to light colours
+	double dTotalMultiplier = m_dTimeMultiplier * m_dSpeed;
+	double dSimulationTime = _latestTime - _firstTime; // latest frame
+	// Adjusting the multiplier will 
+	setTimeOffset(calculateTimeOffset(dSimulationTime, _timeOffset, _timeMultiplier, dTotalMultiplier));
+	setTimeMultiplier(dTotalMultiplier);
 	AnimationPathCallback::operator()(node, nv);
+}
+
+/* Why does this not already exist??
+ * ST = Simulation Time (latest - first), OC = Original Offset, OM = Original multiplier,
+ * NO = New Offeset, NM = New Multiplier
+ * (ST-OO)*OM=(ST-NO)*NM
+ * ((ST-OO)*OM)/NM = ST-NO
+ * NO = ST - (((ST-OO)*OM)/NM))
+ */
+double raaAnimatedComponent::calculateTimeOffset(double dSimulationTime, double dOriginalOffset, double dOriginalMultiplier, double dTotalMultiplier)
+{
+	return dSimulationTime - (dSimulationTime - dOriginalOffset) * dOriginalMultiplier / dTotalMultiplier;
 }
 
 void raaAnimatedComponent::setSpeed(double dSpeed)
@@ -122,22 +139,25 @@ osg::MatrixTransform* raaAnimatedComponent::root()
 
 void raaAnimatedComponent::handleVehicleReactionToLight(bool bIsGlobalPause)
 {
-	if (!m_pLightCurrentHit) return;
-	switch (m_pLightCurrentHit->m_eTrafficLightState)
-	{
-	case raaTrafficLightUnit::rpcTrafficLightState::STOP:
+	if (!m_pLightDetected) return;
+	if (m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::STOP) {
 		setPause(true);
-		break;
+		return;
+	}
+
+	switch (m_pLightDetected->m_eTrafficLightState)
+	{
 	case raaTrafficLightUnit::rpcTrafficLightState::SLOW:
-		setSpeed(20.0f);
-		setPause(bIsGlobalPause);
+		setSpeed(4.0);
 		break;
 	case raaTrafficLightUnit::rpcTrafficLightState::READY:
-		setSpeed(0.1f);
-		setPause(bIsGlobalPause);
+		setSpeed(0.5);
+		break;
+	case raaTrafficLightUnit::rpcTrafficLightState::GO:
+		setSpeed(1.0);
 		break;
 	default:
-		setPause(bIsGlobalPause);
 		break;
 	}
+	setPause(bIsGlobalPause);
 }

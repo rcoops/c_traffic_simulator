@@ -19,7 +19,7 @@ public:
 	virtual ~raaAnimatedComponent();
 
 	rpcDetectionBox* m_pDetectionBox;
-	raaTrafficLightUnit *m_pLightCurrentHit;
+	raaTrafficLightUnit *m_pLightDetected;
 
 	osg::MatrixTransform* root();
 	osg::Vec3f getDetectionPoint(osg::MatrixTransform* pRoot);
@@ -30,16 +30,19 @@ public:
 	void setManualMultiplier(double dTimeMultiplier);
 
 protected:
-	osg::MatrixTransform* m_pRoot;
 	static const osg::Vec3f csm_vfBack;
-	void initDetectionPoint();
-	osg::Geode* initGeode();
 	static const osg::Vec3f csm_vfDetector_Position;
 
+	osg::MatrixTransform* m_pRoot;
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
 	double m_dTimeMultiplier;
 	double m_dSpeed;
+
+	void initDetectionPoint();
+	osg::Geode* initGeode();
+	double calculateTimeOffset(double dAnimationTime, double dOriginalOffset, double dOriginalMultiplier,
+		double dTotalMultiplier);
 
 	void setDetectionBoxVisibility(const bool bIsVisible);
 };
