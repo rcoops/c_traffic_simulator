@@ -21,6 +21,7 @@ public:
 	void setAnimationPath(osg::AnimationPath *pAP);
 
 	void addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint); // manually add points
+	void addControlPointToPath(float fAnimationTime, osg::Vec3f &avfGlobalTranlation, osg::Quat &aqGlobalRotation, unsigned int uiCurrentTile, unsigned int uiCurrentPoint);
 
 protected:
 	osg::AnimationPath *m_pAP;

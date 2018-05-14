@@ -5,6 +5,7 @@
 #include "raaTile.h"
 #include <osgDB/ReadFile>
 #include "raaAnimationPathBuilder.h"
+#include "rpcContextAwareAnimationPath.h"
 
 /*
  * PLAN FOR DYNAMIC PATHS
@@ -105,6 +106,19 @@ void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsign
 		m_fAnimationTime += fDistance / csm_fFrameRate;
 	}
 	m_vfPreviousGlobalTranslation = vfGlobalTranslation;
+	addControlPointToPath(m_fAnimationTime, vfGlobalTranslation, qGlobalRotation, uiCurrentTile, uiCurrentPoint);
+}
 
-	m_pAP->insert(m_fAnimationTime, osg::AnimationPath::ControlPoint(vfGlobalTranslation, qGlobalRotation));
+void raaAnimationPathBuilder::addControlPointToPath(float fAnimationTime, osg::Vec3f &avfGlobalTranlation, osg::Quat &aqGlobalRotation,
+	unsigned int uiCurrentTile, unsigned int uiCurrentPoint)
+{
+	rpcContextAwareAnimationPath* pPath = dynamic_cast<rpcContextAwareAnimationPath*>(m_pAP);
+	if (pPath)
+	{
+		pPath->insertPoint(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation), uiCurrentTile, uiCurrentPoint);
+	}
+	else
+	{
+		m_pAP->insert(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation));
+	}
 }

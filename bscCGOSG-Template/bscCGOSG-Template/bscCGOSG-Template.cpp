@@ -32,6 +32,7 @@
 #include "raaJunctionController.h"
 #include "raaInputController.h"
 #include "rpcPathSelector.h"
+#include "rpcContextAwareAnimationPath.h"
 
 //#include <osgDB/ReadFile>
 
@@ -44,7 +45,7 @@ osg::Vec3f g_vPastPos;
 
 void addAnimatedComponent(const std::string sAnimPath)
 {
-	osg::AnimationPath *pAP = new osg::AnimationPath();
+	osg::AnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
 
 	/* Example of manually adding control points - use instead of file loading if you wish
