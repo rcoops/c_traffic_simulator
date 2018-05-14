@@ -16,17 +16,16 @@
 #include "rpcPathSelector.h"
 #include "rpcCarVeryon.h"
 #include "rpcCarDelta.h"
-#include "raaAnimationPathBuilder.h"
 
 extern osg::Group *g_pRoot;
 
 const osg::Vec3f raaAnimatedComponent::csm_vfLightDetectorPosition = osg::Vec3f(0.0f, 140.0f, 20.0f);
-const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3f(80.0f, 0.0f, 20.0f);
+const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3f(120.0f, 0.0f, 20.0f);
 
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
-raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex), m_bPaused(false)
+raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_fPrePauseSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex), m_bPaused(false)
 {
 	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
@@ -91,8 +90,14 @@ void raaAnimatedComponent::checkForNewPath()
 	}
 }
 
-void raaAnimatedComponent::setPause(bool bPause)
+void raaAnimatedComponent::setPause(const bool bPause)
 {
+	if (bPause)
+	{
+		m_fPrePauseSpeed = m_fSpeed;
+		setSpeed(0.00000001f);
+	}
+	else setSpeed(m_fPrePauseSpeed);
 	//if (bPause && !m_bPaused) {
 	//	double animationTime = getAnimationTime();
 	//	m_dAnimationTimeBeforePause = getAnimationTime();
@@ -105,7 +110,7 @@ void raaAnimatedComponent::setPause(bool bPause)
 	//	setTimeOffset(getTimeOffset() + getAnimationTime() - m_dAnimationTimeBeforePause);
 	//	m_bPaused = false;
 	//}
-	AnimationPathCallback::setPause(bPause);
+	//AnimationPathCallback::setPause(bPause);
 }
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
@@ -234,41 +239,53 @@ void raaAnimatedComponent::reactToLightInSights()
 		break;
 	}
 	// Haven't taken a red action so just check it here if it's red, pause, if not take global
-	bool isPause = m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause;
-	if (isPause != m_bPaused)
-	{
-		if (!m_bPaused)
-		{
-			double time = getAnimationTime();
-			double offset = getTimeOffset();
-			double before = m_dAnimationTimeBeforePause;
-			m_dAnimationTimeBeforePause = getAnimationTime();
-
-			printf("Unpause- time: %f, offset: %f, before: %f\n", time, offset, before);
-		}
-		else
-		{
-			double time = getAnimationTime();
-			double offset = getTimeOffset();
-			double before = m_dAnimationTimeBeforePause;
-			setTimeOffset(offset - (time - m_dAnimationTimeBeforePause));
-			printf("Unpause- time: %f, offset: %f, before: %f, new offset: %f\n", time, offset, before, getTimeOffset());
-		}
-		double time = getAnimationTime();
-	}
-	m_bPaused = isPause;
-	setPause(isPause);
+	setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
+//	bool isPause = m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause;
+//	if (isPause != m_bPaused)
+//	{
+//		if (!m_bPaused)
+//		{
+//			double time = getAnimationTime();
+//			double offset = getTimeOffset();
+//			double before = m_dAnimationTimeBeforePause;
+//			m_dAnimationTimeBeforePause = getAnimationTime();
+//
+//			printf("PASUE - time: %f, offset: %f, before: %f\n", time, offset, before);
+//		}
+//		else
+//		{
+//			double time = getAnimationTime();
+//			double offset = getTimeOffset();
+//			double before = m_dAnimationTimeBeforePause;
+//			setTimeOffset(offset - (time - m_dAnimationTimeBeforePause));
+//			printf("UNPAUSE - time: %f, offset: %f, before: %f, new offset: %f\n", time, offset, before, getTimeOffset());
+//		}
+//		double time = getAnimationTime();
+//	}
+//	m_bPaused = isPause;
+//	setPause(isPause);
 }
 
 raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
 {
 	switch (eVehicleType)
 	{
-	case vehicleType::delta:
+	case delta:
 		return new rpcCarDelta(pAP);
 	default:
 		return new rpcCarVeryon(pAP);
 	}
+}
+
+raaAnimatedComponent* raaAnimatedComponent::buildRandomVehicle(rpcContextAwareAnimationPath *pAP)
+{
+	return vehicleFactory(getRandomType(), pAP);
+}
+
+raaAnimatedComponent::vehicleType raaAnimatedComponent::getRandomType()
+{
+	unsigned int uiRandom = rand() % numberOfTypes;
+	return static_cast<vehicleType>(uiRandom);
 }
 
 raaAnimatedComponent::~raaAnimatedComponent()

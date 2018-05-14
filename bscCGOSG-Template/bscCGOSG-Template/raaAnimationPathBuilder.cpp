@@ -13,7 +13,7 @@
  * DONE extend animated component to hold those vals and populate them when handed the (extended) AP
  * DONE add a setter for the same
  * DONE update path selector to return *single* path for given tile/point number (if multiple pick one randomly)
- * on callback, if current time >= path getLastTime() - alternatively query the roadset for the tile number and point number and animPointPosition (see addControlPoint)
+ * DONE on callback, if current time >= path getLastTime() - alternatively query the roadset for the tile number and point number and animPointPosition (see addControlPoint)
  *		interrogate path selector using stored tile number and point number for point
  *		add path to animated component
  *		go!

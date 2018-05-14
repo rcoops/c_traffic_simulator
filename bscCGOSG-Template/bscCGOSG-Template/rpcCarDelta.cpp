@@ -16,8 +16,8 @@ osg::Node* rpcCarDelta::makeBaseGeometry()
 {
 	m_pGeometry = osgDB::readNodeFile("../../Data/car-delta.OSGB");
 	m_pGeometry->ref();
-	raaPrinter printer;
-	printer.apply(*m_pGeometry);
+	//raaPrinter printer;
+	//printer.apply(*m_pGeometry);
 	osg::MatrixTransform *pMatrixTransform = new osg::MatrixTransform();
 	osg::Matrixf mT, mR;
 	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 0.0f));

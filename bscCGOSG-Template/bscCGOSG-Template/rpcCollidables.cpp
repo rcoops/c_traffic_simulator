@@ -43,10 +43,15 @@ void rpcCollidables::toggleDetectionVisibility()
 	performOnAllLights(new rpcTrafficLightDetectorVisibilityToggleFunctor());
 }
 
-void rpcCollidables::toggleLightState()
+void rpcCollidables::toggleLightStateManual()
 {
 	cycleManualState();
 	performOnAllLights(new rpcToggleLightState(m_eLightState));
+}
+
+void rpcCollidables::toggleLightStateAutomatic()
+{
+	performOnAllLights(new rpcRevertToAutomaticState());
 }
 
 void rpcCollidables::adjustVehicleSpeed(const bool bIsIncrease)
@@ -104,8 +109,13 @@ void rpcCollidables::cycleManualState()
 
 void rpcCollidables::createRandomAnimatedComponent()
 {
-	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createNewPath();
-	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::delta, pAP);
+	createAnimatedComponent(raaAnimatedComponent::getRandomType());
+}
+
+void rpcCollidables::createAnimatedComponent(raaAnimatedComponent::vehicleType eVehicleType)
+{
+	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createRandomPath();
+	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(eVehicleType, pAP);
 	g_pRoot->addChild(pAnim->root());
 
 	addVehicle(pAnim);

@@ -62,7 +62,7 @@ void rpcPathSelector::loadNewPoints(rpcContextAwareAnimationPath *pAP, float fSt
 	apBuilder.load("../../data/animationpaths/" + sPath + ".txt"); // loading the animation path from file
 }
 
-rpcContextAwareAnimationPath* rpcPathSelector::createNewPath()
+rpcContextAwareAnimationPath* rpcPathSelector::createRandomPath()
 {
 	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);

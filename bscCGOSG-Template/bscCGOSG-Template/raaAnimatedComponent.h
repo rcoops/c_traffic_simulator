@@ -16,8 +16,9 @@ typedef std::list<class raaAnimatedComponent*> rpcVehicles;
 class raaAnimatedComponent: public osg::AnimationPathCallback, public rpcDetectable
 {
 public:
+	// fudge to get number of types
 	enum vehicleType {
-		veryon, delta
+		veryon, delta, numberOfTypes
 	};
 	raaAnimatedComponent(rpcContextAwareAnimationPath* pAP);
 
@@ -28,7 +29,8 @@ public:
 
 	static void setManualMultiplier(float fTimeMultiplier);
 	static raaAnimatedComponent* vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP);
-
+	static raaAnimatedComponent* buildRandomVehicle(rpcContextAwareAnimationPath* pAP);
+	static vehicleType getRandomType();
 	osg::MatrixTransform* root() const;
 	void toggleDetectionBoxVisibility();
 	void reactToLightInSights();
@@ -38,7 +40,7 @@ public:
 	bool canSee(rpcDetectable* pDetectable, osg::Group* pRoot) const;
 	void setMultiplier();
 	void checkForNewPath();
-	void setPause(bool bPause);
+	void setPause(const bool bPause);
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	osg::Vec3f getDetectionPointRelativeTo(osg::Node* pRoot) override;
@@ -57,6 +59,7 @@ protected:
 	bool m_bDetectorBoxVisible;
 	bool m_bPaused;
 	float m_fSpeed;
+	float m_fPrePauseSpeed;
 	double m_dAnimationTimeBeforePause;
 	unsigned int m_uiLastTileInAnimation;
 	unsigned int m_uiLastAnimationPointInAnimation;

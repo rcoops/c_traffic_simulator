@@ -14,7 +14,7 @@ public:
 
 	std::pair<unsigned, unsigned> retrieveIndexes(std::string sPath) const;
 	void loadNewPoints(rpcContextAwareAnimationPath *pAP, float fStartingAnimationTime, unsigned int uiTile, unsigned int uiPoint);
-	rpcContextAwareAnimationPath* createNewPath();
+	rpcContextAwareAnimationPath* createRandomPath();
 	
 	virtual ~rpcPathSelector();
 

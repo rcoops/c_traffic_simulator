@@ -25,12 +25,15 @@ public:
 	static rpcCollidables* instance();
 
 	static void addVehicle(raaAnimatedComponent *pVehicle);
+	static void createRandomAnimatedComponent();
+	static void createAnimatedComponent(raaAnimatedComponent::vehicleType eVehicleType);
+
 	void addLight(raaTrafficLightUnit *pLight);
 	void toggleDetectionVisibility();
-	void toggleLightState();
+	void toggleLightStateManual();
+	void toggleLightStateAutomatic();
 	void adjustVehicleSpeed(const bool bIsIncrease);
 	void pauseVehicles();
-	void createRandomAnimatedComponent();
 
 	virtual ~rpcCollidables();
 	

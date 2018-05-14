@@ -27,7 +27,15 @@ bool raaInputController::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActi
 			return true;
 		case 't':
 		case 'T':
-			rpcCollidables::instance()->toggleLightState();
+			rpcCollidables::instance()->toggleLightStateManual();
+			return true;
+		case 'u':
+		case 'U':
+			rpcCollidables::instance()->toggleLightStateAutomatic();
+			return true;
+		case 'c':
+		case 'C':
+			rpcCollidables::instance()->createRandomAnimatedComponent();
 			return true;
 		case 'p':
 		case 'P':

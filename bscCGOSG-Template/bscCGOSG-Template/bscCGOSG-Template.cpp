@@ -98,6 +98,8 @@ int main(int argc, char** argv)
 
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
 	rpcCollidables::instance()->createRandomAnimatedComponent();
+	rpcCollidables::instance()->createRandomAnimatedComponent();
+	rpcCollidables::instance()->createRandomAnimatedComponent();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);
