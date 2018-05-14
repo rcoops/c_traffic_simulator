@@ -101,7 +101,6 @@ void raaAnimatedComponent::setPause(const bool bPause)
 	//if (bPause && !m_bPaused) {
 	//	double animationTime = getAnimationTime();
 	//	m_dAnimationTimeBeforePause = getAnimationTime();
-
 	//	m_bPaused = true;
 	//}
 	//else if (!bPause && m_bPaused) {
@@ -241,29 +240,7 @@ void raaAnimatedComponent::reactToLightInSights()
 	// Haven't taken a red action so just check it here if it's red, pause, if not take global
 	setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
 //	bool isPause = m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause;
-//	if (isPause != m_bPaused)
-//	{
-//		if (!m_bPaused)
-//		{
-//			double time = getAnimationTime();
-//			double offset = getTimeOffset();
-//			double before = m_dAnimationTimeBeforePause;
-//			m_dAnimationTimeBeforePause = getAnimationTime();
-//
-//			printf("PASUE - time: %f, offset: %f, before: %f\n", time, offset, before);
-//		}
-//		else
-//		{
-//			double time = getAnimationTime();
-//			double offset = getTimeOffset();
-//			double before = m_dAnimationTimeBeforePause;
-//			setTimeOffset(offset - (time - m_dAnimationTimeBeforePause));
-//			printf("UNPAUSE - time: %f, offset: %f, before: %f, new offset: %f\n", time, offset, before, getTimeOffset());
-//		}
-//		double time = getAnimationTime();
-//	}
-//	m_bPaused = isPause;
-//	setPause(isPause);
+
 }
 
 raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
