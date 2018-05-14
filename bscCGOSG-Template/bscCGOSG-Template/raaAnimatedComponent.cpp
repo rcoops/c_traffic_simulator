@@ -51,6 +51,7 @@ void raaAnimatedComponent::setFinalAnimationPathPoint(osg::AnimationPath *pAP)
 		std::pair<unsigned int, unsigned int> pPoints = pPath->getPoint();
 		m_uiLastTileInAnimation = pPoints.first;
 		m_uiLastAnimationPointInAnimation = pPoints.second;
+		setAnimationPath(pPath);
 	}
 }
 
@@ -74,7 +75,7 @@ void raaAnimatedComponent::setMultiplier()
 void raaAnimatedComponent::checkForNewPath()
 {
 	rpcContextAwareAnimationPath *pPath = dynamic_cast<rpcContextAwareAnimationPath*>(getAnimationPath());
-	if (pPath && pPath->isEndOfAnimation(_latestTime))
+	if (pPath && pPath->isEndOfAnimation(_latestTime - _firstTime))
 	{
 		osg::AnimationPath *pPath = rpcPathSelector::instance()->getNewAnimationPath(m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
 		setFinalAnimationPathPoint(pPath); 
