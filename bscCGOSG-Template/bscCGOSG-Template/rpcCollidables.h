@@ -30,6 +30,7 @@ public:
 	void toggleLightState();
 	void adjustVehicleSpeed(const bool bIsIncrease);
 	void pauseVehicles();
+	void createRandomAnimatedComponent();
 
 	virtual ~rpcCollidables();
 	

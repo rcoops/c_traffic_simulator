@@ -44,15 +44,6 @@ double g_dLastTime = 0.0;
 osg::Vec3f g_vPastPos;
 
 
-void createRandomAnimatedComponent()
-{
-	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createNewPath();
-	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::veryon, pAP);
-	g_pRoot->addChild(pAnim->root());
-
-	rpcCollidables::instance()->addVehicle(pAnim);
-}
-
 void addAnimatedComponent(const std::string sAnimPath)
 {
 	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
@@ -106,7 +97,7 @@ int main(int argc, char** argv)
 	*/
 
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
-	createRandomAnimatedComponent();
+	rpcCollidables::instance()->createRandomAnimatedComponent();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);

@@ -42,6 +42,8 @@ raaTrafficLightUnit::raaTrafficLightUnit(): m_bIsDetectionPointVisible(false)
 	raaFinder<osg::Geode> greenFinder("trafficLight::GreenLamp-GEODE", m_pRotation);
 	raaFinder<osg::Geode> amberFinder("trafficLight::AmberLamp-GEODE", m_pRotation);
 
+	//raaPrinter printer;
+	//printer.apply(*m_pTranslation);
 	m_pRed = redFinder.node();
 	m_pGreen = greenFinder.node();
 	m_pAmber = amberFinder.node();
@@ -115,8 +117,8 @@ void raaTrafficLightUnit::adjustLightColour() const
 void raaTrafficLightUnit::setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed) const
 {
 	m_pGreen->getOrCreateStateSet()->setAttributeAndModes(pGreen, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-	m_pRed->getOrCreateStateSet()->setAttributeAndModes(pAmber, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
-	m_pAmber->getOrCreateStateSet()->setAttributeAndModes(pRed, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+	m_pRed->getOrCreateStateSet()->setAttributeAndModes(pRed, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+	m_pAmber->getOrCreateStateSet()->setAttributeAndModes(pAmber, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 }
 
 void raaTrafficLightUnit::initAsset(const std::string sFile)

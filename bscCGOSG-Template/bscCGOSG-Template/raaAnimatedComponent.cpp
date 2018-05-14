@@ -15,6 +15,7 @@
 #include "rpcContextAwareAnimationPath.h"
 #include "rpcPathSelector.h"
 #include "rpcCarVeryon.h"
+#include "rpcCarDelta.h"
 #include "raaAnimationPathBuilder.h"
 
 extern osg::Group *g_pRoot;
@@ -263,6 +264,8 @@ raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleT
 {
 	switch (eVehicleType)
 	{
+	case vehicleType::delta:
+		return new rpcCarDelta(pAP);
 	default:
 		return new rpcCarVeryon(pAP);
 	}

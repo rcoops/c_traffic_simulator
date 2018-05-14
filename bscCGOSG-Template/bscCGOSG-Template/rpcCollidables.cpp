@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "rpcCollidables.h"
+#include "rpcPathSelector.h"
 
 raaVehicles rpcCollidables::sm_lVehicles;
 raaLights rpcCollidables::sm_lLights;
@@ -98,6 +99,16 @@ void rpcCollidables::cycleManualState()
 		break;
 	}
 	performOnAllLights(new rpcToggleLightState(m_eLightState));
+}
+
+
+void rpcCollidables::createRandomAnimatedComponent()
+{
+	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createNewPath();
+	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::delta, pAP);
+	g_pRoot->addChild(pAnim->root());
+
+	addVehicle(pAnim);
 }
 
 rpcCollidables::~rpcCollidables()

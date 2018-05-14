@@ -18,7 +18,7 @@
  *		add path to animated component
  *		go!
  */
-const float raaAnimationPathBuilder::csm_fFrameRate = 100.0f;
+const float raaAnimationPathBuilder::csm_fFrameRate = 200.0f;
 
 raaAnimationPathBuilder::raaAnimationPathBuilder(rpcContextAwareAnimationPath *pAP, osg::Node *pRoot, float fAnimationStartTime): m_pAP(pAP), m_pRoot(pRoot),
 	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(fAnimationStartTime), m_bIsBeginningOfAnimation(0)

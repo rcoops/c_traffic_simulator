@@ -17,7 +17,7 @@ class raaAnimatedComponent: public osg::AnimationPathCallback, public rpcDetecta
 {
 public:
 	enum vehicleType {
-		veryon
+		veryon, delta
 	};
 	raaAnimatedComponent(rpcContextAwareAnimationPath* pAP);
 
