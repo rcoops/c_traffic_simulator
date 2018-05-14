@@ -31,6 +31,8 @@ public:
 	void setSpeed(float fSpeed);
 	void setFinalAnimationPathPoint(osg::AnimationPath *pAP);
 	bool canSee(rpcDetectable* pDetectable, osg::Group* pRoot) const;
+	void setMultiplier();
+	void checkForNewPath();
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	osg::Vec3f getDetectionPointRelativeTo(osg::Node* pRoot) override;
@@ -53,8 +55,7 @@ protected:
 
 	static osg::Geode* makeBaseGeometry();
 	static osg::Geode* makeGeode();
-	static double calculateTimeOffset(double dAnimationTime, double dOriginalOffset, double dOriginalMultiplier,
-		double dTotalMultiplier);
+	double calculateTimeOffset(const double dTotalNewMultiplier) const;
 
 	void initDetectionPoint() const;
 	void setDetectionBoxVisibility(const bool bIsVisible) const;

@@ -18,6 +18,11 @@ std::pair<unsigned int, unsigned int> rpcContextAwareAnimationPath::getPoint()
 	return std::pair<unsigned int, unsigned int>(m_uiEndTileIndex, m_uiEndPointIndex);
 }
 
+bool rpcContextAwareAnimationPath::isEndOfAnimation(double dCurrentTime)
+{
+	return abs(getLastTime() - dCurrentTime) > 0.00001;
+}
+
 rpcContextAwareAnimationPath::~rpcContextAwareAnimationPath()
 {
 }

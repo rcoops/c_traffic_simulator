@@ -4,13 +4,15 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include <osg/Material>
+#include <valarray>
+#include <osg/PolygonMode>
+#include <osg/AnimationPath>
 
 #include "raaAnimatedComponent.h"
-#include <osg/PolygonMode>
 #include "raaTrafficLightUnit.h"
-#include <valarray>
 #include "raaJunctionController.h"
 #include "rpcContextAwareAnimationPath.h"
+#include "rpcPathSelector.h"
 
 extern osg::Group *g_pRoot;
 
@@ -48,20 +50,35 @@ void raaAnimatedComponent::setFinalAnimationPathPoint(osg::AnimationPath *pAP)
 	{
 		std::pair<unsigned int, unsigned int> pPoints = pPath->getPoint();
 		m_uiLastTileInAnimation = pPoints.first;
-		m_uiLastTileInAnimation = pPoints.second;
+		m_uiLastAnimationPointInAnimation = pPoints.second;
 	}
 }
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
-	// Controllable global speed * car's speed in reaction to light colours
-	const double dTotalMultiplier = sm_fTimeMultiplier * m_fSpeed;
-	const double dSimulationTime = _latestTime - _firstTime; // latest frame
-	// Adjusting the multiplier will 
-	setTimeOffset(calculateTimeOffset(dSimulationTime, _timeOffset, _timeMultiplier, dTotalMultiplier));
-	setTimeMultiplier(dTotalMultiplier);
+	checkForNewPath();
+	setMultiplier();
 	AnimationPathCallback::operator()(node, nv);
 	checkForVehicles();
+}
+
+void raaAnimatedComponent::setMultiplier()
+{
+	// Controllable global speed * car's speed in reaction to light colours
+	const double dTotalMultiplier = sm_fTimeMultiplier * m_fSpeed; // latest frame
+															 // Adjusting the multiplier will move the animation speed so need to get an offset
+	setTimeOffset(calculateTimeOffset(dTotalMultiplier));
+	setTimeMultiplier(dTotalMultiplier);
+}
+
+void raaAnimatedComponent::checkForNewPath()
+{
+	rpcContextAwareAnimationPath *pPath = dynamic_cast<rpcContextAwareAnimationPath*>(getAnimationPath());
+	if (pPath && pPath->isEndOfAnimation(_latestTime))
+	{
+		osg::AnimationPath *pPath = rpcPathSelector::instance()->getNewAnimationPath(m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
+		setAnimationPath(pPath);
+	}
 }
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
@@ -78,9 +95,10 @@ osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
  * ((ST-OO)*OM)/NM = ST-NO
  * NO = ST - (((ST-OO)*OM)/NM))
  */
-double raaAnimatedComponent::calculateTimeOffset(const double dSimulationTime, const double dOriginalOffset, const double dOriginalMultiplier, const double dTotalMultiplier)
+double raaAnimatedComponent::calculateTimeOffset(const double dTotalNewMultiplier) const
 {
-	return dSimulationTime - (dSimulationTime - dOriginalOffset) * dOriginalMultiplier / dTotalMultiplier;
+	const double dSimulationTime = _latestTime - _firstTime;
+	return dSimulationTime - (dSimulationTime - _timeOffset) * _timeMultiplier / dTotalNewMultiplier;
 }
 
 void raaAnimatedComponent::setSpeed(const float fSpeed)

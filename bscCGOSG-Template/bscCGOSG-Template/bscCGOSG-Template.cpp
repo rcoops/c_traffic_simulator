@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 	std::string sTrafficLightAsset = "../../Data/raaTrafficLight.OSGB";
 	std::string sRoadMap = "../../Data/roads3.txt";
 	std::string sRoadAsset = "../../Data/RoadSet.OSGB";
-	std::string sAnimPath = "../../Data/animPath1.txt";
+	std::string sAnimPath = "../../Data/animationpaths/6_1.txt";
 	std::string sAnimPath2 = "../../Data/animPath2.txt";
 	std::string sAnimPath3 = "../../Data/animPath3.txt";
 
@@ -105,11 +105,11 @@ int main(int argc, char** argv)
 
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
 
+	rpcPathSelector::instance()->buildAnimationPaths();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);
 //	addAnimatedComponent(sAnimPath3);
-	rpcPathSelector::instance()->buildAnimationPaths();
 	// setup stuff
 	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
 	pTraits->x = 20;

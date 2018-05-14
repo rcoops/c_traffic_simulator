@@ -13,7 +13,7 @@ public:
 
 	void buildAnimationPaths();
 	void addAnimationPath(std::string sPath);
-	std::list<osg::AnimationPath*> getOrCreateAnimationPaths(const unsigned int uiTile, const unsigned int uiPoint);
+	std::list<osg::AnimationPath*>* getOrCreateAnimationPaths(const unsigned int uiTile, const unsigned int uiPoint);
 	std::pair<unsigned, unsigned> retrieveIndexes(std::string sPath) const;
 	osg::AnimationPath* getNewAnimationPath(unsigned int uiTile, unsigned int uiPoint);
 
@@ -21,7 +21,7 @@ public:
 
 protected:
 	rpcPathSelector();
-	rpcTileAnimationPointPaths m_mAnimationPaths;
+	rpcTileAnimationPointPaths* m_mAnimationPaths;
 
 	static rpcPathSelector* sm_pInstance;
 };

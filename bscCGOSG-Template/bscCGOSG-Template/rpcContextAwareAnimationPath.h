@@ -11,6 +11,7 @@ public:
 
 	void insertPoint(double time, const osg::AnimationPath::ControlPoint& controlPoint, unsigned int uiTile, unsigned int uiPoint);
 	std::pair<unsigned int, unsigned int> getPoint();
+	bool isEndOfAnimation(double dCurrentTime);
 
 	~rpcContextAwareAnimationPath();
 };
