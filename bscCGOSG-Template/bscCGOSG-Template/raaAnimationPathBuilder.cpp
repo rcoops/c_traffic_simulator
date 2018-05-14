@@ -6,7 +6,18 @@
 #include <osgDB/ReadFile>
 #include "raaAnimationPathBuilder.h"
 
-
+/*
+ * PLAN FOR DYNAMIC PATHS
+ * ----------------------
+ * extend animation path to hold a tile number and point number for the last point added
+ * extend animated component to hold those vals and populate them when handed the (extended) AP
+ * add a setter for the same
+ * update path selector to return *single* path for given tile/point number (if multiple pick one randomly)
+ * on callback, if current time >= path getLastTime()
+ *		interrogate path selector using stored tile number and point number for point
+ *		add path to animated component
+ *		
+ */
 
 raaAnimationPathBuilder::raaAnimationPathBuilder(osg::AnimationPath *pAP, osg::Node *pRoot): m_pAP(pAP), m_pRoot(pRoot),
 	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(0.0f), m_bIsBeginningOfAnimation(0)
@@ -72,7 +83,6 @@ void raaAnimationPathBuilder::addControlPoints()
 		// get road set singleton, get tile, get animation point
 		addControlPoint(*uiiTile, *uiiPoint);
 	}
-
 }
 
 void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint)

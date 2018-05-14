@@ -59,6 +59,7 @@ osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
 }
 
 /* Why is this not a function of the callback??
+ * Animation Time = (latest time - first time) * timemultiplier, so we need to rejig the offset:
  * ST = Simulation Time (latest - first), OC = Original Offset, OM = Original multiplier,
  * NO = New Offeset, NM = New Multiplier
  * (ST-OO)*OM=(ST-NO)*NM
