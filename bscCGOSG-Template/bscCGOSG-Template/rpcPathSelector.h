@@ -15,6 +15,7 @@ public:
 	void addAnimationPath(std::string sPath);
 	std::list<osg::AnimationPath*> getOrCreateAnimationPaths(const unsigned int uiTile, const unsigned int uiPoint);
 	std::pair<unsigned, unsigned> retrieveIndexes(std::string sPath) const;
+	osg::AnimationPath* getNewAnimationPath(unsigned int uiTile, unsigned int uiPoint);
 
 	virtual ~rpcPathSelector();
 

@@ -68,4 +68,14 @@ std::pair<unsigned int, unsigned int> rpcPathSelector::retrieveIndexes(std::stri
 	return std::pair<unsigned int, unsigned int>(iTile, iPoint);
 }
 
+osg::AnimationPath* rpcPathSelector::getNewAnimationPath(unsigned int uiTile, unsigned int uiPoint)
+{
+	std::list<osg::AnimationPath*> lPaths = getOrCreateAnimationPaths(uiTile, uiPoint);
+	unsigned int count = lPaths.size();
+	unsigned int randomIndex = rand() % count;
+	std::list<osg::AnimationPath*>::iterator itPaths = lPaths.begin();
+	std::advance(itPaths, randomIndex);
+	return (*itPaths);
+}
+
 rpcPathSelector::~rpcPathSelector() {}
