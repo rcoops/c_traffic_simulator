@@ -21,6 +21,7 @@ rpcPathSelector* rpcPathSelector::instance()
 
 void rpcPathSelector::buildAnimationPaths()
 {
+	// This is mucky but querying for file names in a directory in windows = painful
 	std::string sPathNames[104] = {
 		"10_0_0", "10_0_1", "10_5_0", "10_5_1", "10_8_0", "10_8_1", "12_1", "12_2", "13_1", "13_2", "14_1", "15_0_0", "15_0_1", "15_5_0", "15_5_1", "15_8_0", "15_8_1",
 		"16_1", "16_2", "17_0_0", "17_0_1", "17_0_2", "17_11_0", "17_11_1", "17_11_2", "17_5_0", "17_5_1", "17_5_2", "17_8_0", "17_8_1", "17_8_2", "18_1", "18_2",
@@ -36,30 +37,34 @@ void rpcPathSelector::addAnimationPath(const std::string sPath)
 {
 	osg::AnimationPath *pAP = new osg::AnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
-	std::pair<unsigned int, unsigned int> pIndexes = retrieveIndexes(sPath);
-	apBuilder.load("../../data/" + sPath + ".txt"); // loading the animation path from file
-	std::list<osg::AnimationPath*> lAnimationPathsForTileAndPoint = getOrCreateAnimationPaths(pIndexes.first, pIndexes.second);
-	lAnimationPathsForTileAndPoint.push_back(pAP);
+	const std::pair<unsigned int, unsigned int> pruiTileAndPointIndex = retrieveIndexes(sPath); // parse the file name for tile and point number
+	apBuilder.load("../../data/animationpaths/" + sPath + ".txt"); // loading the animation path from file
+	// Add the path on to the list retrieved or created at the indexes
+	getOrCreateAnimationPaths(pruiTileAndPointIndex.first, pruiTileAndPointIndex.second).push_back(pAP);
 }
 
+// Wont exist a lot of the time but as we're storing multiple paths in some points this is needed
 std::list<osg::AnimationPath*> rpcPathSelector::getOrCreateAnimationPaths(const unsigned uiTile, const unsigned uiPoint)
 {
+	// if there's no map on the tile, make one and get the reference
 	if (m_mAnimationPaths.find(uiTile) == m_mAnimationPaths.end()) m_mAnimationPaths.insert(make_pair(uiTile, new rpcAnimationPointPaths()));
 	rpcAnimationPointPaths *pointPaths = m_mAnimationPaths[uiTile];
+	// if there's no map in the point make one
 	if (pointPaths->find(uiPoint) == pointPaths->end()) pointPaths->insert(make_pair(uiPoint, std::list<class osg::AnimationPath*>()));
-	return (*pointPaths)[uiPoint];
+	return (*pointPaths)[uiPoint]; // return the reference to the (potentially newly created) list
 }
 
 std::pair<unsigned int, unsigned int> rpcPathSelector::retrieveIndexes(std::string sPath) const
 {
-	std::string delimiter = "_";
-	unsigned int firstTokenEndIndex = sPath.find(delimiter);
-	std::string sTile = sPath.substr(0, sPath.find(delimiter));
-	std::string sRemainder = sPath.substr(firstTokenEndIndex + 1);
-	std::string sPoint = sRemainder.substr(0, sRemainder.find(delimiter));
-	int iTile = stoi(sTile);
-	int iPoint = stoi(sPoint);
-	printf("%d, %d\n", iTile, iPoint);
+	std::string sDelimiter = "_"; // can't see a way round hardcoding this
+	unsigned int uiFirstTokenEndIndex = sPath.find(sDelimiter);
+	std::string sTile = sPath.substr(0, sPath.find(sDelimiter)); // Get our tile number as a string
+	std::string sPathRemainder = sPath.substr(uiFirstTokenEndIndex + 1);
+	std::string sPoint = sPathRemainder.substr(0, sPathRemainder.find(sDelimiter)); // Get our point number as a string
+	// convert to ints
+	unsigned int iTile = stoi(sTile);
+	unsigned int iPoint = stoi(sPoint);
+//	printf("%d, %d\n", iTile, iPoint);
 	return std::pair<unsigned int, unsigned int>(iTile, iPoint);
 }
 

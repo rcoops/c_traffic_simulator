@@ -13,11 +13,12 @@
  * extend animated component to hold those vals and populate them when handed the (extended) AP
  * add a setter for the same
  * update path selector to return *single* path for given tile/point number (if multiple pick one randomly)
- * on callback, if current time >= path getLastTime()
+ * on callback, if current time >= path getLastTime() - alternatively query the roadset for the tile number and point number and animPointPosition (see addControlPoint)
  *		interrogate path selector using stored tile number and point number for point
  *		add path to animated component
- *		
+ *		go!
  */
+const float raaAnimationPathBuilder::csm_fFrameRate = 60.0f;
 
 raaAnimationPathBuilder::raaAnimationPathBuilder(osg::AnimationPath *pAP, osg::Node *pRoot): m_pAP(pAP), m_pRoot(pRoot),
 	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(0.0f), m_bIsBeginningOfAnimation(0)
@@ -101,7 +102,7 @@ void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsign
 	if (!m_bIsBeginningOfAnimation)
 	{
 		float fDistance = (vfGlobalTranslation - m_vfPreviousGlobalTranslation).length();
-		m_fAnimationTime += fDistance / 60.0f;
+		m_fAnimationTime += fDistance / csm_fFrameRate;
 	}
 	m_vfPreviousGlobalTranslation = vfGlobalTranslation;
 

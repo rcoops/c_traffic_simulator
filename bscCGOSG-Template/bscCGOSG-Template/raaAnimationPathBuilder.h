@@ -34,5 +34,7 @@ protected:
 	float m_fAnimationTime;
 	bool m_bIsBeginningOfAnimation;
 
+	const static float csm_fFrameRate;
+
 };
 
