@@ -19,7 +19,6 @@ const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
-// convert dimensions to consts
 raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f)
 {
 	m_pLightDetected = nullptr;
@@ -55,10 +54,8 @@ void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
 {
-	if (pRoot) {
-		return csm_vfBack * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
-	}
-	return csm_vfBack; // can't really happen - this wont exit if tree root doesn't
+	if (pRoot) return csm_vfBack * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
+	return csm_vfBack; // can't really happen - this wont exist if tree root doesn't
 }
 
 /* Why is this not a function of the callback??
