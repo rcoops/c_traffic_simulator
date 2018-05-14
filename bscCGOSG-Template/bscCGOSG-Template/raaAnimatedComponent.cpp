@@ -10,6 +10,7 @@
 #include "raaTrafficLightUnit.h"
 #include <valarray>
 #include "raaJunctionController.h"
+#include "rpcContextAwareAnimationPath.h"
 
 extern osg::Group *g_pRoot;
 
@@ -36,8 +37,19 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 	m_psDetectorSwitch->addChild(m_pLightDetector->root());
 	m_psDetectorSwitch->addChild(m_pVehicleDetector->root());
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
-
+	setFinalAnimationPathPoint(pAP);
 	m_pRoot->setUpdateCallback(this);
+}
+
+void raaAnimatedComponent::setFinalAnimationPathPoint(osg::AnimationPath *pAP)
+{
+	rpcContextAwareAnimationPath *pPath = dynamic_cast<rpcContextAwareAnimationPath*>(pAP);
+	if (pPath)
+	{
+		std::pair<unsigned int, unsigned int> pPoints = pPath->getPoint();
+		m_uiLastTileInAnimation = pPoints.first;
+		m_uiLastTileInAnimation = pPoints.second;
+	}
 }
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)

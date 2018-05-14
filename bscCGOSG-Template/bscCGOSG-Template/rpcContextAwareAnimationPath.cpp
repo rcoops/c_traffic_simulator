@@ -13,6 +13,10 @@ void rpcContextAwareAnimationPath::insertPoint(double time, const osg::Animation
 	m_uiEndTileIndex = uiTile;
 	m_uiEndPointIndex = uiPoint;
 }
+std::pair<unsigned int, unsigned int> rpcContextAwareAnimationPath::getPoint()
+{
+	return std::pair<unsigned int, unsigned int>(m_uiEndTileIndex, m_uiEndPointIndex);
+}
 
 rpcContextAwareAnimationPath::~rpcContextAwareAnimationPath()
 {

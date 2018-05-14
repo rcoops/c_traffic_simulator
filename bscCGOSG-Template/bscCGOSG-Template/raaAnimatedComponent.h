@@ -29,6 +29,7 @@ public:
 	void toggleDetectionBoxVisibility();
 	void reactToLightInSights();
 	void setSpeed(float fSpeed);
+	void setFinalAnimationPathPoint(osg::AnimationPath *pAP);
 	bool canSee(rpcDetectable* pDetectable, osg::Group* pRoot) const;
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
@@ -41,11 +42,14 @@ protected:
 	static const osg::Vec3f csm_vfLightDetectorPosition;
 	static const osg::Vec3f csm_vfVehicleDetectorPosition;
 
+	static float sm_fTimeMultiplier;
+
 	osg::MatrixTransform* m_pRoot;
 	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
-	static float sm_fTimeMultiplier;
 	float m_fSpeed;
+	unsigned int m_uiLastTileInAnimation;
+	unsigned int m_uiLastAnimationPointInAnimation;
 
 	static osg::Geode* makeBaseGeometry();
 	static osg::Geode* makeGeode();

@@ -10,6 +10,7 @@ public:
 	unsigned int m_uiEndPointIndex;
 
 	void insertPoint(double time, const osg::AnimationPath::ControlPoint& controlPoint, unsigned int uiTile, unsigned int uiPoint);
+	std::pair<unsigned int, unsigned int> getPoint();
 
 	~rpcContextAwareAnimationPath();
 };
