@@ -13,6 +13,7 @@
 #include "raaJunctionController.h"
 #include "rpcContextAwareAnimationPath.h"
 #include "rpcPathSelector.h"
+#include "raaAnimationPathBuilder.h"
 
 extern osg::Group *g_pRoot;
 
@@ -22,7 +23,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
-raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f)
+raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex)
 {
 	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
@@ -39,25 +40,34 @@ raaAnimatedComponent::raaAnimatedComponent(osg::AnimationPath *pAP): AnimationPa
 	m_psDetectorSwitch->addChild(m_pLightDetector->root());
 	m_psDetectorSwitch->addChild(m_pVehicleDetector->root());
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
-	setFinalAnimationPathPoint(pAP);
+	loadNewPath();
 	m_pRoot->setUpdateCallback(this);
 }
 
-void raaAnimatedComponent::setFinalAnimationPathPoint(osg::AnimationPath *pAP)
+void raaAnimatedComponent::loadNewPath()
 {
-	rpcContextAwareAnimationPath *pPath = dynamic_cast<rpcContextAwareAnimationPath*>(pAP);
-	if (pPath)
+	rpcPathSelector::instance()->loadNewPoints(m_pAP, getAnimationTime(), m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
+	double d = getAnimationTime();
+	setFinalAnimationPathPoint();
+}
+
+void raaAnimatedComponent::setFinalAnimationPathPoint()
+{
+	if (m_pAP)
 	{
-		std::pair<unsigned int, unsigned int> pPoints = pPath->getPoint();
+		std::pair<unsigned int, unsigned int> pPoints = m_pAP->getPoint();
+		
 		m_uiLastTileInAnimation = pPoints.first;
 		m_uiLastAnimationPointInAnimation = pPoints.second;
-		setAnimationPath(pPath);
 	}
 }
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	checkForNewPath();
+	double last = m_pAP->getLastTime();
+	double first = m_pAP->getFirstTime();
+	double l = _latestTime;
 	setMultiplier();
 	AnimationPathCallback::operator()(node, nv);
 	checkForVehicles();
@@ -74,11 +84,9 @@ void raaAnimatedComponent::setMultiplier()
 
 void raaAnimatedComponent::checkForNewPath()
 {
-	rpcContextAwareAnimationPath *pPath = dynamic_cast<rpcContextAwareAnimationPath*>(getAnimationPath());
-	if (pPath && pPath->isEndOfAnimation(_latestTime - _firstTime))
+	if (m_pAP && m_pAP->isEndOfAnimation(getAnimationTime()))
 	{
-		osg::AnimationPath *pPath = rpcPathSelector::instance()->getNewAnimationPath(m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
-		setFinalAnimationPathPoint(pPath); 
+		loadNewPath();
 	}
 }
 

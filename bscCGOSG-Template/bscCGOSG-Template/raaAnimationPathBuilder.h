@@ -3,6 +3,7 @@
 //#include <windows.h>
 #include <osg/AnimationPath>
 #include <list>
+#include "rpcContextAwareAnimationPath.h"
 
 typedef std::list<unsigned int> uIntList;
 
@@ -13,18 +14,18 @@ typedef std::list<unsigned int> uIntList;
 class raaAnimationPathBuilder
 {
 public:
-	raaAnimationPathBuilder(osg::AnimationPath *pAP, osg::Node* pRoot);
+	raaAnimationPathBuilder(rpcContextAwareAnimationPath *pAP, osg::Node* pRoot, float fAnimationStartTime = 0.0f);
 	virtual ~raaAnimationPathBuilder();
 
 	void load(std::string sFile);  // read animation file and populate 
 	void save(std::string sFile); // save the animation points
-	void setAnimationPath(osg::AnimationPath *pAP);
 
 	void addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint); // manually add points
 	void addControlPointToPath(float fAnimationTime, osg::Vec3f &avfGlobalTranlation, osg::Quat &aqGlobalRotation, unsigned int uiCurrentTile, unsigned int uiCurrentPoint);
+	float calculateTimeChange(float fOriginalTime, osg::Vec3f vfCurrentGlobalTranslation, osg::Vec3f vfGlobalPerviousTranslation);
 
 protected:
-	osg::AnimationPath *m_pAP;
+	rpcContextAwareAnimationPath *m_pAP;
 	osg::Node *m_pRoot;
 	uIntList m_lTiles;
 	uIntList m_lPoints;

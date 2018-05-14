@@ -5,7 +5,6 @@
 #include "raaTile.h"
 #include <osgDB/ReadFile>
 #include "raaAnimationPathBuilder.h"
-#include "rpcContextAwareAnimationPath.h"
 
 /*
  * PLAN FOR DYNAMIC PATHS
@@ -21,8 +20,8 @@
  */
 const float raaAnimationPathBuilder::csm_fFrameRate = 60.0f;
 
-raaAnimationPathBuilder::raaAnimationPathBuilder(osg::AnimationPath *pAP, osg::Node *pRoot): m_pAP(pAP), m_pRoot(pRoot),
-	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(0.0f), m_bIsBeginningOfAnimation(0)
+raaAnimationPathBuilder::raaAnimationPathBuilder(rpcContextAwareAnimationPath *pAP, osg::Node *pRoot, float fAnimationStartTime): m_pAP(pAP), m_pRoot(pRoot),
+	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(fAnimationStartTime), m_bIsBeginningOfAnimation(0)
 {
 }
 
@@ -74,7 +73,6 @@ unsigned int raaAnimationPathBuilder::popReference(uIntList &lReferences)
 
 void raaAnimationPathBuilder::addControlPoints()
 {
-	m_fAnimationTime = 0.0;
 	unsigned int uiCurrentTile, uiCurrentPoint;
 
 	uIntList::iterator uiiTile = m_lTiles.begin();
@@ -102,23 +100,23 @@ void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsign
 
 	if (!m_bIsBeginningOfAnimation)
 	{
-		float fDistance = (vfGlobalTranslation - m_vfPreviousGlobalTranslation).length();
-		m_fAnimationTime += fDistance / csm_fFrameRate;
+		//float fDistance = (vfGlobalTranslation - m_vfPreviousGlobalTranslation).length();
+		//m_fAnimationTime += fDistance / csm_fFrameRate;
+		m_fAnimationTime = calculateTimeChange(m_fAnimationTime, vfGlobalTranslation, m_vfPreviousGlobalTranslation);
 	}
 	m_vfPreviousGlobalTranslation = vfGlobalTranslation;
 	addControlPointToPath(m_fAnimationTime, vfGlobalTranslation, qGlobalRotation, uiCurrentTile, uiCurrentPoint);
 }
 
+float raaAnimationPathBuilder::calculateTimeChange(float fOriginalTime, osg::Vec3f vfCurrentGlobalTranslation, osg::Vec3f vfGlobalPerviousTranslation)
+{
+	float fDistance = (vfCurrentGlobalTranslation - m_vfPreviousGlobalTranslation).length();
+	fOriginalTime += fDistance / csm_fFrameRate;
+	return fOriginalTime;
+}
+
 void raaAnimationPathBuilder::addControlPointToPath(float fAnimationTime, osg::Vec3f &avfGlobalTranlation, osg::Quat &aqGlobalRotation,
 	unsigned int uiCurrentTile, unsigned int uiCurrentPoint)
 {
-	rpcContextAwareAnimationPath* pPath = dynamic_cast<rpcContextAwareAnimationPath*>(m_pAP);
-	if (pPath)
-	{
-		pPath->insertPoint(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation), uiCurrentTile, uiCurrentPoint);
-	}
-	else
-	{
-		m_pAP->insert(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation));
-	}
+	m_pAP->insertPoint(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation), uiCurrentTile, uiCurrentPoint);
 }

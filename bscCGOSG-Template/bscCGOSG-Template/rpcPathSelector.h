@@ -1,6 +1,7 @@
 #pragma once
 #include <osg/AnimationPath>
 #include <list>
+#include "rpcContextAwareAnimationPath.h"
 
 typedef std::map<unsigned int, std::list<class osg::AnimationPath*>> rpcAnimationPointPaths;
 typedef std::map<unsigned int, rpcAnimationPointPaths*> rpcTileAnimationPointPaths;
@@ -11,17 +12,15 @@ public:
 
 	static rpcPathSelector* instance();
 
-	void buildAnimationPaths();
-	void addAnimationPath(std::string sPath);
-	std::list<osg::AnimationPath*>* getOrCreateAnimationPaths(const unsigned int uiTile, const unsigned int uiPoint);
 	std::pair<unsigned, unsigned> retrieveIndexes(std::string sPath) const;
-	osg::AnimationPath* getNewAnimationPath(unsigned int uiTile, unsigned int uiPoint);
+	void loadNewPoints(rpcContextAwareAnimationPath *pAP, float fStartingAnimationTime, unsigned int uiTile, unsigned int uiPoint);
+	void getPathName(std::string &psPath, unsigned int uiTile, unsigned int uiPoint);
 
 	virtual ~rpcPathSelector();
 
 protected:
 	rpcPathSelector();
 	rpcTileAnimationPointPaths* m_mAnimationPaths;
-
+	static std::string sm_sPathNames[104];
 	static rpcPathSelector* sm_pInstance;
 };

@@ -45,16 +45,8 @@ osg::Vec3f g_vPastPos;
 
 void addAnimatedComponent(const std::string sAnimPath)
 {
-	osg::AnimationPath *pAP = new rpcContextAwareAnimationPath();
+	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
-
-	/* Example of manually adding control points - use instead of file loading if you wish
-	apBuilder.addControlPoint(1, 2);
-	apBuilder.addControlPoint(1, 0);
-	apBuilder.addControlPoint(2, 2);
-	....
-	apBuilder.addControlPoint(0, 10);
-	*/
 
 	//	apBuilder.save("../../data/animPointsOut.txt");
 	apBuilder.load(sAnimPath); // loading the animation path from file
@@ -105,7 +97,6 @@ int main(int argc, char** argv)
 
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
 
-	rpcPathSelector::instance()->buildAnimationPaths();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);

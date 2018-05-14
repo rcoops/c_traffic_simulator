@@ -20,9 +20,8 @@ std::pair<unsigned int, unsigned int> rpcContextAwareAnimationPath::getPoint()
 
 bool rpcContextAwareAnimationPath::isEndOfAnimation(double dCurrentTime)
 {
-	double dLastTime = getLastTime();
-	double dDifference = abs(getLastTime() - dCurrentTime);
-	bool bIsOver = dCurrentTime >= getLastTime();//dDifference < 0.00001;
+	double lastTime = getLastTime();
+	bool bIsOver = dCurrentTime >= getLastTime();
 	return bIsOver;
 }
 
