@@ -165,6 +165,7 @@
     <ClInclude Include="raaTileTJunction.h" />
     <ClInclude Include="raaTileXJunction.h" />
     <ClInclude Include="raaTrafficLightUnit.h" />
+    <ClInclude Include="rpcContextAwareAnimationPath.h" />
     <ClInclude Include="rpcDetectable.h" />
     <ClInclude Include="rpcPathSelector.h" />
     <ClInclude Include="rpcTrafficLightFunctor.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="raaTileTJunction.cpp" />
     <ClCompile Include="raaTileXJunction.cpp" />
     <ClCompile Include="raaTrafficLightUnit.cpp" />
+    <ClCompile Include="rpcContextAwareAnimationPath.cpp" />
     <ClCompile Include="rpcDetectionBox.cpp" />
     <ClCompile Include="rpcCollidables.cpp" />
     <ClCompile Include="rpcPathSelector.cpp" />

@@ -12,7 +12,6 @@
 
 #include "raaAnimationPoints.h"
 
-
 osg::Geode *raaAnimationPoints::m_pAnimGeode=0;
 
 raaAnimationPoints::raaAnimationPoints()

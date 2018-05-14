@@ -84,6 +84,9 @@
     <ClInclude Include="rpcPathSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rpcContextAwareAnimationPath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -141,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rpcPathSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rpcContextAwareAnimationPath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -118,12 +118,14 @@ int main(int argc, char** argv)
 	pTraits->windowDecoration = true;
 	pTraits->doubleBuffer = true;
 	pTraits->sharedContext = 0;
-
+	//osgGA::OrbitManipulator *pOrbit = new osgGA::OrbitManipulator();
+	//pOrbit->setElevation(100.0);
 	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
 	osgGA::KeySwitchMatrixManipulator* pKeyswitchManipulator = new osgGA::KeySwitchMatrixManipulator();
 	pKeyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
 	pKeyswitchManipulator->addMatrixManipulator('2', "Flight", new osgGA::FlightManipulator());
 	pKeyswitchManipulator->addMatrixManipulator('3', "Drive", new osgGA::DriveManipulator());
+	//pKeyswitchManipulator->addMatrixManipulator('4', "Orbit", pOrbit);
 	viewer.setCameraManipulator(pKeyswitchManipulator);
 	osg::Camera *pCamera = viewer.getCamera();
 	pCamera->setGraphicsContext(pGC);
