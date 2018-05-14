@@ -5,6 +5,7 @@
 
 #include <osg/Group>
 #include "raaAnimationPathBuilder.h"
+#include "rpcContextAwareAnimationPath.h"
 
 extern osg::Group *g_pRoot;
 
@@ -39,7 +40,7 @@ void rpcPathSelector::buildAnimationPaths()
 
 void rpcPathSelector::addAnimationPath(const std::string sPath)
 {
-	osg::AnimationPath *pAP = new osg::AnimationPath();
+	osg::AnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
 	const std::pair<unsigned int, unsigned int> pruiTileAndPointIndex = retrieveIndexes(sPath); // parse the file name for tile and point number
 	apBuilder.load("../../data/animationpaths/" + sPath + ".txt"); // loading the animation path from file
@@ -78,7 +79,7 @@ std::pair<unsigned int, unsigned int> rpcPathSelector::retrieveIndexes(std::stri
 
 osg::AnimationPath* rpcPathSelector::getNewAnimationPath(unsigned int uiTile, unsigned int uiPoint)
 {
-	std::list<osg::AnimationPath*> *plPaths = getOrCreateAnimationPaths(6, 2);
+	std::list<osg::AnimationPath*> *plPaths = getOrCreateAnimationPaths(uiTile, uiPoint);
 	unsigned int count = plPaths->size();
 	unsigned int randomIndex = rand() % count;
 	std::list<osg::AnimationPath*>::iterator itPaths = plPaths->begin();

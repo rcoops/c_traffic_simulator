@@ -77,7 +77,7 @@ void raaAnimatedComponent::checkForNewPath()
 	if (pPath && pPath->isEndOfAnimation(_latestTime))
 	{
 		osg::AnimationPath *pPath = rpcPathSelector::instance()->getNewAnimationPath(m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
-		setAnimationPath(pPath);
+		setFinalAnimationPathPoint(pPath); 
 	}
 }
 
