@@ -7,6 +7,7 @@
 #include <valarray>
 #include <osg/PolygonMode>
 #include <osg/AnimationPath>
+#include <osgDB/readFile>
 
 #include "raaAnimatedComponent.h"
 #include "raaTrafficLightUnit.h"
@@ -23,7 +24,7 @@ const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3
 const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
-raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex)
+raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex), m_bPaused(false)
 {
 	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
@@ -88,6 +89,23 @@ void raaAnimatedComponent::checkForNewPath()
 	{
 		loadNewPath();
 	}
+}
+
+void raaAnimatedComponent::setPause(bool bPause)
+{
+	//if (bPause && !m_bPaused) {
+	//	double animationTime = getAnimationTime();
+	//	m_dAnimationTimeBeforePause = getAnimationTime();
+
+	//	m_bPaused = true;
+	//}
+	//else if (!bPause && m_bPaused) {
+	//	double animationTime = getAnimationTime();
+	//	double offset = getTimeOffset();
+	//	setTimeOffset(getTimeOffset() + getAnimationTime() - m_dAnimationTimeBeforePause);
+	//	m_bPaused = false;
+	//}
+	AnimationPathCallback::setPause(bPause);
 }
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
@@ -157,14 +175,32 @@ osg::Geode* raaAnimatedComponent::makeGeode()
 	return pGeode;
 }
 
-osg::Geode* raaAnimatedComponent::makeBaseGeometry()
+osg::Node* raaAnimatedComponent::makeBaseGeometry()
 {
 	osg::Geode* pGeode = makeGeode();
-	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(0.0f, 0.0f, 20.0f), 80.0f, 60.0f, 40.0f));
-	pSD->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
+	osg::Node *pNode = osgDB::readNodeFile("../../Data/car-veyron.OSGB");
+	osg::MatrixTransform *pTranslate = new osg::MatrixTransform();
+	osg::MatrixTransform *pRotate = new osg::MatrixTransform();
+	osg::MatrixTransform *pScale = new osg::MatrixTransform();
+	osg::Matrixf matrix = osg::Matrixf();
+	osg::Matrixf mT, mR, mS;
+	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 30.0f));
+	mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
+	mS.makeScale(osg::Vec3f(10.0f, 10.0f, 10.0f));
+	pTranslate->setMatrix(mT);
+	pTranslate->addChild(pRotate);
+	pRotate->setMatrix(mR);
+	pRotate->addChild(pScale);
+	pScale->setMatrix(mS);
+	pScale->addChild(pNode);
+	//osg::MatrixTransform *matT = new osg::MatrixTransform();
+	//matT->setMatrix(osg::Matrix::scale(osg::Vec3f(50.0f, 50.0f, 50.0f)));
+	//osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(0.0f, 0.0f, 20.0f), 80.0f, 60.0f, 40.0f));
+	//pSD->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
 
-	pGeode->addDrawable(pSD);
-	return pGeode;
+	//pGeode->addDrawable(pSD);
+	//pGeode->addChild(pNode);
+	return pTranslate;
 }
 
 void raaAnimatedComponent::toggleDetectionBoxVisibility()
@@ -226,7 +262,30 @@ void raaAnimatedComponent::reactToLightInSights()
 		break;
 	}
 	// Haven't taken a red action so just check it here if it's red, pause, if not take global
-	setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
+	bool isPause = m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause;
+	if (isPause != m_bPaused)
+	{
+		if (!m_bPaused)
+		{
+			double time = getAnimationTime();
+			double offset = getTimeOffset();
+			double before = m_dAnimationTimeBeforePause;
+			m_dAnimationTimeBeforePause = getAnimationTime();
+
+			printf("Unpause- time: %f, offset: %f, before: %f\n", time, offset, before);
+		}
+		else
+		{
+			double time = getAnimationTime();
+			double offset = getTimeOffset();
+			double before = m_dAnimationTimeBeforePause;
+			setTimeOffset(offset - (time - m_dAnimationTimeBeforePause));
+			printf("Unpause- time: %f, offset: %f, before: %f, new offset: %f\n", time, offset, before, getTimeOffset());
+		}
+		double time = getAnimationTime();
+	}
+	m_bPaused = isPause;
+	setPause(isPause);
 }
 
 raaAnimatedComponent::~raaAnimatedComponent()

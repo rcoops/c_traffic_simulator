@@ -9,6 +9,7 @@
 extern osg::Group *g_pRoot;
 
 rpcPathSelector* rpcPathSelector::sm_pInstance;
+
 std::string rpcPathSelector::sm_sPathNames[104] = {
 	"10_0_0", "10_0_1", "10_5_0", "10_5_1", "10_8_0", "10_8_1", "12_1", "12_2", "13_1", "13_2", "14_1", "15_0_0", "15_0_1", "15_5_0", "15_5_1", "15_8_0", "15_8_1",
 	"16_1", "16_2", "17_0_0", "17_0_1", "17_0_2", "17_11_0", "17_11_1", "17_11_2", "17_5_0", "17_5_1", "17_5_2", "17_8_0", "17_8_1", "17_8_2", "18_1", "18_2",
@@ -20,7 +21,6 @@ std::string rpcPathSelector::sm_sPathNames[104] = {
 
 rpcPathSelector::rpcPathSelector()
 {
-	m_mAnimationPaths = new rpcTileAnimationPointPaths();
 }
 
 rpcPathSelector* rpcPathSelector::instance()

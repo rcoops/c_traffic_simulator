@@ -34,6 +34,7 @@ public:
 	bool canSee(rpcDetectable* pDetectable, osg::Group* pRoot) const;
 	void setMultiplier();
 	void checkForNewPath();
+	void setPause(bool bPause);
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	osg::Vec3f getDetectionPointRelativeTo(osg::Node* pRoot) override;
@@ -48,14 +49,16 @@ protected:
 	static float sm_fTimeMultiplier;
 
 	osg::MatrixTransform* m_pRoot;
-	bool m_bDetectorBoxVisible;
 	osg::Switch* m_psDetectorSwitch;
+	bool m_bDetectorBoxVisible;
+	bool m_bPaused;
 	float m_fSpeed;
+	double m_dAnimationTimeBeforePause;
 	unsigned int m_uiLastTileInAnimation;
 	unsigned int m_uiLastAnimationPointInAnimation;
 	rpcContextAwareAnimationPath *m_pAP;
 
-	static osg::Geode* makeBaseGeometry();
+	osg::Node* makeBaseGeometry();
 	static osg::Geode* makeGeode();
 	double calculateTimeOffset(const double dTotalNewMultiplier) const;
 

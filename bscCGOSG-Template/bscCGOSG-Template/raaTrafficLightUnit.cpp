@@ -162,7 +162,6 @@ void raaTrafficLightUnit::finshAsset()
 	}
 }
 
-
 void raaTrafficLightUnit::setTransform(const float fX, const float fY, const float fRot, const float fScale) const
 {
 	if(m_pTranslation)

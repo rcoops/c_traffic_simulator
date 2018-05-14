@@ -20,7 +20,7 @@ public:
 
 protected:
 	rpcPathSelector();
-	rpcTileAnimationPointPaths* m_mAnimationPaths;
+
 	static std::string sm_sPathNames[104];
 	static rpcPathSelector* sm_pInstance;
 };
