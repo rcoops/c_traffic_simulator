@@ -16,6 +16,9 @@ typedef std::list<class raaAnimatedComponent*> rpcVehicles;
 class raaAnimatedComponent: public osg::AnimationPathCallback, public rpcDetectable
 {
 public:
+	enum vehicleType {
+		veryon
+	};
 	raaAnimatedComponent(rpcContextAwareAnimationPath* pAP);
 
 	rpcDetectionBox* m_pLightDetector;
@@ -24,6 +27,7 @@ public:
 	raaAnimatedComponent *m_pVehicleDetected;
 
 	static void setManualMultiplier(float fTimeMultiplier);
+	static raaAnimatedComponent* vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP);
 
 	osg::MatrixTransform* root() const;
 	void toggleDetectionBoxVisibility();
@@ -58,7 +62,7 @@ protected:
 	unsigned int m_uiLastAnimationPointInAnimation;
 	rpcContextAwareAnimationPath *m_pAP;
 
-	osg::Node* makeBaseGeometry();
+	virtual osg::Node* makeBaseGeometry() = 0;
 	static osg::Geode* makeGeode();
 	double calculateTimeOffset(const double dTotalNewMultiplier) const;
 

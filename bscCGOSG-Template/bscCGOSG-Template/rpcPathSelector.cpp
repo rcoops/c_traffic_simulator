@@ -9,8 +9,9 @@
 extern osg::Group *g_pRoot;
 
 rpcPathSelector* rpcPathSelector::sm_pInstance;
+const unsigned int rpcPathSelector::csm_uiNumberOfPaths = 104;
 
-std::string rpcPathSelector::sm_sPathNames[104] = {
+std::string rpcPathSelector::sm_sPathNames[csm_uiNumberOfPaths] = {
 	"10_0_0", "10_0_1", "10_5_0", "10_5_1", "10_8_0", "10_8_1", "12_1", "12_2", "13_1", "13_2", "14_1", "15_0_0", "15_0_1", "15_5_0", "15_5_1", "15_8_0", "15_8_1",
 	"16_1", "16_2", "17_0_0", "17_0_1", "17_0_2", "17_11_0", "17_11_1", "17_11_2", "17_5_0", "17_5_1", "17_5_2", "17_8_0", "17_8_1", "17_8_2", "18_1", "18_2",
 	"19_0_0", "19_0_1", "19_5_0", "19_5_1", "19_8_0", "19_8_1", "1_1", "20_1", "20_2", "21_1", "21_2", "22_1", "22_2", "23_0_0", "23_0_1", "23_5_0", "23_5_1",
@@ -33,18 +34,25 @@ rpcPathSelector* rpcPathSelector::instance()
 void rpcPathSelector::getPathName(std::string &spPath, unsigned int uiTile, unsigned int uiPoint)
 {
 	std::list<std::string> sValidPathNames = std::list<std::string>();
-	for (int i = 0; i < 104; i++)
+	for (int i = 0; i < csm_uiNumberOfPaths; i++)
 	{
 		std::pair<unsigned int, unsigned int> indexes = retrieveIndexes(sm_sPathNames[i]);
 		if (indexes.first == uiTile && indexes.second == uiPoint) sValidPathNames.push_back(sm_sPathNames[i]);
 	}
 
-	unsigned int count = sValidPathNames.size();
-	unsigned int randomIndex = rand() % count;
+	unsigned int uiCount = sValidPathNames.size();
+	unsigned int uiRandomIndex = rand() % uiCount;
 	std::list<std::string>::iterator itPaths = sValidPathNames.begin();
-	std::advance(itPaths, randomIndex);
+	std::advance(itPaths, uiRandomIndex);
 	spPath = *itPaths;
 }
+
+void rpcPathSelector::getRandomPath(std::string &spPath)
+{
+	unsigned int randomIndex = rand() % csm_uiNumberOfPaths;
+	spPath = sm_sPathNames[randomIndex];
+}
+
 void rpcPathSelector::loadNewPoints(rpcContextAwareAnimationPath *pAP, float fStartingAnimationTime, unsigned int uiTile, unsigned int uiPoint)
 {
 	pAP->clear();
@@ -52,6 +60,16 @@ void rpcPathSelector::loadNewPoints(rpcContextAwareAnimationPath *pAP, float fSt
 	std::string sPath;
 	getPathName(sPath, uiTile, uiPoint); // load a potential path into a string from the points
 	apBuilder.load("../../data/animationpaths/" + sPath + ".txt"); // loading the animation path from file
+}
+
+rpcContextAwareAnimationPath* rpcPathSelector::createNewPath()
+{
+	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
+	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
+	std::string sPath;
+	getRandomPath(sPath); // load a potential path into a string from the points
+	apBuilder.load("../../data/animationpaths/" + sPath + ".txt"); // loading the animation path from file
+	return pAP;
 }
 
 std::pair<unsigned int, unsigned int> rpcPathSelector::retrieveIndexes(std::string sPath) const

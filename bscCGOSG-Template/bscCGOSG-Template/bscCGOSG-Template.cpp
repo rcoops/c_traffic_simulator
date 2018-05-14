@@ -43,6 +43,16 @@ unsigned int g_uiCPs = 0;
 double g_dLastTime = 0.0;
 osg::Vec3f g_vPastPos;
 
+
+void createRandomAnimatedComponent()
+{
+	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createNewPath();
+	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::veryon, pAP);
+	g_pRoot->addChild(pAnim->root());
+
+	rpcCollidables::instance()->addVehicle(pAnim);
+}
+
 void addAnimatedComponent(const std::string sAnimPath)
 {
 	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
@@ -52,7 +62,7 @@ void addAnimatedComponent(const std::string sAnimPath)
 	apBuilder.load(sAnimPath); // loading the animation path from file
 
 	// create an animated component and add to the scene with the animation path included
-	raaAnimatedComponent *pAnim = new raaAnimatedComponent(pAP);
+	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::veryon, pAP);
 	g_pRoot->addChild(pAnim->root());
 
 	rpcCollidables::instance()->addVehicle(pAnim);
@@ -96,7 +106,7 @@ int main(int argc, char** argv)
 	*/
 
 	g_pRoot->addChild(raaRoadSet::instance()->sg()); // adds the road description to the SG
-
+	createRandomAnimatedComponent();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
 //	addAnimatedComponent(sAnimPath2);

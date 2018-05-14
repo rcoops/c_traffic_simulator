@@ -87,6 +87,12 @@
     <ClInclude Include="rpcContextAwareAnimationPath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rpcCarVeryon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rpcCarDelta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -147,6 +153,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rpcContextAwareAnimationPath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rpcCarVeryon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rpcCarDelta.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

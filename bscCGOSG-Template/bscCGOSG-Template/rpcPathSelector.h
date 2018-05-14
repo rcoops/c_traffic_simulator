@@ -14,12 +14,16 @@ public:
 
 	std::pair<unsigned, unsigned> retrieveIndexes(std::string sPath) const;
 	void loadNewPoints(rpcContextAwareAnimationPath *pAP, float fStartingAnimationTime, unsigned int uiTile, unsigned int uiPoint);
-	void getPathName(std::string &psPath, unsigned int uiTile, unsigned int uiPoint);
-
+	rpcContextAwareAnimationPath* createNewPath();
+	
 	virtual ~rpcPathSelector();
 
 protected:
 	rpcPathSelector();
+	void getPathName(std::string &psPath, unsigned int uiTile, unsigned int uiPoint);
+	void getRandomPath(std::string &psPath);
+
+	const static unsigned int csm_uiNumberOfPaths;
 
 	static std::string sm_sPathNames[104];
 	static rpcPathSelector* sm_pInstance;

@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <osgDB\readFile>
-#include "rpcCarVeryon.h"
 
-rpcCarVeryon::rpcCarVeryon(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
+#include "rpcCarDelta.h"
+
+rpcCarDelta::rpcCarDelta(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
 	m_pRoot->addChild(makeBaseGeometry());
 }
 
-osg::Node* rpcCarVeryon::makeBaseGeometry()
+osg::Node* rpcCarDelta::makeBaseGeometry()
 {
 	osg::Geode* pGeode = makeGeode();
-	osg::Node *pNode = osgDB::readNodeFile("../../Data/car-veyron.OSGB");
+	osg::Node *pNode = osgDB::readNodeFile("../../Data/car-delta.OSGB");
 	osg::MatrixTransform *pTranslate = new osg::MatrixTransform();
 	osg::MatrixTransform *pRotate = new osg::MatrixTransform();
 	osg::MatrixTransform *pScale = new osg::MatrixTransform();
@@ -36,7 +37,4 @@ osg::Node* rpcCarVeryon::makeBaseGeometry()
 	return pTranslate;
 }
 
-rpcCarVeryon::~rpcCarVeryon()
-{
-
-}
+rpcCarDelta::~rpcCarDelta() {}

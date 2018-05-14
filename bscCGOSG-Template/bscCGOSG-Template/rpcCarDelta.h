@@ -3,12 +3,12 @@
 #include <windows.h>
 #include "raaAnimatedComponent.h"
 
-class rpcCarVeryon : public raaAnimatedComponent
+class rpcCarDelta : public raaAnimatedComponent
 {
 public:
-	rpcCarVeryon(rpcContextAwareAnimationPath* pAP);
+	rpcCarDelta(rpcContextAwareAnimationPath* pAP);
 
-	virtual ~rpcCarVeryon();
+	virtual ~rpcCarDelta();
 protected:
 	virtual osg::Node* makeBaseGeometry() override;
 };
