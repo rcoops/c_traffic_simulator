@@ -18,7 +18,7 @@ class raaAnimatedComponent: public osg::AnimationPathCallback, public rpcDetecta
 public:
 	// fudge to get number of types
 	enum vehicleType {
-		veryon, delta, numberOfTypes
+		veryon, delta, truck, numberOfTypes
 	};
 	raaAnimatedComponent(rpcContextAwareAnimationPath* pAP);
 
@@ -65,12 +65,16 @@ protected:
 	unsigned int m_uiLastAnimationPointInAnimation;
 	rpcContextAwareAnimationPath *m_pAP;
 
-	virtual osg::Node* makeBaseGeometry() = 0;
 	static osg::Geode* makeGeode();
-	double calculateTimeOffset(const double dTotalNewMultiplier) const;
 
+	double calculateTimeOffset(const double dTotalNewMultiplier) const;
 	void initDetectionPoint() const;
 	void setDetectionBoxVisibility(const bool bIsVisible) const;
 	void checkForVehicles();
+
+	virtual void goFast() = 0;
+	virtual void goSlow() = 0;
+	virtual void goCruising() = 0;
+	virtual osg::Node* makeBaseGeometry() = 0;
 };
 

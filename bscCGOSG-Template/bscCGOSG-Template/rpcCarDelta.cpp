@@ -5,11 +5,30 @@
 #include "raaFinder.h"
 #include "rpcCarDelta.h"
 
-std::string asBodyNames[6] = { "HDM_01_07_top-GEODE", "HDM_01_07_hood-GEODE", "HDM_01_07_front_fenders-GEODE", "HDM_01_07_doors-GEODE", "HDM_01_07_trunk_spoiler-GEODE", "HDM_01_07_bottom_sill-GEODE" };
+const float rpcCarDelta::csm_fSlowMultiplier = 0.5f;
+const float rpcCarDelta::csm_fFastMultiplier = 4.0f;
+const float rpcCarDelta::csm_fCruisingMultiplier = 1.0f;
+
+static std::string asBodyNames[6] = { "HDM_01_07_top-GEODE", "HDM_01_07_hood-GEODE", "HDM_01_07_front_fenders-GEODE", "HDM_01_07_doors-GEODE", "HDM_01_07_trunk_spoiler-GEODE", "HDM_01_07_bottom_sill-GEODE" };
 
 rpcCarDelta::rpcCarDelta(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
-	m_pRoot->addChild(makeBaseGeometry());
+	m_pRoot->addChild(rpcCarDelta::makeBaseGeometry());
+}
+
+void rpcCarDelta::goFast()
+{
+	setSpeed(csm_fFastMultiplier);
+}
+
+void rpcCarDelta::goSlow()
+{
+	setSpeed(csm_fSlowMultiplier);
+}
+
+void rpcCarDelta::goCruising()
+{
+	setSpeed(csm_fCruisingMultiplier);
 }
 
 osg::Node* rpcCarDelta::makeBaseGeometry()
@@ -19,10 +38,9 @@ osg::Node* rpcCarDelta::makeBaseGeometry()
 	//raaPrinter printer;
 	//printer.apply(*m_pGeometry);
 	osg::MatrixTransform *pMatrixTransform = new osg::MatrixTransform();
-	osg::Matrixf mT, mR;
-	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 0.0f));
+	osg::Matrixf mR;
 	mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
-	pMatrixTransform->setMatrix(mT * mR);
+	pMatrixTransform->setMatrix(mR);
 	pMatrixTransform->addChild(m_pGeometry);
 	
 	m_pBodyMat = new osg::Material();

@@ -10,5 +10,15 @@ public:
 
 	virtual ~rpcCarVeryon();
 protected:
-	virtual osg::Node* makeBaseGeometry() override;
+	const static float csm_fSlowMultiplier;
+	const static float csm_fFastMultiplier;
+	const static float csm_fCruisingMultiplier;
+
+	osg::Node *m_pGeometry;
+
+	void goFast() override;
+	void goSlow() override;
+	void goCruising() override;
+
+	osg::Node* makeBaseGeometry() override;
 };

@@ -169,6 +169,7 @@
     <ClInclude Include="rpcCarVeryon.h" />
     <ClInclude Include="rpcContextAwareAnimationPath.h" />
     <ClInclude Include="rpcDetectable.h" />
+    <ClInclude Include="rpcDumpTruck.h" />
     <ClInclude Include="rpcPathSelector.h" />
     <ClInclude Include="rpcTrafficLightFunctor.h" />
     <ClInclude Include="rpcVehicleFunctor.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="rpcContextAwareAnimationPath.cpp" />
     <ClCompile Include="rpcDetectionBox.cpp" />
     <ClCompile Include="rpcCollidables.cpp" />
+    <ClCompile Include="rpcDumpTruck.cpp" />
     <ClCompile Include="rpcPathSelector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

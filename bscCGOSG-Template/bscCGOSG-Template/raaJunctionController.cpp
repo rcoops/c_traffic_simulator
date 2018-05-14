@@ -66,6 +66,7 @@ raaTrafficLightUnit* raaJunctionController::addLight(osg::Vec3f vfPositionRotati
 
 void raaJunctionController::checkDetection()
 {
+	if (!g_pRoot) return;
 	raaLights::iterator itLight; raaVehicles::iterator itVehicle;
 	// Iterate through all vehicles
 	for (itVehicle = rpcCollidables::sm_lVehicles.begin(); itVehicle != rpcCollidables::sm_lVehicles.end(); ++itVehicle)

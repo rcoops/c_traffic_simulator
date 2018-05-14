@@ -114,6 +114,7 @@ void rpcCollidables::createRandomAnimatedComponent()
 
 void rpcCollidables::createAnimatedComponent(raaAnimatedComponent::vehicleType eVehicleType)
 {
+	if (!g_pRoot) return;
 	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createRandomPath();
 	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(eVehicleType, pAP);
 	g_pRoot->addChild(pAnim->root());

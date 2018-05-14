@@ -16,6 +16,7 @@
 #include "rpcPathSelector.h"
 #include "rpcCarVeryon.h"
 #include "rpcCarDelta.h"
+#include "rpcDumpTruck.h"
 
 extern osg::Group *g_pRoot;
 
@@ -47,7 +48,6 @@ raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): A
 void raaAnimatedComponent::loadNewPath()
 {
 	rpcPathSelector::instance()->loadNewPoints(m_pAP, getAnimationTime(), m_uiLastTileInAnimation, m_uiLastAnimationPointInAnimation);
-	double d = getAnimationTime();
 	setFinalAnimationPathPoint();
 }
 
@@ -55,8 +55,7 @@ void raaAnimatedComponent::setFinalAnimationPathPoint()
 {
 	if (m_pAP)
 	{
-		std::pair<unsigned int, unsigned int> pPoints = m_pAP->getPoint();
-		
+		const std::pair<unsigned int, unsigned int> pPoints = m_pAP->getPoint();
 		m_uiLastTileInAnimation = pPoints.first;
 		m_uiLastAnimationPointInAnimation = pPoints.second;
 	}
@@ -65,12 +64,9 @@ void raaAnimatedComponent::setFinalAnimationPathPoint()
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	checkForNewPath();
-	double last = m_pAP->getLastTime();
-	double first = m_pAP->getFirstTime();
-	double l = _latestTime;
 	setMultiplier();
-	AnimationPathCallback::operator()(node, nv);
 	checkForVehicles();
+	AnimationPathCallback::operator()(node, nv);
 }
 
 void raaAnimatedComponent::setMultiplier()
@@ -92,12 +88,16 @@ void raaAnimatedComponent::checkForNewPath()
 
 void raaAnimatedComponent::setPause(const bool bPause)
 {
-	if (bPause)
+	if (bPause && !m_bPaused)
 	{
 		m_fPrePauseSpeed = m_fSpeed;
+		m_bPaused = true;
 		setSpeed(0.00000001f);
+	} else
+	{
+		m_bPaused = false;
+		setSpeed(m_fPrePauseSpeed);
 	}
-	else setSpeed(m_fPrePauseSpeed);
 	//if (bPause && !m_bPaused) {
 	//	double animationTime = getAnimationTime();
 	//	m_dAnimationTimeBeforePause = getAnimationTime();
@@ -109,7 +109,7 @@ void raaAnimatedComponent::setPause(const bool bPause)
 	//	setTimeOffset(getTimeOffset() + getAnimationTime() - m_dAnimationTimeBeforePause);
 	//	m_bPaused = false;
 	//}
-	//AnimationPathCallback::setPause(bPause);
+	AnimationPathCallback::setPause(bPause);
 }
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
@@ -134,7 +134,7 @@ double raaAnimatedComponent::calculateTimeOffset(const double dTotalNewMultiplie
 
 void raaAnimatedComponent::setSpeed(const float fSpeed)
 {
-	m_fSpeed = fSpeed;
+	m_fSpeed = m_fPrePauseSpeed = fSpeed;
 }
 
 void raaAnimatedComponent::setManualMultiplier(const float fTimeMultiplier)
@@ -204,7 +204,7 @@ void raaAnimatedComponent::checkForVehicles()
 		if (*itVehicle == this)  return; // No point checking detection on self
 		if (canSee((*itVehicle), g_pRoot)) m_pVehicleDetected = *itVehicle; 
 	}
-	if (m_pVehicleDetected)
+	if (m_pVehicleDetected) // Car in my radar
 	{
 		// still in sight?
 		const bool bCanStillSeeVehicle = canSee(m_pVehicleDetected, g_pRoot);
@@ -221,26 +221,25 @@ osg::MatrixTransform* raaAnimatedComponent::root() const
 
 void raaAnimatedComponent::reactToLightInSights()
 {
-	if (!m_pLightDetected) return;
-
-	switch (m_pLightDetected->m_eTrafficLightState)
-	{
-	case raaTrafficLightUnit::rpcTrafficLightState::slow:
-		setSpeed(4.0f); // GET THROUGH THE LIGHT QUICK!!!
-		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::ready:
-		setSpeed(0.5f); // speeding up
-		break;
-	case raaTrafficLightUnit::rpcTrafficLightState::go:
-		setSpeed(1.0f); // standard
-		break;
-	default:
-		break;
-	}
-	// Haven't taken a red action so just check it here if it's red, pause, if not take global
-	setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
-//	bool isPause = m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause;
-
+		if (!m_pLightDetected) return;
+		switch (m_pLightDetected->m_eTrafficLightState)
+		{
+		case raaTrafficLightUnit::rpcTrafficLightState::slow:
+			goFast();// GET THROUGH THE LIGHT QUICK!!!
+//			setSpeed(4.0f); // GET THROUGH THE LIGHT QUICK!!!
+			break;
+		case raaTrafficLightUnit::rpcTrafficLightState::ready:
+			goSlow();
+//			setSpeed(0.5f); // speeding up
+			break;
+		case raaTrafficLightUnit::rpcTrafficLightState::go:
+			goCruising();
+//			setSpeed(1.0f); // standard
+			break;
+		default:
+			break;
+		}
+		setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
 }
 
 raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
@@ -249,6 +248,8 @@ raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleT
 	{
 	case delta:
 		return new rpcCarDelta(pAP);
+	case truck:
+		return new rpcDumpTruck(pAP);
 	default:
 		return new rpcCarVeryon(pAP);
 	}

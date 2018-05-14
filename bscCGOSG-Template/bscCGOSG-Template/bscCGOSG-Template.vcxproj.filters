@@ -93,6 +93,9 @@
     <ClInclude Include="rpcCarDelta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rpcDumpTruck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -159,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rpcCarDelta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rpcDumpTruck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
