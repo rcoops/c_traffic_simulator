@@ -4,8 +4,6 @@
 #include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
-#include <osg/Switch>
-#include "rpcDetectable.h"
 
 class rpcDetectionBox
 {

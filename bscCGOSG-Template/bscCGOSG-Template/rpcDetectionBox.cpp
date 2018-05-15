@@ -25,11 +25,9 @@ osg::Geode* rpcDetectionBox::makeGeometry() const
 	osg::Geode* pGeode = new osg::Geode();
 	// set the drawables shape to a sphere with bound centre and co-ords
 	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Sphere(m_pScale->getBound().center(), m_pScale->getBound().radius()));
-
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(makeMaterial(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	pGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
-
 	pGeode->addDrawable(pSD);
 	return pGeode;
 }
