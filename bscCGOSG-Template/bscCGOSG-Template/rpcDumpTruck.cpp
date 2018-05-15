@@ -12,7 +12,7 @@ osg::Node* rpcDumpTruck::sm_pGeometry = nullptr;
 rpcDumpTruck::rpcDumpTruck(rpcContextAwareAnimationPath* pAP): raaAnimatedComponent(pAP)
 {
 	rpcDumpTruck::buildGeometry();
-	if (m_pTransform) initDetectionPoint(osg::Vec3f(-m_pTransform->getBound().radius(), 0.0f, 20.0f));
+	if (m_pTransform) initDetectionPoint(osg::Vec3f(-(m_pTransform->getBound().radius() + 60.0f), 0.0f, 20.0f));
 }
 
 void rpcDumpTruck::goFast()

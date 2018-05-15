@@ -31,29 +31,29 @@ rpcPathSelector* rpcPathSelector::instance()
 	return sm_pInstance;
 }
 
-void rpcPathSelector::getPathName(std::string &spPath, unsigned int uiTile, unsigned int uiPoint)
+void rpcPathSelector::getPathName(std::string &spPath, const unsigned int uiTile, const unsigned int uiPoint) const
 {
+	// aggregator & filter for any that match the tile and point numbers
 	std::list<std::string> sValidPathNames = std::list<std::string>();
 	for (int i = 0; i < csm_uiNumberOfPaths; i++)
 	{
-		std::pair<unsigned int, unsigned int> indexes = retrieveIndexes(sm_sPathNames[i]);
-		if (indexes.first == uiTile && indexes.second == uiPoint) sValidPathNames.push_back(sm_sPathNames[i]);
+		const std::pair<unsigned int, unsigned int> uiTileAndPointIndexes = retrieveIndexes(sm_sPathNames[i]); // parse name into two ints
+		if (uiTileAndPointIndexes.first == uiTile && uiTileAndPointIndexes.second == uiPoint) sValidPathNames.push_back(sm_sPathNames[i]);
 	}
 
-	unsigned int uiCount = sValidPathNames.size();
-	unsigned int uiRandomIndex = rand() % uiCount;
+	const unsigned int uiCount = sValidPathNames.size(); // count the result
 	std::list<std::string>::iterator itPaths = sValidPathNames.begin();
-	std::advance(itPaths, uiRandomIndex);
+	if (uiCount != 1) advance(itPaths, rand() % uiCount); // pick a random element if more than 1
 	spPath = *itPaths;
 }
 
 void rpcPathSelector::getRandomPath(std::string &spPath)
 {
-	unsigned int randomIndex = rand() % csm_uiNumberOfPaths;
-	spPath = sm_sPathNames[randomIndex];
+	spPath = sm_sPathNames[rand() % csm_uiNumberOfPaths];
 }
 
-void rpcPathSelector::loadNewPoints(rpcContextAwareAnimationPath *pAP, float fStartingAnimationTime, unsigned int uiTile, unsigned int uiPoint)
+void rpcPathSelector::loadNewPoints(rpcContextAwareAnimationPath *pAP, const float fStartingAnimationTime,
+	const unsigned int uiTile, const unsigned int uiPoint) const
 {
 	pAP->clear();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot, fStartingAnimationTime);
@@ -74,11 +74,11 @@ rpcContextAwareAnimationPath* rpcPathSelector::createRandomPath()
 
 std::pair<unsigned int, unsigned int> rpcPathSelector::retrieveIndexes(std::string sPath) const
 {
-	std::string sDelimiter = "_"; // can't see a way round hardcoding this
-	unsigned int uiFirstTokenEndIndex = sPath.find(sDelimiter);
-	std::string sTile = sPath.substr(0, sPath.find(sDelimiter)); // Get our tile number as a string
-	std::string sPathRemainder = sPath.substr(uiFirstTokenEndIndex + 1);
-	std::string sPoint = sPathRemainder.substr(0, sPathRemainder.find(sDelimiter)); // Get our point number as a string
+	const std::string sDelimiter = "_"; // file name is <tile_number>_<point_number>{_<option>}
+	const unsigned int uiFirstTokenEndIndex = sPath.find(sDelimiter);
+	const std::string sTile = sPath.substr(0, sPath.find(sDelimiter)); // Get our tile number as a string
+	const std::string sPathRemainder = sPath.substr(uiFirstTokenEndIndex + 1); // want the point after to ignore the _
+	const std::string sPoint = sPathRemainder.substr(0, sPathRemainder.find(sDelimiter)); // Get our point number as a string
 
 	return std::pair<unsigned int, unsigned int>(stoi(sTile), stoi(sPoint));
 }

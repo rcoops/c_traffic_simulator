@@ -25,7 +25,7 @@ static std::string asMetallicNames[12] = { "HDM_01_07_front_bumper_reflectors-GE
 rpcCarDelta::rpcCarDelta(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
 	rpcCarDelta::buildGeometry();
-	initDetectionPoint(osg::Vec3f(-m_pRoot->getBound().radius(), 0.0f, 20.0f));
+	initDetectionPoint(osg::Vec3f(-m_pRoot->getBound().radius() + 10.0f, 0.0f, 20.0f));
 }
 
 void rpcCarDelta::goFast()

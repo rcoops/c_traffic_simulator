@@ -12,7 +12,7 @@ osg::Node* rpcCarVeryon::sm_pGeometry = nullptr;
 rpcCarVeryon::rpcCarVeryon(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
 	rpcCarVeryon::buildGeometry();
-	initDetectionPoint(osg::Vec3f(-m_pRoot->getBound().radius(), 0.0f, 20.0f));
+	initDetectionPoint(osg::Vec3f(-m_pRoot->getBound().radius() + 10.0f, 0.0f, 20.0f));
 }
 
 void rpcCarVeryon::goFast()

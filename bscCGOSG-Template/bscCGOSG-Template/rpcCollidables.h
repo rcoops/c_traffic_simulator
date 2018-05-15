@@ -26,12 +26,12 @@ public:
 
 	static void addVehicle(raaAnimatedComponent *pVehicle);
 	static void createRandomAnimatedComponent();
-	static void createAnimatedComponent(raaAnimatedComponent::vehicleType eVehicleType);
+	static void createAnimatedComponent(const raaAnimatedComponent::vehicleType eVehicleType);
 
-	void addLight(raaTrafficLightUnit *pLight);
-	void toggleDetectionVisibility();
+	static void addLight(raaTrafficLightUnit *pLight);
+	static void toggleDetectionVisibility();
 	void toggleLightStateManual();
-	void toggleLightStateAutomatic();
+	static void toggleLightStateAutomatic();
 	void adjustVehicleSpeed(const bool bIsIncrease);
 	void pauseVehicles();
 
@@ -40,8 +40,8 @@ public:
 protected:
 	rpcCollidables();
 
-	void performOnAllVehicles(rpcVehicleFunctor* pFunctor);
-	void performOnAllLights(rpcTrafficLightFunctor* pFunctor);
+	static void performOnAllVehicles(rpcVehicleFunctor* pFunctor);
+	static void performOnAllLights(rpcTrafficLightFunctor* pFunctor);
 	void cycleManualState();
 
 	static rpcCollidables* sm_pInstance;

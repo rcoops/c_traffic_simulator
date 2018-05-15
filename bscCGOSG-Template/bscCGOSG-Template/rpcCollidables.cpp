@@ -23,7 +23,7 @@ rpcCollidables* rpcCollidables::instance()
 
 void rpcCollidables::addVehicle(raaAnimatedComponent* pVehicle)
 {
-	if (pVehicle && std::find(sm_lVehicles.begin(), sm_lVehicles.end(), pVehicle) == sm_lVehicles.end())
+	if (pVehicle && find(sm_lVehicles.begin(), sm_lVehicles.end(), pVehicle) == sm_lVehicles.end())
 	{
 		sm_lVehicles.push_back(pVehicle);
 	}
@@ -31,7 +31,7 @@ void rpcCollidables::addVehicle(raaAnimatedComponent* pVehicle)
 
 void rpcCollidables::addLight(raaTrafficLightUnit* pLight)
 {
-	if (pLight && std::find(sm_lLights.begin(), sm_lLights.end(), pLight) == sm_lLights.end())
+	if (pLight && find(sm_lLights.begin(), sm_lLights.end(), pLight) == sm_lLights.end())
 	{
 		sm_lLights.push_back(pLight);
 	}
@@ -112,7 +112,7 @@ void rpcCollidables::createRandomAnimatedComponent()
 	createAnimatedComponent(raaAnimatedComponent::getRandomType());
 }
 
-void rpcCollidables::createAnimatedComponent(raaAnimatedComponent::vehicleType eVehicleType)
+void rpcCollidables::createAnimatedComponent(const raaAnimatedComponent::vehicleType eVehicleType)
 {
 	if (!g_pRoot) return;
 	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createRandomPath();
