@@ -38,8 +38,9 @@ raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): A
 	m_pRoot->addChild(m_psDetectorSwitch);
 	m_pLightDetector = new rpcDetectionBox(csm_vfLightDetectorPosition, osg::Vec3f(50.0f, 50.0f, 50.0f));
 	m_pVehicleDetector = new rpcDetectionBox(csm_vfVehicleDetectorPosition);
-	m_psDetectorSwitch->addChild(m_pLightDetector->root());
-	m_psDetectorSwitch->addChild(m_pVehicleDetector->root());
+	// we want both of these to enable / disable
+	m_psDetectorSwitch->addChild(m_pLightDetector->node());
+	m_psDetectorSwitch->addChild(m_pVehicleDetector->node());
 	setDetectionBoxVisibility(m_bDetectorBoxVisible);
 	loadNewPath();
 	m_pRoot->setUpdateCallback(this);
@@ -55,7 +56,7 @@ void raaAnimatedComponent::setFinalAnimationPathPoint()
 {
 	if (m_pAP)
 	{
-		const std::pair<unsigned int, unsigned int> pPoints = m_pAP->getPoint();
+		const std::pair<unsigned int, unsigned int> pPoints = m_pAP->getFinalPoint();
 		m_uiLastTileInAnimation = pPoints.first;
 		m_uiLastAnimationPointInAnimation = pPoints.second;
 	}
@@ -65,8 +66,8 @@ void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
 	// check if we're at the end of our path and if so load a new one
 	if (m_pAP && m_pAP->isEndOfAnimation(getAnimationTime())) loadNewPath();
-	setMultiplier();
-	checkForVehicles();
+	setMultiplier(); // adjust the multiplier if its needed
+	checkForVehicles(); // vehicle collision detection
 	AnimationPathCallback::operator()(node, nv);
 }
 
@@ -109,6 +110,7 @@ void raaAnimatedComponent::setPause(const bool bPause)
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
 {
+	// check our point is set (it should be), if not use default
 	const osg::Vec3f vfDetectionPoint = m_vfDetectionPoint ? *m_vfDetectionPoint : sm_vfBackDefault;
 	if (pRoot) return vfDetectionPoint * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
 	return vfDetectionPoint; // can't really happen - this wont exist if tree root doesn't
@@ -151,11 +153,14 @@ bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable) const
 void raaAnimatedComponent::initDetectionPoint(const osg::Vec3f vPos) const
 {
 	if (!m_psDetectorSwitch) return;
+	// build transform and move
 	osg::MatrixTransform *pDetectionPointTransform = new osg::MatrixTransform();
 	pDetectionPointTransform->setMatrix(osg::Matrix::translate(vPos));
-	osg::Geode* pGeode = makeGeode();
-	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f));
+	osg::Geode* pGeode = makeGeode(); // create geode with standard wireframe
+	// add in our bounding sphere
+	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f)); 
 	pSPoint->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
+	// add all the things
 	pGeode->addDrawable(pSPoint);
 	pDetectionPointTransform->addChild(pGeode);
 	m_psDetectorSwitch->addChild(pDetectionPointTransform);
@@ -222,7 +227,7 @@ void raaAnimatedComponent::reactToLightInSights()
 		switch (m_pLightDetected->m_eTrafficLightState)
 		{
 		case raaTrafficLightUnit::rpcTrafficLightState::slow:
-			goFast(); // GET THROUGH THE LIGHT QUICK!!!
+			goFast(); // GET THROUGH THE LIGHT QUICK!!! (realism)
 			break;
 		case raaTrafficLightUnit::rpcTrafficLightState::ready:
 			goSlow();

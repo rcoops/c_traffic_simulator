@@ -16,18 +16,19 @@ class raaTrafficLightUnit: public osg::Node, public rpcDetectable
 {
 public:
 	raaTrafficLightUnit();
-	virtual ~raaTrafficLightUnit();
 
 	enum rpcTrafficLightState
 	{
 		off, go, stop, slow, ready
 	};
 
+	const static osg::Vec3f csm_vfDetectionPoint;
+
+	osg::MatrixTransform* m_pRotation;
+
 	rpcTrafficLightState m_eTrafficLightState;
 	rpcTrafficLightState m_eLastState;
 	bool m_bIsManual;
-	const static osg::Vec3f csm_vfDetectionPoint;
-	osg::MatrixTransform* m_pRotation;
 
 	static void initAsset(std:: string sFile);
 	static void finshAsset();
@@ -39,9 +40,12 @@ public:
 	void turnOffManualState();;
 	void toggleDetectionPointVisibility();
 	osg::Vec3f getDetectionPointRelativeTo(Node* pRoot) override;
+	virtual ~raaTrafficLightUnit();
 
 protected:
-	static osg::Node* sm_pAsset;
+	const static float csm_fDefaultScale;
+
+	static Node* sm_pAsset;
 	static osg::Material* sm_pRedOn;
 	static osg::Material* sm_pRedOff;
 	static osg::Material* sm_pAmberOn;
@@ -51,19 +55,16 @@ protected:
 
 	osg::MatrixTransform* m_pTranslation;
 	osg::MatrixTransform* m_pScale;
-
+	osg::Switch *m_pDetectionPointSwitch;
 	osg::Geode* m_pRed;
 	osg::Geode* m_pGreen;
 	osg::Geode* m_pAmber;
 
-	const static float csm_fDefaultScale;
-
 	bool m_bIsDetectionPointVisible;
 
-	osg::Switch *m_pDetectionPointSwitch;
-
 	void adjustLightColour() const;
-
+	void initDetectionPoint();
+	void initLightNodes();
 	void setColour(osg::Material* pGreen, osg::Material* pAmber, osg::Material* pRed) const;
 	void setDetectionPointVisibility(const bool bIsVisible) const;
 

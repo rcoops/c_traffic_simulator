@@ -17,10 +17,6 @@ raaJunctionController::raaJunctionController(): m_lLights()
 {
 }
 
-raaJunctionController::~raaJunctionController()
-{
-}
-
 void raaJunctionController::operator()(osg::Node* node, osg::NodeVisitor* nv) 
 {
 	cycleTrafficLights(nv);
@@ -31,36 +27,34 @@ void raaJunctionController::operator()(osg::Node* node, osg::NodeVisitor* nv)
 void raaJunctionController::cycleTrafficLights(osg::NodeVisitor* pNodeVisitor)
 {
 	if (!(*m_itLight) || (*m_itLight)->m_bIsManual) return; // if we've turned off light changes
-
 	const double dSimulationTime = round(pNodeVisitor->getFrameStamp()->getSimulationTime());
 	const double c_dTimeSinceStatusChange = dSimulationTime - m_dLastChangeTime;
 	
-	if (c_dTimeSinceStatusChange > csm_dLightChangeTime)
+	if (c_dTimeSinceStatusChange > csm_dLightChangeTime) // every 5 seconds
 	{
-		(*m_itLight)->setLightState(raaTrafficLightUnit::slow);
+		(*m_itLight)->setLightState(raaTrafficLightUnit::slow); // current light
 		raaLights::iterator itLights = m_itLight;
-		if (++itLights == m_lLights.end()) itLights = m_lLights.begin();
+		if (++itLights == m_lLights.end()) itLights = m_lLights.begin(); // 'next' one on
 		(*itLights)->setLightState(raaTrafficLightUnit::ready);
 	}
-	if (c_dTimeSinceStatusChange > csm_dLightChangeTime + 2.0f)
+	if (c_dTimeSinceStatusChange > csm_dLightChangeTime + 2.0f) // 2 seconds later
 	{
-		(*m_itLight)->setLightState(raaTrafficLightUnit::stop);
-		if (++m_itLight == m_lLights.end()) m_itLight = m_lLights.begin();
+		(*m_itLight)->setLightState(raaTrafficLightUnit::stop); // current light
+		if (++m_itLight == m_lLights.end()) m_itLight = m_lLights.begin(); // move iterator to next light
 		(*m_itLight)->setLightState(raaTrafficLightUnit::go);
 
-		//counter reset to zero
-		m_dLastChangeTime = dSimulationTime;
+		m_dLastChangeTime = dSimulationTime; //counter reset to zero
 	}
 }
 
+// only needs x y translation, and rotation
 raaTrafficLightUnit* raaJunctionController::addLight(osg::Vec3f vfPositionRotation)
 {
 	raaTrafficLightUnit *pL0 = new raaTrafficLightUnit();
 	pL0->setTransform(vfPositionRotation[0], vfPositionRotation[1], vfPositionRotation[2]);
-	pL0->ref();
-	rpcCollidables::instance()->addLight(pL0);
-	m_lLights.push_back(pL0);
-	m_itLight = m_lLights.begin();
+	rpcCollidables::instance()->addLight(pL0); // add ref to collidables list
+	m_lLights.push_back(pL0); // add to our own list
+	m_itLight = m_lLights.begin(); // reset iterator
 	return pL0;
 }
 
@@ -91,4 +85,10 @@ void raaJunctionController::checkDetection()
 			}
 		}
 	}
+}
+
+raaJunctionController::~raaJunctionController()
+{
+	for (raaLights::iterator itLight = m_lLights.begin(); itLight != m_lLights.end(); ++itLight) (*itLight)->unref();
+	m_lLights.clear();
 }

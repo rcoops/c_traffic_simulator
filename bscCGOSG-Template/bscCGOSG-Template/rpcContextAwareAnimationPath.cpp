@@ -1,30 +1,28 @@
 #include "stdafx.h"
 #include "rpcContextAwareAnimationPath.h"
 
-rpcContextAwareAnimationPath::rpcContextAwareAnimationPath(): AnimationPath()// cant do this...? : _loopMode(NO_LOOPING)
+rpcContextAwareAnimationPath::rpcContextAwareAnimationPath(): AnimationPath() // cant do this...? , _loopMode(NO_LOOPING)
 {
-	setLoopMode(NO_LOOPING);
+	setLoopMode(NO_LOOPING); // we only want each path to execute once
 }
 
-void rpcContextAwareAnimationPath::insertPoint(double time, const osg::AnimationPath::ControlPoint& controlPoint,
-	unsigned int uiTile, unsigned int uiPoint)
+void rpcContextAwareAnimationPath::insertPoint(const double dAnimationTime, const ControlPoint& cPoint,
+											   const unsigned int uiTile, const unsigned int uiPoint)
 {
-	AnimationPath::insert(time, controlPoint);
+	insert(dAnimationTime, cPoint); // do what would be done anyway
+	// set the points
 	m_uiEndTileIndex = uiTile;
 	m_uiEndPointIndex = uiPoint;
 }
-std::pair<unsigned int, unsigned int> rpcContextAwareAnimationPath::getPoint()
+
+std::pair<unsigned int, unsigned int> rpcContextAwareAnimationPath::getFinalPoint()
 {
 	return std::pair<unsigned int, unsigned int>(m_uiEndTileIndex, m_uiEndPointIndex);
 }
 
-bool rpcContextAwareAnimationPath::isEndOfAnimation(double dCurrentTime)
+bool rpcContextAwareAnimationPath::isEndOfAnimation(const double dCurrentTime) const
 {
-	double lastTime = getLastTime();
-	bool bIsOver = dCurrentTime >= getLastTime();
-	return bIsOver;
+	return dCurrentTime >= getLastTime();
 }
 
-rpcContextAwareAnimationPath::~rpcContextAwareAnimationPath()
-{
-}
+rpcContextAwareAnimationPath::~rpcContextAwareAnimationPath() {}

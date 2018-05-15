@@ -8,7 +8,7 @@
 class raaTileXJunction: public raaTile, public raaJunctionController 
 {
 public:
-	raaTileXJunction(unsigned int uiName, osg::Node* pNode, raaAnimationPoints* pAP);
+	raaTileXJunction(const unsigned int uiName, osg::Node* pNode, raaAnimationPoints* pAP);
 	virtual ~raaTileXJunction();
 
 protected:

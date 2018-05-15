@@ -5,10 +5,12 @@
 class raaTileTJunction: public raaTile, public raaJunctionController
 {
 public:
-	raaTileTJunction(unsigned int uiName, osg::Node* pNode, raaAnimationPoints* pAP);
+	raaTileTJunction(const unsigned int uiName, osg::Node* pNode, raaAnimationPoints* pAP);
 	virtual ~raaTileTJunction();
 
 protected:
+	const static float csm_fRotation;
+
 	void addLights() override;
 };
 
