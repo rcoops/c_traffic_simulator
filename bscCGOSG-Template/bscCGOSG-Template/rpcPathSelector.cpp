@@ -27,7 +27,6 @@ rpcPathSelector::rpcPathSelector()
 rpcPathSelector* rpcPathSelector::instance()
 {
 	if (!sm_pInstance) sm_pInstance = new rpcPathSelector();
-
 	return sm_pInstance;
 }
 

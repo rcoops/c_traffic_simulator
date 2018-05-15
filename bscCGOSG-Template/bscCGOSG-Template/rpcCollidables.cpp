@@ -17,7 +17,6 @@ rpcCollidables::rpcCollidables() {}
 rpcCollidables* rpcCollidables::instance()
 {
 	if (!sm_pInstance) sm_pInstance = new rpcCollidables();
-
 	return sm_pInstance;
 }
 
@@ -69,18 +68,14 @@ void rpcCollidables::pauseVehicles()
 
 void rpcCollidables::performOnAllVehicles(rpcVehicleFunctor *pFunc)
 {
-	for (raaVehicles::iterator itVehicle = sm_lVehicles.begin(); itVehicle != sm_lVehicles.end(); ++itVehicle)
-	{
-		(*pFunc)(*itVehicle);
-	}
+	raaVehicles::iterator itVehicle = sm_lVehicles.begin();
+	for (; itVehicle != sm_lVehicles.end(); ++itVehicle) (*pFunc)(*itVehicle);
 }
 
 void rpcCollidables::performOnAllLights(rpcTrafficLightFunctor* pFunctor)
 {
-	for (raaLights::iterator itLight = sm_lLights.begin(); itLight != sm_lLights.end(); ++itLight)
-	{
-		(*pFunctor)(*itLight);
-	}
+	raaLights::iterator itLight = sm_lLights.begin;
+	for (; itLight != sm_lLights.end(); ++itLight) (*pFunctor)(*itLight);
 }
 
 void rpcCollidables::cycleManualState()
@@ -122,6 +117,4 @@ void rpcCollidables::createAnimatedComponent(const raaAnimatedComponent::vehicle
 	addVehicle(pAnim);
 }
 
-rpcCollidables::~rpcCollidables()
-{
-}
+rpcCollidables::~rpcCollidables() {}
