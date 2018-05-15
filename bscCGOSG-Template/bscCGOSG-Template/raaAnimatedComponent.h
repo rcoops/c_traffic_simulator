@@ -31,9 +31,9 @@ public:
 	void setSpeed(float fSpeed);
 	void setFinalAnimationPathPoint();
 	void loadNewPath();
-	bool canSee(rpcDetectable* pDetectable) const;
 	void setMultiplier();
 	void setPause(const bool bPause);
+	bool canSee(rpcDetectable* pDetectable) const;
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
 	osg::Vec3f getDetectionPointRelativeTo(osg::Node* pRoot) override;

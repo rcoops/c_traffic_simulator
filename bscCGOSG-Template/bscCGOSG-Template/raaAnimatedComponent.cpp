@@ -140,10 +140,7 @@ void raaAnimatedComponent::setManualMultiplier(const float fTimeMultiplier)
 bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable) const
 {
 	const osg::Vec3f vfGlobalCoordinates = pDetectable->getDetectionPointRelativeTo(g_pRoot);
-	if (dynamic_cast<raaTrafficLightUnit*>(pDetectable)) // is it a light?
-	{
-		return m_pLightDetector->contains(vfGlobalCoordinates, g_pRoot); // cool, check the light detector
-	}
+	if (dynamic_cast<raaTrafficLightUnit*>(pDetectable)) return m_pLightDetector->contains(vfGlobalCoordinates, g_pRoot); // if light, check the light detector
 	return m_pVehicleDetector->contains(vfGlobalCoordinates, g_pRoot); // no? must be a vehicle
 }
 
