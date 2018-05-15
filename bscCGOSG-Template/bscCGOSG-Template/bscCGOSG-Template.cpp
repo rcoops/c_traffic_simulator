@@ -44,7 +44,7 @@ double g_dLastTime = 0.0;
 osg::Vec3f g_vPastPos;
 
 
-void addAnimatedComponent(const std::string sAnimPath)
+void addAnimatedComponent(const std::string sAnimPath, raaAnimatedComponent::vehicleType eType = raaAnimatedComponent::vehicleType::veryon)
 {
 	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
@@ -53,7 +53,7 @@ void addAnimatedComponent(const std::string sAnimPath)
 	apBuilder.load(sAnimPath); // loading the animation path from file
 
 	// create an animated component and add to the scene with the animation path included
-	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(raaAnimatedComponent::vehicleType::veryon, pAP);
+	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(eType, pAP);
 	g_pRoot->addChild(pAnim->root());
 
 	rpcCollidables::instance()->addVehicle(pAnim);
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 	std::string sRoadMap = "../../Data/roads3.txt";
 	std::string sRoadAsset = "../../Data/RoadSet.OSGB";
 	std::string sAnimPath = "../../Data/animationpaths/6_1.txt";
-	std::string sAnimPath2 = "../../Data/animPath2.txt";
+	std::string sAnimPath2 = "../../Data/animationpaths/1_1.txt";
 	std::string sAnimPath3 = "../../Data/animPath3.txt";
 
 	for (int i = 0; i < argc; i++)
@@ -102,6 +102,7 @@ int main(int argc, char** argv)
 	rpcCollidables::instance()->createRandomAnimatedComponent();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
+	addAnimatedComponent(sAnimPath2, raaAnimatedComponent::vehicleType::delta);
 //	addAnimatedComponent(sAnimPath2);
 //	addAnimatedComponent(sAnimPath3);
 	// setup stuff
@@ -113,14 +114,16 @@ int main(int argc, char** argv)
 	pTraits->windowDecoration = true;
 	pTraits->doubleBuffer = true;
 	pTraits->sharedContext = 0;
-	//osgGA::OrbitManipulator *pOrbit = new osgGA::OrbitManipulator();
+	osgGA::OrbitManipulator *pOrbit = new osgGA::OrbitManipulator();
+	pOrbit->setCenter(osg::Vec3(0.0, 0.0, 0.0));
 	//pOrbit->setElevation(100.0);
 	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
 	osgGA::KeySwitchMatrixManipulator* pKeyswitchManipulator = new osgGA::KeySwitchMatrixManipulator();
-	pKeyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+	//pKeyswitchManipulator->addMatrixManipulator('1', "Trackball", new osgGA::TrackballManipulator());
+	pKeyswitchManipulator->addMatrixManipulator('1', "Orbit", pOrbit);
 	pKeyswitchManipulator->addMatrixManipulator('2', "Flight", new osgGA::FlightManipulator());
 	pKeyswitchManipulator->addMatrixManipulator('3', "Drive", new osgGA::DriveManipulator());
-	//pKeyswitchManipulator->addMatrixManipulator('4', "Orbit", pOrbit);
+	
 	viewer.setCameraManipulator(pKeyswitchManipulator);
 	osg::Camera *pCamera = viewer.getCamera();
 	pCamera->setGraphicsContext(pGC);

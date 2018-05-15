@@ -1,135 +1,51 @@
-
-|--|--|--|--Node -> HDM_01_07_top-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_hood-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_front_fenders-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_bottom_sill-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_doors-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_side_windows-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_trunk_lid-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_taillights-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_back_bumper-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_front_bumper-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_trunk_spoiler-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_muffer-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_bottom-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_break_disc-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_tire-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim_bolts-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_break_disc01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim_bolts01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_tire01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_door_handles-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_trunk_handle-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_taillights_reflector-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_reverse_light_reflector-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_front_bumper_reflectors-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_front_register_plate-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_back_register_plate-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_grill-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_headlight_frame-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_headlight_reflector-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_lancia_logo_front-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_lancia_logo_front01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_brake_caliper_fl-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_brake_caliper_fl01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_interior_bottom-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_interior_top-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_lancia_logo_left-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_lancia_logo_left01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_recaro_seat-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_recaro_seat01-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_back_seats-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_hf_logo-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rear_wipe_arm-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_right_wipe_arm-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_left_wipe_arm-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_dashboard_top-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_dashboard_bottom-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_speedo-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_1-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_air_blowers-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_gearbox-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_stering_wheel-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_stering_wheel_column-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_pedals-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_windshield_washers-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_wipe_blade__left-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_wipe_blade_right-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_wipe_blade_rear-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_break_disc02-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim_bolts02-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_brake_caliper_fl02-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_tire02-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim02-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim_bolts03-GEODE :: osg::Geode
-|--|--|--|--Node -> HDM_01_07_brake_caliper_fl03-GEODE :: osg::Geode
-|--|--|--|--Node -> HDM_01_07_break_disc03-GEODE :: osg::Geode
-|--|--|--|--Node -> HDM_01_07_tire03-GEODE :: osg::Geode
-
-|--|--|--|--Node -> HDM_01_07_rim03-GEODE :: osg::Geode
+// BODY
+HDM_01_07_top-GEODE
+HDM_01_07_hood-GEODE
+HDM_01_07_doors-GEODE
+HDM_01_07_front_fenders-GEODE
+HDM_01_07_trunk_lid-GEODE
+HDM_01_07_trunk_spoiler-GEODE
+
+// BLACK
+HDM_01_07_door_handles-GEODE
+HDM_01_07_trunk_handle-GEODE
+HDM_01_07_tire-GEODE
+HDM_01_07_tire01-GEODE
+HDM_01_07_tire02-GEODE
+HDM_01_07_tire03-GEODE
+HDM_01_07_back_bumper-GEODE
+HDM_01_07_front_bumper-GEODE
+
+// ??
+
+HDM_01_07_taillights-GEODE
+HDM_01_07_taillights_reflector-GEODE
+HDM_01_07_reverse_light_reflector-GEODE
+
+
+HDM_01_07_1-GEODE
+HDM_01_07_Object01-GEODE
+HDM_01_07_Object02-GEODE
+HDM_01_07_Object03-GEODE
+HDM_01_07_Object04-GEODE
+HDM_01_07_Object05-GEODE
+HDM_01_07_Object06-GEODE
+HDM_01_07_Object07-GEODE
+
+//METALLIC
+HDM_01_07_front_bumper_reflectors-GEODE
+HDM_01_07_bottom_sill-GEODE
+HDM_01_07_muffer-GEODE
+HDM_01_07_metal_wire-GEODE
+HDM_01_07_grill-GEODE
+HDM_01_07_rim-GEODE
+HDM_01_07_rim01-GEODE
+HDM_01_07_rim02-GEODE
+HDM_01_07_rim03-GEODE
+HDM_01_07_rim_bolts-GEODE
+HDM_01_07_rim_bolts01-GEODE
+HDM_01_07_rim_bolts02-GEODE
+HDM_01_07_rim_bolts03-GEODE
+
+//TRANSPARENT
+HDM_01_07_side_windows-GEODE

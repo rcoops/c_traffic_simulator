@@ -24,6 +24,7 @@ void rpcCarVeryon::goSlow()
 
 void rpcCarVeryon::goCruising()
 {
+	setSpeed(csm_fCruisingMultiplier);
 }
 
 osg::Node* rpcCarVeryon::makeBaseGeometry()
