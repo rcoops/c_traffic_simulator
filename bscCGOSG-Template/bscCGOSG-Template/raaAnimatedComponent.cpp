@@ -32,10 +32,9 @@ raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): A
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
 	// switch->transform->geode
-
 	m_psDetectorSwitch = new osg::Switch();
+	m_psDetectorSwitch->ref();
 	m_pRoot->addChild(m_psDetectorSwitch);
-	initDetectionPoint();
 	m_pLightDetector = new rpcDetectionBox(csm_vfLightDetectorPosition, osg::Vec3f(50.0f, 50.0f, 50.0f));
 	m_pVehicleDetector = new rpcDetectionBox(csm_vfVehicleDetectorPosition);
 	m_psDetectorSwitch->addChild(m_pLightDetector->root());
@@ -153,11 +152,11 @@ bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable) const
 	return m_pVehicleDetector->contains(vfGlobalCoordinates, g_pRoot); // no? must be a vehicle
 }
 
-void raaAnimatedComponent::initDetectionPoint() const
+void raaAnimatedComponent::initDetectionPoint(const osg::Vec3f vPos) const
 {
 	if (!m_psDetectorSwitch) return;
 	osg::MatrixTransform *pDetectionPointTransform = new osg::MatrixTransform();
-	pDetectionPointTransform->setMatrix(osg::Matrix::translate(csm_vfBack));
+	pDetectionPointTransform->setMatrix(osg::Matrix::translate(vPos));
 	osg::Geode* pGeode = makeGeode();
 	osg::ShapeDrawable* pSPoint = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0, 0.0, 0.0), 2.0f));
 	pSPoint->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::Material::ON | osg::Material::OVERRIDE);
@@ -268,4 +267,5 @@ raaAnimatedComponent::vehicleType raaAnimatedComponent::getRandomType()
 raaAnimatedComponent::~raaAnimatedComponent()
 {
 	m_pRoot->unref();
+	m_psDetectorSwitch->unref();
 }

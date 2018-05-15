@@ -68,7 +68,7 @@ protected:
 	static osg::Geode* makeGeode();
 
 	double calculateTimeOffset(const double dTotalNewMultiplier) const;
-	void initDetectionPoint() const;
+	void initDetectionPoint(const osg::Vec3f vPos = csm_vfBack) const;
 	void setDetectionBoxVisibility(const bool bIsVisible) const;
 	void checkForVehicles();
 
