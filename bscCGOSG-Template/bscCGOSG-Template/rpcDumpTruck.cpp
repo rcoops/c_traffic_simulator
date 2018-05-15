@@ -12,7 +12,9 @@ osg::Node* rpcDumpTruck::sm_pGeometry = nullptr;
 rpcDumpTruck::rpcDumpTruck(rpcContextAwareAnimationPath* pAP): raaAnimatedComponent(pAP)
 {
 	rpcDumpTruck::buildGeometry();
-	if (m_pTransform) initDetectionPoint(osg::Vec3f(-(m_pTransform->getBound().radius() + 60.0f), 0.0f, 20.0f));
+	// set custom detection point
+	m_vfDetectionPoint = new osg::Vec3f(-(m_pTransform->getBound().radius() + 60.0f), 0.0f, 20.0f);
+	initDetectionPoint(*m_vfDetectionPoint);
 }
 
 void rpcDumpTruck::goFast()
@@ -32,14 +34,17 @@ void rpcDumpTruck::goCruising()
 
 void rpcDumpTruck::buildGeometry()
 {
+	// build transform
 	m_pTransform = new osg::MatrixTransform();
 	m_pTransform->ref();
+	// perform the transformation
 	osg::Matrixf mT, mS;
 	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 60.0f));
 	mS.makeScale(osg::Vec3f(10.0f, 10.0f, 10.0f));
 	m_pTransform->setMatrix(mS * mT);
+	// copy in the geometry
 	m_pTransform->addChild(static_cast<osg::Node*>(sm_pGeometry->clone(osg::CopyOp::DEEP_COPY_NODES)));
-	m_pRoot->addChild(m_pTransform);
+	m_pRoot->addChild(m_pTransform); // add to root
 }
 
 void rpcDumpTruck::initAsset(const std::string sPath)

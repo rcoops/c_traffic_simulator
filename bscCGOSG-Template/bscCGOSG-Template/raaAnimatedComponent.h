@@ -39,7 +39,6 @@ public:
 	void loadNewPath();
 	bool canSee(rpcDetectable* pDetectable) const;
 	void setMultiplier();
-	void checkForNewPath();
 	void setPause(const bool bPause);
 
 	void operator()(osg::Node* node, osg::NodeVisitor* nv) override;
@@ -48,14 +47,15 @@ public:
 	virtual ~raaAnimatedComponent();
 
 protected:
-	static const osg::Vec3f csm_vfBack;
 	static const osg::Vec3f csm_vfLightDetectorPosition;
 	static const osg::Vec3f csm_vfVehicleDetectorPosition;
 
+	static osg::Vec3f sm_vfBackDefault;
 	static float sm_fTimeMultiplier;
 
 	osg::MatrixTransform* m_pRoot;
 	osg::Switch* m_psDetectorSwitch;
+	osg::Vec3f *m_vfDetectionPoint;
 	bool m_bDetectorBoxVisible;
 	bool m_bPaused;
 	float m_fSpeed;
@@ -68,7 +68,7 @@ protected:
 	static osg::Geode* makeGeode();
 
 	double calculateTimeOffset(const double dTotalNewMultiplier) const;
-	void initDetectionPoint(const osg::Vec3f vPos = csm_vfBack) const;
+	void initDetectionPoint(const osg::Vec3f vPos = sm_vfBackDefault) const;
 	void setDetectionBoxVisibility(const bool bIsVisible) const;
 	void checkForVehicles();
 

@@ -20,8 +20,8 @@
  */
 const float raaAnimationPathBuilder::csm_fFrameRate = 200.0f;
 
-raaAnimationPathBuilder::raaAnimationPathBuilder(rpcContextAwareAnimationPath *pAP, osg::Node *pRoot, float fAnimationStartTime): m_pAP(pAP), m_pRoot(pRoot),
-	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(fAnimationStartTime), m_bIsBeginningOfAnimation(0)
+raaAnimationPathBuilder::raaAnimationPathBuilder(rpcContextAwareAnimationPath *pAP, osg::Node *pRoot, const float fAnimationStartTime): m_pAP(pAP), m_pRoot(pRoot),
+	m_vfPreviousGlobalTranslation(0.0f, 0.0f, 0.0f), m_fAnimationTime(fAnimationStartTime), m_bIsBeginningOfAnimation(false)
 {
 }
 
@@ -29,7 +29,7 @@ raaAnimationPathBuilder::~raaAnimationPathBuilder()
 {
 }
 
-void raaAnimationPathBuilder::load(std::string sFile)
+void raaAnimationPathBuilder::load(const std::string sFile)
 {
 	std::ifstream file(sFile);
 
@@ -46,16 +46,14 @@ void raaAnimationPathBuilder::load(std::string sFile)
 	addControlPoints();
 }
 
-void raaAnimationPathBuilder::save(std::string sFile)
+void raaAnimationPathBuilder::save(const std::string sFile)
 {
 	std::ofstream file(sFile);
-
-	unsigned int uiTile, uiAP;
 
 	uIntList::iterator itTile = m_lTiles.begin();
 	uIntList::iterator itAP = m_lPoints.begin();
 
-	for (; itTile != m_lTiles.end() && itAP != m_lPoints.end(); itTile++, itAP++)
+	for (; itTile != m_lTiles.end() && itAP != m_lPoints.end(); ++itTile, ++itAP)
 	{
 		file << (*itTile) << " " << (*itAP) << std::endl;
 	}
@@ -64,59 +62,40 @@ void raaAnimationPathBuilder::save(std::string sFile)
 
 // osg docs for animation path & animation path callback
 
-unsigned int raaAnimationPathBuilder::popReference(uIntList &lReferences)
-{
-	unsigned int uiReference = lReferences.front();
-	lReferences.pop_front();
-	return uiReference;
-}
-
 void raaAnimationPathBuilder::addControlPoints()
 {
-	unsigned int uiCurrentTile, uiCurrentPoint;
-
 	uIntList::iterator uiiTile = m_lTiles.begin();
 	uIntList::iterator uiiPoint = m_lPoints.begin();
 	for (; uiiTile != m_lTiles.end(); uiiTile++, uiiPoint++)
 	{
-		m_bIsBeginningOfAnimation = uiiTile == m_lTiles.begin();
-		// get road set singleton, get tile, get animation point
+		m_bIsBeginningOfAnimation = uiiTile == m_lTiles.begin(); // set this so we can avoid calc for first point later on
 		addControlPoint(*uiiTile, *uiiPoint);
 	}
 }
 
-void raaAnimationPathBuilder::addControlPoint(unsigned int uiCurrentTile, unsigned int uiCurrentPoint)
+void raaAnimationPathBuilder::addControlPoint(const unsigned int uiCurrentTile, const unsigned int uiCurrentPoint)
 {
-	raaRoadSet *pRoadSet = raaRoadSet::instance();
+	raaRoadSet *pRoadSet = raaRoadSet::instance(); // get roadset
 //	printf("Tile number: %d, Point number: %d\n", uiCurrentTile, uiCurrentPoint);
 	raaTile *pTile = pRoadSet->tile(uiCurrentTile);
 
 	// transform is easy - multiply matrix by vector
+	// get global transform
 	osg::Matrixf mfGlobalTransform = computeLocalToWorld(pTile->lowestTransform()->getParentalNodePaths()[0], true);
+	const osg::Vec3f vfGlobalTranslation = pTile->animPointPosition(uiCurrentPoint) * mfGlobalTransform;
+	// rotation is harder - local quarternian to matrix, multiply global by local matrix, resulting matrix to quarternian (or convert the global matrix to quarternian)
+	// get global rotation (convert global matrix to quat and multiply by tile rotation)
+	const osg::Quat qGlobalRotation = mfGlobalTransform.getRotate() * pTile->animPointRotation(uiCurrentPoint);
 
-	osg::Vec3f vfGlobalTranslation = pTile->animPointPosition(uiCurrentPoint) * mfGlobalTransform;
-	// rotation is harder - local quarternian to matrix, multiply global by local matrix, resulting matrix to quarternian (or convert the global matrix to quarternian
-	osg::Quat qGlobalRotation = mfGlobalTransform.getRotate() * pTile->animPointRotation(uiCurrentPoint);
-
-	if (!m_bIsBeginningOfAnimation)
-	{
-		//float fDistance = (vfGlobalTranslation - m_vfPreviousGlobalTranslation).length();
-		//m_fAnimationTime += fDistance / csm_fFrameRate;
-		m_fAnimationTime = calculateTimeChange(m_fAnimationTime, vfGlobalTranslation, m_vfPreviousGlobalTranslation);
-	}
-	m_vfPreviousGlobalTranslation = vfGlobalTranslation;
-	addControlPointToPath(m_fAnimationTime, vfGlobalTranslation, qGlobalRotation, uiCurrentTile, uiCurrentPoint);
+	if (!m_bIsBeginningOfAnimation) m_fAnimationTime = calculateNewAnimationTime(m_fAnimationTime, vfGlobalTranslation);
+	m_vfPreviousGlobalTranslation = vfGlobalTranslation; // save the position for next time calc
+	// create new control point with our calculated animation time, translation & rotation (and assign tile & point numbers)
+	m_pAP->insertPoint(m_fAnimationTime, osg::AnimationPath::ControlPoint(vfGlobalTranslation, qGlobalRotation), uiCurrentTile, uiCurrentPoint);
 }
 
-float raaAnimationPathBuilder::calculateTimeChange(float fOriginalTime, osg::Vec3f vfCurrentGlobalTranslation, osg::Vec3f vfGlobalPerviousTranslation)
+float raaAnimationPathBuilder::calculateNewAnimationTime(float fOriginalTime, const osg::Vec3f vfCurrentGlobalTranslation) const
 {
-	float fDistance = (vfCurrentGlobalTranslation - m_vfPreviousGlobalTranslation).length();
+	const float fDistance = (vfCurrentGlobalTranslation - m_vfPreviousGlobalTranslation).length();
 	fOriginalTime += fDistance / csm_fFrameRate;
 	return fOriginalTime;
-}
-
-void raaAnimationPathBuilder::addControlPointToPath(float fAnimationTime, osg::Vec3f &avfGlobalTranlation, osg::Quat &aqGlobalRotation,
-	unsigned int uiCurrentTile, unsigned int uiCurrentPoint)
-{
-	m_pAP->insertPoint(m_fAnimationTime, osg::AnimationPath::ControlPoint(avfGlobalTranlation, aqGlobalRotation), uiCurrentTile, uiCurrentPoint);
 }

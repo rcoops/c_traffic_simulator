@@ -25,7 +25,9 @@ static std::string asMetallicNames[12] = { "HDM_01_07_front_bumper_reflectors-GE
 rpcCarDelta::rpcCarDelta(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
 	rpcCarDelta::buildGeometry();
-	initDetectionPoint(osg::Vec3f(-m_pRoot->getBound().radius() + 10.0f, 0.0f, 20.0f));
+	// set custom detection point
+	if (m_pRoot) m_vfDetectionPoint = new osg::Vec3f(10.0f - m_pRoot->getBound().radius(), 0.0f, 20.0f);
+	initDetectionPoint(*m_vfDetectionPoint);
 }
 
 void rpcCarDelta::goFast()
@@ -45,14 +47,16 @@ void rpcCarDelta::goCruising()
 
 void rpcCarDelta::buildGeometry()
 {
-//	raaPrinter printer;
-//	printer.apply(*m_pRotate);
-	// build the transform containing a copy of the geometry
+	// build transform
 	m_pRotate = new osg::MatrixTransform();
 	m_pRotate->ref();
+	// rotate
 	m_pRotate->setMatrix(osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f)));
+	// copy in the geometry
 	m_pRotate->addChild(static_cast<osg::Node*>(sm_pGeometry->clone(osg::CopyOp::DEEP_COPY_NODES)));
-	applyMaterials(); // Apply the materials
+	//	raaPrinter printer;
+	//	printer.apply(*m_pRotate);
+	applyMaterials(); // Give it some colour
 	m_pRoot->addChild(m_pRotate); // add to root
 }
 

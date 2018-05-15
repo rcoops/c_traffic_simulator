@@ -23,11 +23,12 @@ extern osg::Group *g_pRoot;
 const osg::Vec3f raaAnimatedComponent::csm_vfLightDetectorPosition = osg::Vec3f(0.0f, 140.0f, 20.0f);
 const osg::Vec3f raaAnimatedComponent::csm_vfVehicleDetectorPosition = osg::Vec3f(120.0f, 0.0f, 20.0f);
 
-const osg::Vec3f raaAnimatedComponent::csm_vfBack = osg::Vec3f(-40.0f, 0.0f, 20.0f);
+osg::Vec3f raaAnimatedComponent::sm_vfBackDefault = osg::Vec3f(-40.0f, 0.0f, 20.0f);
 float raaAnimatedComponent::sm_fTimeMultiplier = 1.0f;
 
-raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_pAP(pAP), m_bDetectorBoxVisible(false), m_fSpeed(1.0f), m_fPrePauseSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex), m_bPaused(false)
+raaAnimatedComponent::raaAnimatedComponent(rpcContextAwareAnimationPath *pAP): AnimationPathCallback(pAP), m_bDetectorBoxVisible(false), m_bPaused(false), m_fSpeed(1.0f), m_fPrePauseSpeed(1.0f), m_uiLastTileInAnimation(pAP->m_uiEndTileIndex), m_uiLastAnimationPointInAnimation(pAP->m_uiEndPointIndex), m_pAP(pAP)
 {
+	m_vfDetectionPoint = &sm_vfBackDefault;
 	m_pLightDetected = nullptr;
 	m_pRoot = new osg::MatrixTransform();
 	m_pRoot->ref();
@@ -62,7 +63,8 @@ void raaAnimatedComponent::setFinalAnimationPathPoint()
 
 void raaAnimatedComponent::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
-	checkForNewPath();
+	// check if we're at the end of our path and if so load a new one
+	if (m_pAP && m_pAP->isEndOfAnimation(getAnimationTime())) loadNewPath();
 	setMultiplier();
 	checkForVehicles();
 	AnimationPathCallback::operator()(node, nv);
@@ -72,31 +74,24 @@ void raaAnimatedComponent::setMultiplier()
 {
 	// Controllable global speed * car's speed in reaction to light colours
 	const double dTotalMultiplier = sm_fTimeMultiplier * m_fSpeed; // latest frame
-															 // Adjusting the multiplier will move the animation speed so need to get an offset
+	// Adjusting the multiplier will move the animation speed so need to set an offset
 	setTimeOffset(calculateTimeOffset(dTotalMultiplier));
 	setTimeMultiplier(dTotalMultiplier);
 }
 
-void raaAnimatedComponent::checkForNewPath()
-{
-	if (m_pAP && m_pAP->isEndOfAnimation(getAnimationTime()))
-	{
-		loadNewPath();
-	}
-}
-
 void raaAnimatedComponent::setPause(const bool bPause)
 {
-	if (bPause && !m_bPaused)
+	// setPause messes with path selection at lights so instead set speed to almost stop
+	if (bPause && !m_bPaused) // make sure we weren't already paused
 	{
-		m_fPrePauseSpeed = m_fSpeed;
-		m_bPaused = true;
+		m_fPrePauseSpeed = m_fSpeed; // save the speed pre-pause
+		m_bPaused = true; // tell the component we're paused
 		m_fSpeed = 0.00000001f;
 	}
-	else if (!bPause && m_bPaused)
+	else if (!bPause && m_bPaused) // make sure we were paused
 	{
 		m_bPaused = false;
-		setSpeed(m_fPrePauseSpeed);
+		setSpeed(m_fPrePauseSpeed); // reset the speed to what it was before the pause
 	}
 	//if (bPause && !m_bPaused) {
 	//	double animationTime = getAnimationTime();
@@ -114,8 +109,9 @@ void raaAnimatedComponent::setPause(const bool bPause)
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
 {
-	if (pRoot) return csm_vfBack * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
-	return csm_vfBack; // can't really happen - this wont exist if tree root doesn't
+	const osg::Vec3f vfDetectionPoint = m_vfDetectionPoint ? *m_vfDetectionPoint : sm_vfBackDefault;
+	if (pRoot) return vfDetectionPoint * computeLocalToWorld(m_pRoot->getParentalNodePaths(pRoot)[0]);
+	return vfDetectionPoint; // can't really happen - this wont exist if tree root doesn't
 }
 
 /* Why is this not a function of the callback??
@@ -268,4 +264,6 @@ raaAnimatedComponent::~raaAnimatedComponent()
 {
 	m_pRoot->unref();
 	m_psDetectorSwitch->unref();
+	m_vfDetectionPoint = nullptr;
+	delete m_vfDetectionPoint;
 }
