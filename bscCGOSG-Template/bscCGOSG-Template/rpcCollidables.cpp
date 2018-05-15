@@ -74,7 +74,7 @@ void rpcCollidables::performOnAllVehicles(rpcVehicleFunctor *pFunc)
 
 void rpcCollidables::performOnAllLights(rpcTrafficLightFunctor* pFunctor)
 {
-	raaLights::iterator itLight = sm_lLights.begin;
+	raaLights::iterator itLight = sm_lLights.begin();
 	for (; itLight != sm_lLights.end(); ++itLight) (*pFunctor)(*itLight);
 }
 
@@ -104,14 +104,14 @@ void rpcCollidables::cycleManualState()
 
 void rpcCollidables::createRandomAnimatedComponent()
 {
-	createAnimatedComponent(raaAnimatedComponent::getRandomType());
+	createAnimatedComponent(rpcVehicleFactory::getRandomType());
 }
 
-void rpcCollidables::createAnimatedComponent(const raaAnimatedComponent::vehicleType eVehicleType)
+void rpcCollidables::createAnimatedComponent(const rpcVehicleFactory::vehicleType eVehicleType)
 {
 	if (!g_pRoot) return;
 	rpcContextAwareAnimationPath *pAP = rpcPathSelector::instance()->createRandomPath();
-	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(eVehicleType, pAP);
+	raaAnimatedComponent *pAnim = rpcVehicleFactory::vehicleFactory(eVehicleType, pAP);
 	g_pRoot->addChild(pAnim->root());
 
 	addVehicle(pAnim);

@@ -19,7 +19,8 @@ public:
 protected:
 	static const osg::Vec3f vfDefaultSize;
 
-	osg::MatrixTransform* m_pTransform;
+	osg::MatrixTransform* m_pTranslate;
+	osg::MatrixTransform* m_pScale;
 	osg::Matrix* m_pWorldToBound;
 
 	static osg::Material* makeMaterial();

@@ -36,6 +36,7 @@
 #include "rpcCarVeryon.h"
 #include "rpcDumpTruck.h"
 #include "rpcCarDelta.h"
+#include "rpcVehicleFactory.h"
 
 //#include <osgDB/ReadFile>
 
@@ -47,7 +48,7 @@ double g_dLastTime = 0.0;
 osg::Vec3f g_vPastPos;
 
 
-void addAnimatedComponent(const std::string sAnimPath, raaAnimatedComponent::vehicleType eType = raaAnimatedComponent::vehicleType::veryon)
+void addAnimatedComponent(const std::string sAnimPath, rpcVehicleFactory::vehicleType eType = rpcVehicleFactory::vehicleType::veryon)
 {
 	rpcContextAwareAnimationPath *pAP = new rpcContextAwareAnimationPath();
 	raaAnimationPathBuilder apBuilder(pAP, g_pRoot);
@@ -56,7 +57,7 @@ void addAnimatedComponent(const std::string sAnimPath, raaAnimatedComponent::veh
 	apBuilder.load(sAnimPath); // loading the animation path from file
 
 	// create an animated component and add to the scene with the animation path included
-	raaAnimatedComponent *pAnim = raaAnimatedComponent::vehicleFactory(eType, pAP);
+	raaAnimatedComponent *pAnim = rpcVehicleFactory::vehicleFactory(eType, pAP);
 	g_pRoot->addChild(pAnim->root());
 
 	rpcCollidables::instance()->addVehicle(pAnim);
@@ -110,7 +111,7 @@ int main(int argc, char** argv)
 	rpcCollidables::instance()->createRandomAnimatedComponent();
 	// building an animation path
 	addAnimatedComponent(sAnimPath);
-	addAnimatedComponent(sAnimPath2, raaAnimatedComponent::vehicleType::delta);
+	addAnimatedComponent(sAnimPath2, rpcVehicleFactory::vehicleType::delta);
 //	addAnimatedComponent(sAnimPath2);
 //	addAnimatedComponent(sAnimPath3);
 	// setup stuff

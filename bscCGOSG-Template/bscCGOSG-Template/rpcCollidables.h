@@ -5,6 +5,7 @@
 #include "raaAnimatedComponent.h"
 #include "rpcVehicleFunctor.h"
 #include "rpcTrafficLightFunctor.h"
+#include "rpcVehicleFactory.h"
 
 typedef std::list<raaTrafficLightUnit*> raaLights;
 typedef std::list<raaAnimatedComponent*> raaVehicles;
@@ -26,7 +27,7 @@ public:
 
 	static void addVehicle(raaAnimatedComponent *pVehicle);
 	static void createRandomAnimatedComponent();
-	static void createAnimatedComponent(const raaAnimatedComponent::vehicleType eVehicleType);
+	static void createAnimatedComponent(const rpcVehicleFactory::vehicleType eVehicleType);
 
 	static void addLight(raaTrafficLightUnit *pLight);
 	static void toggleDetectionVisibility();

@@ -172,6 +172,7 @@
     <ClInclude Include="rpcDumpTruck.h" />
     <ClInclude Include="rpcPathSelector.h" />
     <ClInclude Include="rpcTrafficLightFunctor.h" />
+    <ClInclude Include="rpcVehicleFactory.h" />
     <ClInclude Include="rpcVehicleFunctor.h" />
     <ClInclude Include="rpcDetectionBox.h" />
     <ClInclude Include="rpcCollidables.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="rpcCollidables.cpp" />
     <ClCompile Include="rpcDumpTruck.cpp" />
     <ClCompile Include="rpcPathSelector.cpp" />
+    <ClCompile Include="rpcVehicleFactory.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

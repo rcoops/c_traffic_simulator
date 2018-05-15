@@ -16,10 +16,6 @@ typedef std::list<class raaAnimatedComponent*> rpcVehicles;
 class raaAnimatedComponent: public osg::AnimationPathCallback, public rpcDetectable
 {
 public:
-	// fudge to get number of types
-	enum vehicleType {
-		veryon, delta, truck, numberOfTypes
-	};
 	raaAnimatedComponent(rpcContextAwareAnimationPath* pAP);
 
 	rpcDetectionBox* m_pLightDetector;
@@ -28,9 +24,7 @@ public:
 	raaAnimatedComponent *m_pVehicleDetected;
 
 	static void setManualMultiplier(float fTimeMultiplier);
-	static raaAnimatedComponent* vehicleFactory(const vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP);
-	static raaAnimatedComponent* buildRandomVehicle(rpcContextAwareAnimationPath* pAP);
-	static vehicleType getRandomType();
+
 	osg::MatrixTransform* root() const;
 	void toggleDetectionBoxVisibility();
 	void reactToLightInSights();

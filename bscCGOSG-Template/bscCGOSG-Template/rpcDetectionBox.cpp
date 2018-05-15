@@ -9,21 +9,22 @@ const osg::Vec3f rpcDetectionBox::vfDefaultSize = osg::Vec3f(30.0f, 30.0f, 30.0f
 
 rpcDetectionBox::rpcDetectionBox(osg::Vec3f vfPosition, osg::Vec3f vfSize)
 {
-	// move & size it
-	m_pTransform = new osg::MatrixTransform();
-	m_pTransform->ref();
-	osg::Matrixf mT, mS;
-	mT.makeTranslate(vfPosition[0], vfPosition[1], vfPosition[2]);
-	mS.makeScale(vfSize[0], vfSize[1], vfSize[2]);
-	m_pTransform->setMatrix(mS * mT);
-	m_pTransform->addChild(makeGeometry()); // load in wireframe
+	// move & size it (need the translate separate for calc of box
+	m_pTranslate = new osg::MatrixTransform();
+	m_pTranslate->ref();
+	m_pTranslate->setMatrix(osg::Matrix::translate(vfPosition[0], vfPosition[1], vfPosition[2]));
+	m_pScale = new osg::MatrixTransform();
+	m_pScale->setMatrix(osg::Matrix::scale(vfSize[0], vfSize[1], vfSize[2]));
+	m_pScale->ref();
+	m_pTranslate->addChild(m_pScale);
+	m_pScale->addChild(makeGeometry()); // load in wireframe
 }
 
 osg::Geode* rpcDetectionBox::makeGeometry() const
 {
 	osg::Geode* pGeode = new osg::Geode();
 	// set the drawables shape to a sphere with bound centre and co-ords
-	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Sphere(m_pTransform->getBound().center(), m_pTransform->getBound().radius()));
+	osg::ShapeDrawable* pSD = new osg::ShapeDrawable(new osg::Sphere(m_pScale->getBound().center(), m_pScale->getBound().radius()));
 
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(makeMaterial(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 	pGeode->getOrCreateStateSet()->setAttributeAndModes(new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
@@ -35,7 +36,7 @@ osg::Geode* rpcDetectionBox::makeGeometry() const
 
 bool rpcDetectionBox::contains(const osg::Vec3f pvfGlobalCoordinates, osg::Group *pRoot) const
 {
-	return m_pTransform->computeBound().contains(pvfGlobalCoordinates * computeWorldToLocal(m_pTransform->getParentalNodePaths(pRoot)[0]));
+	return m_pScale->computeBound().contains(pvfGlobalCoordinates * computeWorldToLocal(m_pTranslate->getParentalNodePaths(pRoot)[0]));
 }
 
 osg::Material* rpcDetectionBox::makeMaterial()
@@ -50,10 +51,11 @@ osg::Material* rpcDetectionBox::makeMaterial()
 
 osg::MatrixTransform* rpcDetectionBox::node() const
 {
-	return m_pTransform;
+	return m_pTranslate;
 }
 
 rpcDetectionBox::~rpcDetectionBox()
 {
-	m_pTransform->unref();
+	m_pTranslate->unref();
+	m_pScale->unref();
 }

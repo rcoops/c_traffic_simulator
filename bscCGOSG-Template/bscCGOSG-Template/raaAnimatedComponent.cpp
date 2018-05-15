@@ -241,30 +241,6 @@ void raaAnimatedComponent::reactToLightInSights()
 		setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
 }
 
-raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(const vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
-{
-	switch (eVehicleType)
-	{
-	case delta:
-		return new rpcCarDelta(pAP);
-	case truck:
-		return new rpcDumpTruck(pAP);
-	default:
-		return new rpcCarVeryon(pAP);
-	}
-}
-
-raaAnimatedComponent* raaAnimatedComponent::buildRandomVehicle(rpcContextAwareAnimationPath *pAP)
-{
-	return vehicleFactory(getRandomType(), pAP);
-}
-
-raaAnimatedComponent::vehicleType raaAnimatedComponent::getRandomType()
-{
-	unsigned int uiRandom = rand() % numberOfTypes;
-	return static_cast<vehicleType>(uiRandom);
-}
-
 raaAnimatedComponent::~raaAnimatedComponent()
 {
 	m_pRoot->unref();
