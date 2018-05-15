@@ -143,14 +143,14 @@ void raaAnimatedComponent::setManualMultiplier(const float fTimeMultiplier)
 	sm_fTimeMultiplier = fTimeMultiplier;
 }
 
-bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable, osg::Group *pRoot) const
+bool raaAnimatedComponent::canSee(rpcDetectable *pDetectable) const
 {
-	const osg::Vec3f vfGlobalCoordinates = pDetectable->getDetectionPointRelativeTo(pRoot);
+	const osg::Vec3f vfGlobalCoordinates = pDetectable->getDetectionPointRelativeTo(g_pRoot);
 	if (dynamic_cast<raaTrafficLightUnit*>(pDetectable)) // is it a light?
 	{
-		return m_pLightDetector->contains(vfGlobalCoordinates, pRoot); // cool, check the light detector
+		return m_pLightDetector->contains(vfGlobalCoordinates, g_pRoot); // cool, check the light detector
 	}
-	return m_pVehicleDetector->contains(vfGlobalCoordinates, pRoot); // no? must be a vehicle
+	return m_pVehicleDetector->contains(vfGlobalCoordinates, g_pRoot); // no? must be a vehicle
 }
 
 void raaAnimatedComponent::initDetectionPoint() const
@@ -165,6 +165,7 @@ void raaAnimatedComponent::initDetectionPoint() const
 	pDetectionPointTransform->addChild(pGeode);
 	m_psDetectorSwitch->addChild(pDetectionPointTransform);
 }
+
 osg::Geode* raaAnimatedComponent::makeGeode()
 {
 	osg::Geode* pGeode = new osg::Geode();
@@ -202,14 +203,13 @@ void raaAnimatedComponent::checkForVehicles()
 	// All the vehicles
 	for (; itVehicle != rpcCollidables::sm_lVehicles.end() && !m_pVehicleDetected; ++itVehicle)
 	{
-		if (*itVehicle == this)  return; // No point checking detection on self
-		bool detected = canSee((*itVehicle), g_pRoot);
-		if (detected) m_pVehicleDetected = *itVehicle; 
+		if (*itVehicle == this) return; // No point checking detection on self
+		if (canSee((*itVehicle))) m_pVehicleDetected = *itVehicle; // focus on this vehicle
 	}
 	if (m_pVehicleDetected) // Car in my radar
 	{
 		// still in sight?
-		const bool bCanStillSeeVehicle = canSee(m_pVehicleDetected, g_pRoot);
+		const bool bCanStillSeeVehicle = canSee(m_pVehicleDetected);
 		// if it is, set pause true, if not, take global val
 		setPause(bCanStillSeeVehicle || rpcCollidables::instance()->m_bIsGlobalPause);
 		if (!bCanStillSeeVehicle) m_pVehicleDetected = nullptr; // discard reference if out of sight
@@ -227,7 +227,7 @@ void raaAnimatedComponent::reactToLightInSights()
 		switch (m_pLightDetected->m_eTrafficLightState)
 		{
 		case raaTrafficLightUnit::rpcTrafficLightState::slow:
-			goFast();// GET THROUGH THE LIGHT QUICK!!!
+			goFast(); // GET THROUGH THE LIGHT QUICK!!!
 			break;
 		case raaTrafficLightUnit::rpcTrafficLightState::ready:
 			goSlow();

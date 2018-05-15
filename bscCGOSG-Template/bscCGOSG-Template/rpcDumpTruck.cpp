@@ -7,9 +7,11 @@ const float rpcDumpTruck::csm_fSlowMultiplier = 0.25f;
 const float rpcDumpTruck::csm_fFastMultiplier = 2.0f;
 const float rpcDumpTruck::csm_fCruisingMultiplier = 0.75f;
 
+osg::Node* rpcDumpTruck::sm_pGeometry = nullptr;
+
 rpcDumpTruck::rpcDumpTruck(rpcContextAwareAnimationPath* pAP): raaAnimatedComponent(pAP)
 {
-	m_pRoot->addChild(rpcDumpTruck::makeBaseGeometry());
+	rpcDumpTruck::buildGeometry();
 }
 
 void rpcDumpTruck::goFast()
@@ -27,23 +29,28 @@ void rpcDumpTruck::goCruising()
 	setSpeed(csm_fCruisingMultiplier);
 }
 
-osg::Node* rpcDumpTruck::makeBaseGeometry()
+void rpcDumpTruck::buildGeometry()
 {
-	m_pGeometry = osgDB::readNodeFile("../../Data/dumptruck.osgt");
-	m_pGeometry->ref();
-	//raaPrinter printer;
-	//printer.apply(*m_pGeometry);
-	osg::MatrixTransform *pMatrixTransform = new osg::MatrixTransform();
+	m_pTransform = new osg::MatrixTransform();
+	m_pTransform->ref();
 	osg::Matrixf mT, mS;
 	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 60.0f));
 	mS.makeScale(osg::Vec3f(10.0f, 10.0f, 10.0f));
-	pMatrixTransform->setMatrix(mS * mT);
-	pMatrixTransform->addChild(m_pGeometry);
+	m_pTransform->setMatrix(mS * mT);
+	m_pTransform->addChild(static_cast<osg::Node*>(sm_pGeometry->clone(osg::CopyOp::DEEP_COPY_NODES)));
+	m_pRoot->addChild(m_pTransform);
+}
 
-	return pMatrixTransform;
+void rpcDumpTruck::initAsset(const std::string sPath)
+{
+	if (!sm_pGeometry)
+	{
+		sm_pGeometry = osgDB::readNodeFile(sPath);
+		sm_pGeometry->ref();
+	}
 }
 
 rpcDumpTruck::~rpcDumpTruck()
 {
-	m_pGeometry->unref();
+	m_pTransform->unref();
 }

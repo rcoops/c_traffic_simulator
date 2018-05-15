@@ -7,9 +7,11 @@ const float rpcCarVeryon::csm_fSlowMultiplier = 0.75f;
 const float rpcCarVeryon::csm_fFastMultiplier = 6.0f;
 const float rpcCarVeryon::csm_fCruisingMultiplier = 2.0f;
 
+osg::Node* rpcCarVeryon::sm_pGeometry = nullptr;
+
 rpcCarVeryon::rpcCarVeryon(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
-	m_pRoot->addChild(rpcCarVeryon::makeBaseGeometry());
+	rpcCarVeryon::buildGeometry();
 }
 
 void rpcCarVeryon::goFast()
@@ -27,21 +29,29 @@ void rpcCarVeryon::goCruising()
 	setSpeed(csm_fCruisingMultiplier);
 }
 
-osg::Node* rpcCarVeryon::makeBaseGeometry()
+void rpcCarVeryon::buildGeometry()
 {
-	m_pGeometry = osgDB::readNodeFile("../../Data/car-veyron.OSGB");
-	m_pGeometry->ref();
-	osg::MatrixTransform *pMatrixTransform = new osg::MatrixTransform();
+	m_pTransform = new osg::MatrixTransform();
+	m_pTransform->ref();
 	osg::Matrixf mT, mR, mS;
 	mT.makeTranslate(osg::Vec3f(0.0f, 0.0f, 30.0f));
 	mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
 	mS.makeScale(osg::Vec3f(10.0f, 10.0f, 10.0f));
-	pMatrixTransform->setMatrix(mS * mR * mT);
-	pMatrixTransform->addChild(m_pGeometry);
-	return pMatrixTransform;
+	m_pTransform->setMatrix(mS * mR * mT);
+	m_pTransform->addChild(static_cast<osg::Node*>(sm_pGeometry->clone(osg::CopyOp::DEEP_COPY_NODES)));
+	m_pRoot->addChild(m_pTransform); // add to root
+}
+
+void rpcCarVeryon::initAsset(const std::string sPath)
+{
+	if (!sm_pGeometry)
+	{
+		sm_pGeometry = osgDB::readNodeFile(sPath);
+		sm_pGeometry->ref();
+	}
 }
 
 rpcCarVeryon::~rpcCarVeryon()
 {
-	m_pGeometry->unref();
+	m_pTransform->unref();
 }

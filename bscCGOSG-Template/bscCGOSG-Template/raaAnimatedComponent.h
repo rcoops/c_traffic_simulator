@@ -37,7 +37,7 @@ public:
 	void setSpeed(float fSpeed);
 	void setFinalAnimationPathPoint();
 	void loadNewPath();
-	bool canSee(rpcDetectable* pDetectable, osg::Group* pRoot) const;
+	bool canSee(rpcDetectable* pDetectable) const;
 	void setMultiplier();
 	void checkForNewPath();
 	void setPause(const bool bPause);
@@ -75,6 +75,6 @@ protected:
 	virtual void goFast() = 0;
 	virtual void goSlow() = 0;
 	virtual void goCruising() = 0;
-	virtual osg::Node* makeBaseGeometry() = 0;
+	virtual void buildGeometry() = 0;
 };
 

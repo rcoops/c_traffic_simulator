@@ -14,6 +14,7 @@ const unsigned int rpcCarDelta::csm_uiNumberOfBodyParts = 6;
 const unsigned int rpcCarDelta::csm_uiNumberOfWindowParts = 1;
 const unsigned int rpcCarDelta::csm_uiNumberOfMetallicParts = 12;
 
+osg::Node* rpcCarDelta::sm_pGeometry = nullptr;
 osg::Material* rpcCarDelta::sm_pMetallicMat = nullptr;
 osg::Material* rpcCarDelta::sm_pWindowMat = nullptr;
 
@@ -23,7 +24,7 @@ static std::string asMetallicNames[12] = { "HDM_01_07_front_bumper_reflectors-GE
 
 rpcCarDelta::rpcCarDelta(rpcContextAwareAnimationPath* pAP) : raaAnimatedComponent(pAP)
 {
-	m_pRoot->addChild(rpcCarDelta::makeBaseGeometry());
+	rpcCarDelta::buildGeometry();
 }
 
 void rpcCarDelta::goFast()
@@ -41,18 +42,22 @@ void rpcCarDelta::goCruising()
 	setSpeed(csm_fCruisingMultiplier);
 }
 
-osg::Node* rpcCarDelta::makeBaseGeometry()
+void rpcCarDelta::buildGeometry()
 {
-	m_pGeometry = osgDB::readNodeFile("../../Data/car-delta.OSGB");
-	m_pGeometry->ref();
 //	raaPrinter printer;
-//	printer.apply(*m_pGeometry);
-	osg::MatrixTransform *pMatrixTransform = new osg::MatrixTransform();
-	osg::Matrixf mR;
-	mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
-	pMatrixTransform->setMatrix(mR);
-	pMatrixTransform->addChild(m_pGeometry);
-	
+//	printer.apply(*m_pRotate);
+	// build the transform containing a copy of the geometry
+	m_pRotate = new osg::MatrixTransform();
+	m_pRotate->ref();
+	m_pRotate->setMatrix(osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f)));
+	m_pRotate->addChild(static_cast<osg::Node*>(sm_pGeometry->clone(osg::CopyOp::DEEP_COPY_NODES)));
+	applyMaterials(); // Apply the materials
+	m_pRoot->addChild(m_pRotate); // add to root
+}
+
+// http://devernay.free.fr/cours/opengl/materials.html
+void rpcCarDelta::applyMaterials()
+{
 	for (int i = 0; i < csm_uiNumberOfBodyParts; ++i) paintBody(getGeode(asBodyNames[i]));
 	for (int i = 0; i < csm_uiNumberOfMetallicParts; ++i) paintMetallicPart(getGeode(asMetallicNames[i]));
 	for (int i = 0; i < csm_uiNumberOfWindowParts; ++i) paintWindow(getGeode(asWindowNames[i]));
@@ -60,15 +65,13 @@ osg::Node* rpcCarDelta::makeBaseGeometry()
 	paintHeadLights(getGeode("HDM_01_07_Object02-GEODE"), getGeode("HDM_01_07_Object03-GEODE"), getGeode("HDM_01_07_Object01-GEODE"), getGeode("HDM_01_07_Object04-GEODE"));
 	paintIndicators(getGeode("HDM_01_07_Object05-GEODE"), getGeode("HDM_01_07_Object08-GEODE"));
 	paintTailLights(getGeode("HDM_01_07_Object07-GEODE"));
-
-	return pMatrixTransform;
 }
+
 osg::Geode* rpcCarDelta::getGeode(const std::string psNodeName) const
 {
-	raaFinder<osg::Geode> finder(psNodeName, m_pGeometry);
+	raaFinder<osg::Geode> finder(psNodeName, m_pRotate);
 	return finder.node();
 }
-// http://devernay.free.fr/cours/opengl/materials.html
 
 void rpcCarDelta::paintWindow(osg::Geode* pGeode)
 {
@@ -165,6 +168,15 @@ void rpcCarDelta::buildNewMaterial(osg::Material **pMat, const osg::Vec3f vAmb, 
 	}
 }
 
+void rpcCarDelta::initAsset(const std::string sPath)
+{
+	if (!sm_pGeometry)
+	{
+		sm_pGeometry = osgDB::readNodeFile(sPath);
+		sm_pGeometry->ref();
+	}
+}
+
 void rpcCarDelta::fullMaterialBuilder(osg::Material* pMat, osg::Vec3f vAmb, osg::Vec3f vDiff, osg::Vec3f vSpec, const float fShininess)
 {
 	pMat->setAmbient(osg::Material::FRONT, osg::Vec4f(vAmb[0], vAmb[1], vAmb[2], 1.0f));
@@ -184,5 +196,5 @@ void rpcCarDelta::materialBuilder(osg::Material* pMat, osg::Vec3f vMat)
 rpcCarDelta::~rpcCarDelta()
 {
 	m_pBodyMat->unref();
-	m_pGeometry->unref();
+	m_pRotate->unref();
 }

@@ -33,6 +33,9 @@
 #include "raaInputController.h"
 #include "rpcPathSelector.h"
 #include "rpcContextAwareAnimationPath.h"
+#include "rpcCarVeryon.h"
+#include "rpcDumpTruck.h"
+#include "rpcCarDelta.h"
 
 //#include <osgDB/ReadFile>
 
@@ -69,6 +72,9 @@ int main(int argc, char** argv)
 
 	// parse command line options
 	std::string sTrafficLightAsset = "../../Data/raaTrafficLight.OSGB";
+	const std::string sCarDeltaAsset = "../../Data/car-delta.OSGB";
+	const std::string sCarVeryonAsset = "../../Data/car-veyron.OSGB";
+	const std::string sDumpTruckAsset = "../../Data/dumptruck.osgt";
 	std::string sRoadMap = "../../Data/roads3.txt";
 	std::string sRoadAsset = "../../Data/RoadSet.OSGB";
 	std::string sAnimPath = "../../Data/animationpaths/6_1.txt";
@@ -85,7 +91,9 @@ int main(int argc, char** argv)
 
 	// loads the tile assets for laying out the tiles. 
 	raaTrafficLightUnit::initAsset(sTrafficLightAsset);
-	
+	rpcCarDelta::initAsset(sCarDeltaAsset);
+	rpcCarVeryon::initAsset(sCarVeryonAsset);
+	rpcDumpTruck::initAsset(sDumpTruckAsset);
 	// loads the road description and populates it
 	raaRoadSet::start(sRoadAsset, sRoadMap);
 

@@ -8,17 +8,21 @@ class rpcCarVeryon : public raaAnimatedComponent
 public:
 	rpcCarVeryon(rpcContextAwareAnimationPath* pAP);
 
+	static void initAsset(const std::string sPath);
+
 	virtual ~rpcCarVeryon();
 protected:
 	const static float csm_fSlowMultiplier;
 	const static float csm_fFastMultiplier;
 	const static float csm_fCruisingMultiplier;
 
-	osg::Node *m_pGeometry;
+	static osg::Node *sm_pGeometry;
+
+	osg::MatrixTransform* m_pTransform;
 
 	void goFast() override;
 	void goSlow() override;
 	void goCruising() override;
 
-	osg::Node* makeBaseGeometry() override;
+	void buildGeometry() override;
 };

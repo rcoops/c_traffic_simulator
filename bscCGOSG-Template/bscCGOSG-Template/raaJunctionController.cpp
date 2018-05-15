@@ -76,11 +76,11 @@ void raaJunctionController::checkDetection()
 		for (itLight = m_lLights.begin(); itLight != m_lLights.end() && !(*itVehicle)->m_pLightDetected; ++itLight)
 		{
 			// If we have a hit, set the car's detected light to that hit
-			if ((*itVehicle)->canSee(*itLight, g_pRoot)) (*itVehicle)->m_pLightDetected = (*itLight);
+			if ((*itVehicle)->canSee(*itLight)) (*itVehicle)->m_pLightDetected = (*itLight);
 		}
 		if((*itVehicle)->m_pLightDetected) // If the car has a detected light already
 		{
-			if ((*itVehicle)->canSee((*itVehicle)->m_pLightDetected, g_pRoot)) // Ift it's still detected
+			if ((*itVehicle)->canSee((*itVehicle)->m_pLightDetected)) // Ift it's still detected
 			{
 				(*itVehicle)->reactToLightInSights(); // React
 			}
