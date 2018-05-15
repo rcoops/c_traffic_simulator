@@ -14,9 +14,6 @@
 #include "raaJunctionController.h"
 #include "rpcContextAwareAnimationPath.h"
 #include "rpcPathSelector.h"
-#include "rpcCarVeryon.h"
-#include "rpcCarDelta.h"
-#include "rpcDumpTruck.h"
 
 extern osg::Group *g_pRoot;
 

@@ -74,10 +74,7 @@ void raaJunctionController::checkDetection()
 		}
 		if((*itVehicle)->m_pLightDetected) // If the car has a detected light already
 		{
-			if ((*itVehicle)->canSee((*itVehicle)->m_pLightDetected)) // Ift it's still detected
-			{
-				(*itVehicle)->reactToLightInSights(); // React
-			}
+			if ((*itVehicle)->canSee((*itVehicle)->m_pLightDetected)) (*itVehicle)->reactToLightInSights(); // If it's still detected, react
 			else
 			{
 				(*itVehicle)->setSpeed(1.0f); // If the speed's been sped during an orange, it needs to go back to normal

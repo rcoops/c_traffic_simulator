@@ -5,6 +5,7 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Switch>
+#include "rpcDetectable.h"
 
 class rpcDetectionBox
 {

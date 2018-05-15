@@ -11,7 +11,7 @@ raaTileXJunction::raaTileXJunction(const unsigned int uiName, osg::Node* pNode, 
 
 void raaTileXJunction::addLights()
 {
-	float fRotation = -90.0f; // set to -90 so we can use += 90 for every loop iteration
+	float fRotation = -90.0f; // set to -90 so we can use += 90 for every loop iteration (start at 0)
 	const float fOutsidePositionRange = 3 * csm_fAbsoluteLightPosition; // 600
 	const float fPositionStep = 2 * csm_fAbsoluteLightPosition; // 400
 	// we want bottom-left, bottom-right top-right, top-left (to go round in a circle)
