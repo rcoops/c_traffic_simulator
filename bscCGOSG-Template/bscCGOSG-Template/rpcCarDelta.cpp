@@ -69,12 +69,6 @@ osg::Geode* rpcCarDelta::getGeode(const std::string psNodeName) const
 	return finder.node();
 }
 // http://devernay.free.fr/cours/opengl/materials.html
-void rpcCarDelta::paintTest(osg::Geode* pGeode)
-{
-	osg::Material *pMat = new osg::Material();
-	buildLightMaterial(pMat, osg::Vec3f(1.0f, 0.0f, 0.0f));
-	pGeode->getOrCreateStateSet()->setAttributeAndModes(pMat, osg::StateAttribute::OVERRIDE);
-}
 
 void rpcCarDelta::paintWindow(osg::Geode* pGeode)
 {
@@ -187,7 +181,8 @@ void rpcCarDelta::materialBuilder(osg::Material* pMat, osg::Vec3f vMat)
 	pMat->setShininess(osg::Material::FRONT, 128.0f);
 }
 
-rpcCarDelta::~rpcCarDelta() {
+rpcCarDelta::~rpcCarDelta()
+{
 	m_pBodyMat->unref();
 	m_pGeometry->unref();
 }
