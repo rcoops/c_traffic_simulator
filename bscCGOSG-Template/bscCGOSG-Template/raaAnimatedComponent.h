@@ -28,7 +28,7 @@ public:
 	raaAnimatedComponent *m_pVehicleDetected;
 
 	static void setManualMultiplier(float fTimeMultiplier);
-	static raaAnimatedComponent* vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP);
+	static raaAnimatedComponent* vehicleFactory(const vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP);
 	static raaAnimatedComponent* buildRandomVehicle(rpcContextAwareAnimationPath* pAP);
 	static vehicleType getRandomType();
 	osg::MatrixTransform* root() const;

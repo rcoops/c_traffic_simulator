@@ -92,8 +92,9 @@ void raaAnimatedComponent::setPause(const bool bPause)
 	{
 		m_fPrePauseSpeed = m_fSpeed;
 		m_bPaused = true;
-		setSpeed(0.00000001f);
-	} else
+		m_fSpeed = 0.00000001f;
+	}
+	else if (!bPause && m_bPaused)
 	{
 		m_bPaused = false;
 		setSpeed(m_fPrePauseSpeed);
@@ -109,7 +110,7 @@ void raaAnimatedComponent::setPause(const bool bPause)
 	//	setTimeOffset(getTimeOffset() + getAnimationTime() - m_dAnimationTimeBeforePause);
 	//	m_bPaused = false;
 	//}
-	AnimationPathCallback::setPause(bPause);
+	//AnimationPathCallback::setPause(bPause);
 }
 
 osg::Vec3f raaAnimatedComponent::getDetectionPointRelativeTo(osg::Node *pRoot)
@@ -202,7 +203,8 @@ void raaAnimatedComponent::checkForVehicles()
 	for (; itVehicle != rpcCollidables::sm_lVehicles.end() && !m_pVehicleDetected; ++itVehicle)
 	{
 		if (*itVehicle == this)  return; // No point checking detection on self
-		if (canSee((*itVehicle), g_pRoot)) m_pVehicleDetected = *itVehicle; 
+		bool detected = canSee((*itVehicle), g_pRoot);
+		if (detected) m_pVehicleDetected = *itVehicle; 
 	}
 	if (m_pVehicleDetected) // Car in my radar
 	{
@@ -226,15 +228,12 @@ void raaAnimatedComponent::reactToLightInSights()
 		{
 		case raaTrafficLightUnit::rpcTrafficLightState::slow:
 			goFast();// GET THROUGH THE LIGHT QUICK!!!
-//			setSpeed(4.0f); // GET THROUGH THE LIGHT QUICK!!!
 			break;
 		case raaTrafficLightUnit::rpcTrafficLightState::ready:
 			goSlow();
-//			setSpeed(0.5f); // speeding up
 			break;
 		case raaTrafficLightUnit::rpcTrafficLightState::go:
 			goCruising();
-//			setSpeed(1.0f); // standard
 			break;
 		default:
 			break;
@@ -242,7 +241,7 @@ void raaAnimatedComponent::reactToLightInSights()
 		setPause(m_pLightDetected->m_eTrafficLightState == raaTrafficLightUnit::rpcTrafficLightState::stop || rpcCollidables::instance()->m_bIsGlobalPause);
 }
 
-raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
+raaAnimatedComponent* raaAnimatedComponent::vehicleFactory(const vehicleType eVehicleType, rpcContextAwareAnimationPath *pAP)
 {
 	switch (eVehicleType)
 	{
